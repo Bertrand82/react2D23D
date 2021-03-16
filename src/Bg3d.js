@@ -84,12 +84,14 @@ class Bg3d extends Component {
         for (var i = 0; i < this.w; i = i + kk) {
             var cube_z_1;
             for (var j = 0; j < this.h; j = j + kk) {
-                var pixel = this.getPixelXY(this.imageData, i, j);
+                var indexPixel = this.getPixelXYIndex(i,j);
+                var pixel = this.getPixelRGB( indexPixel);
+                var greyLevel = this.getGreyLevel( indexPixel);
                 //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
 
                     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-                    var epaisseur = 4 + Math.floor(this.state.epaisseurBase * pixel / 0xffffff);
+                    var epaisseur = this.state.epaisseurBase + Math.floor(this.state.epaisseurBase * greyLevel / 0xffffff);
                     const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * epaisseur);
                     cubeGeometry.translate(i, j, epaisseur);
                     const cube = new THREE.Mesh(cubeGeometry, material);
@@ -119,9 +121,17 @@ class Bg3d extends Component {
         //return (pixel == 0xffffff);
         return (pixel == this.state.couleurFond);
     }
-    getPixel(imgData, index) {
-        var i = index * 4;
-        var data = imgData.data;
+
+    getGreyLevel(i) {
+        var data = this.imageData.data;
+        var red = data[i];
+        var green = data[i + 1];
+        var blue = data[i + 2]; 
+        var grey = .2126 * red + .7152 * green + .0722 * blue;
+        return grey;
+    }
+    getPixelRGB( i) {        
+        var data = this.imageData.data;
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
@@ -132,8 +142,8 @@ class Bg3d extends Component {
 
 
 
-    getPixelXY(imgData, x, y) {
-        return this.getPixel(imgData, y * imgData.width + x);
+    getPixelXYIndex( x, y) {
+        return 4 * ( y *this.imageData.width + x);
     }
 
     create3D() {
