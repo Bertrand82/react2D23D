@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TrackballControls from './TrackballControls';
 import BgComponent from './BgComponent';
+import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
 
 const ctx = initCanvasText();
@@ -19,8 +20,12 @@ class Bg3d extends Component {
         super(props)
         this.state = {
             image2Dsrc: props.image2Dsrc,
+            epaisseurBase: 4,
+            couleurFond: 0xffffff,
+            nbPoints: 20
         }
         this.initImageData(props.image2Dsrc);
+        this.updateParam = this.updateParam.bind(this);
     }
 
     componentDidMount() {
@@ -71,8 +76,9 @@ class Bg3d extends Component {
     }
 
     init2D23D() {
-
-        var kk = Math.round(this.w / 50);
+        var nbPoints = this.state.nbPoints;
+        console.log("nbPoints ::",nbPoints);
+        var kk = Math.round(this.w / nbPoints);
 
         var rangee;
         for (var i = 0; i < this.w; i = i + kk) {
@@ -81,9 +87,9 @@ class Bg3d extends Component {
                 var pixel = this.getPixelXY(this.imageData, i, j);
                 //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
-                    
+
                     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-                    var epaisseur = 4 + Math.floor(2 * pixel / 0xffffff);
+                    var epaisseur = 4 + Math.floor(this.state.epaisseurBase * pixel / 0xffffff);
                     const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * epaisseur);
                     cubeGeometry.translate(i, j, epaisseur);
                     const cube = new THREE.Mesh(cubeGeometry, material);
@@ -99,18 +105,19 @@ class Bg3d extends Component {
                     cube_z_1.add(rangee);
                 }
             }
-            if (cube_z_1){
+            if (cube_z_1) {
                 rangee = cube_z_1;
             }
             cube_z_1 = null;
 
         }
-        console.log("Pixels ::: h :" +this.h+"  w: "+this.w+"  kk :"+ kk +"  rangee :", rangee);
+        console.log("Pixels ::: h :" + this.h + "  w: " + this.w + "  kk :" + kk + "  rangee :", rangee);
         return rangee;
     }
 
     isFondImage(pixel) {
-        return (pixel == 0xffffff);
+        //return (pixel == 0xffffff);
+        return (pixel == this.state.couleurFond);
     }
     getPixel(imgData, index) {
         var i = index * 4;
@@ -155,7 +162,7 @@ class Bg3d extends Component {
 
         //this.controls.addEventListener( 'change',  );
         this.controls.handleResize();
-     }
+    }
     componentWillUnmount() {
         this.stop()
         this.mount.removeChild(this.renderer.domElement)
@@ -174,31 +181,34 @@ class Bg3d extends Component {
         this.renderScene()
         this.frameId = window.requestAnimationFrame(this.animate);
         this.controls.update();
-        
+
     }
     renderScene = () => {
         this.renderer.render(this.scene, this.camera)
     }
-    updateParam = (cote_a, cote_b, e_nervure) => {
-        console.log("updateParam ----- a: " + cote_a + "  b: " + cote_b + "  e: " + e_nervure);
-        var newData = this.state.data;
-        newData.cote_a = cote_a;
-        newData.cote_b = cote_b;
-        newData.e_nervure = e_nervure;
-        this.setState({ data: newData });
-        this.traceData();
-        this.scene.remove(this.croiseeOgive);
-
-        this.croiseeOgive = this.createSimpleCroiseeOgive(cote_a / 100, cote_b / 100, e_nervure / 100);
-        this.scene.add(this.croiseeOgive);
+    updateParam = (epaisseurBase, couleurFond, nbPoints) => {
+        console.log("updateParam ----- epaisseurBase: " + epaisseurBase + "  couleurFond: " + couleurFond + "  nbPoints: " + nbPoints);
+        this.setState({
+            epaisseurBase: epaisseurBase,
+            couleurFond: couleurFond,
+            nbPoints: epaisseurBase
+        })
+        this.scene.remove(this.cubes);
+        this.cubes = this.init2D23D();        
+        this.scene.add(this.cubes);
+        console.log("updateParam  scene updated!!!!!!!!");
     }
     render() {
         return (
-            <div style={{width: '600px',height:'600px'}}>
-                <div
-                    style={{ width: '300px', height: '300px', backgroundColor: "yellow" }}
-                    ref={(mount) => { this.mount = mount }}
-                />
+
+            <div>
+                <Bg3dParam updateParam={this.updateParam} data="{data}" />
+                <div style={{ width: '600px', height: '600px' }}>
+                    <div
+                        style={{ width: '300px', height: '300px', backgroundColor: "yellow" }}
+                        ref={(mount) => { this.mount = mount }}
+                    />
+                </div>
             </div>
         )
     }
