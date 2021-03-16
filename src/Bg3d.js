@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TrackballControls from './TrackballControls';
-import BgComponent from './BgComponent';
+
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
 

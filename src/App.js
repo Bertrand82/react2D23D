@@ -1,6 +1,5 @@
 import logo from './logo.svg';
 import './App.css';
-import BgImages from './BgImages';
 import BgUpload from './BgUpload';
 
 function App() {

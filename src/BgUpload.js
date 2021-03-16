@@ -1,4 +1,4 @@
-import BgImages from './BgImages';
+
 import Bg3d from './Bg3d';
 const React = require('react');
 
