@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TrackballControls from './TrackballControls';
-
+import * as bgexportSTL from './BgStlUtil'
+import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
 
@@ -21,7 +22,7 @@ class Bg3d extends Component {
         this.state = {
             image2Dsrc: props.image2Dsrc,
             epaisseurBase: 4,
-            couleurFond: 0xffffff,
+            couleurFond: '0xffffff',
             nbPoints: 20
         }
         this.initImageData(props.image2Dsrc);
@@ -77,16 +78,16 @@ class Bg3d extends Component {
 
     init2D23D() {
         var nbPoints = this.state.nbPoints;
-        console.log("nbPoints ::",nbPoints);
+        console.log("nbPoints ::", nbPoints);
         var kk = Math.round(this.w / nbPoints);
-
+        console.log("nbPoints ::" + nbPoints + "  kk " + kk);
         var rangee;
         for (var i = 0; i < this.w; i = i + kk) {
             var cube_z_1;
             for (var j = 0; j < this.h; j = j + kk) {
-                var indexPixel = this.getPixelXYIndex(i,j);
-                var pixel = this.getPixelRGB( indexPixel);
-                var greyLevel = this.getGreyLevel( indexPixel);
+                var indexPixel = this.getPixelXYIndex(i, j);
+                var pixel = this.getPixelRGB(indexPixel);
+                var greyLevel = this.getGreyLevel(indexPixel);
                 //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
 
@@ -126,11 +127,11 @@ class Bg3d extends Component {
         var data = this.imageData.data;
         var red = data[i];
         var green = data[i + 1];
-        var blue = data[i + 2]; 
+        var blue = data[i + 2];
         var grey = .2126 * red + .7152 * green + .0722 * blue;
         return grey;
     }
-    getPixelRGB( i) {        
+    getPixelRGB(i) {
         var data = this.imageData.data;
         var red = data[i];
         var green = data[i + 1];
@@ -142,8 +143,8 @@ class Bg3d extends Component {
 
 
 
-    getPixelXYIndex( x, y) {
-        return 4 * ( y *this.imageData.width + x);
+    getPixelXYIndex(x, y) {
+        return 4 * (y * this.imageData.width + x);
     }
 
     create3D() {
@@ -201,18 +202,32 @@ class Bg3d extends Component {
         this.setState({
             epaisseurBase: epaisseurBase,
             couleurFond: couleurFond,
-            nbPoints: epaisseurBase
+            nbPoints: nbPoints
         })
-        this.scene.remove(this.cubes);
-        this.cubes = this.init2D23D();        
-        this.scene.add(this.cubes);
-        console.log("updateParam  scene updated!!!!!!!!");
+
     }
+
+    calcul = () => {
+        console.log("calcul start -----");
+        this.scene.remove(this.cubes);
+        this.cubes = this.init2D23D();
+        this.scene.add(this.cubes);
+        console.log("calcul  scene updated!!!!!!!!");
+    }
+
+    getStl = () => {
+        console.log("getStl start -----"+THREE);
+        const buffer = bgexportSTL.fromMesh(this.cubes);
+        const blob = new Blob([buffer], { type: bgexportSTL.mimeType });
+        saveAs(blob, 'cube.stl');
+        console.log("getStl done");
+    }
+
     render() {
         return (
 
             <div>
-                <Bg3dParam updateParam={this.updateParam} data="{data}" />
+                <Bg3dParam updateParam={this.updateParam} calcul={this.calcul} getStl={this.getStl} data={this.state} />
                 <div style={{ width: '600px', height: '600px' }}>
                     <div
                         style={{ width: '300px', height: '300px', backgroundColor: "yellow" }}
