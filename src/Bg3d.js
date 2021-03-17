@@ -23,7 +23,8 @@ class Bg3d extends Component {
             image2Dsrc: props.image2Dsrc,
             epaisseurBase: 4,
             couleurFond: '0xffffff',
-            nbPoints: 20
+            nbPoints: 20,
+            coefGrey: 10,
         }
         this.initImageData(props.image2Dsrc);
         this.updateParam = this.updateParam.bind(this);
@@ -87,12 +88,14 @@ class Bg3d extends Component {
             for (var j = 0; j < this.h; j = j + kk) {
                 var indexPixel = this.getPixelXYIndex(i, j);
                 var pixel = this.getPixelRGB(indexPixel);
-                var greyLevel = this.getGreyLevel(indexPixel);
+                
                 //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
-
+                    var greyLevel = this.getPixelGreyLevel(indexPixel);
                     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-                    var epaisseur = this.state.epaisseurBase + Math.floor(this.state.epaisseurBase * greyLevel / 0xffffff);
+                    var eGrey = Math.floor((this.state.coefGrey * greyLevel) / 0xff);
+                    console.log("this.state.coefGrey "+this.state.coefGrey+"   "+0xff+" greyLevel "+greyLevel+"  eGrey "+eGrey);
+                    var epaisseur = this.state.epaisseurBase + eGrey ;
                     const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * epaisseur);
                     cubeGeometry.translate(i, j, epaisseur);
                     const cube = new THREE.Mesh(cubeGeometry, material);
@@ -123,7 +126,7 @@ class Bg3d extends Component {
         return (pixel == this.state.couleurFond);
     }
 
-    getGreyLevel(i) {
+    getPixelGreyLevel(i) {
         var data = this.imageData.data;
         var red = data[i];
         var green = data[i + 1];
@@ -197,12 +200,13 @@ class Bg3d extends Component {
     renderScene = () => {
         this.renderer.render(this.scene, this.camera)
     }
-    updateParam = (epaisseurBase, couleurFond, nbPoints) => {
-        console.log("updateParam ----- epaisseurBase: " + epaisseurBase + "  couleurFond: " + couleurFond + "  nbPoints: " + nbPoints);
+    updateParam = (epaisseurBase, couleurFond, nbPoints,coefGrey) => {
+        console.log("updateParam ----- epaisseurBase: " + epaisseurBase + "  couleurFond: " + couleurFond + "  nbPoints: " + nbPoints+"  coefGrey "+coefGrey);
         this.setState({
             epaisseurBase: epaisseurBase,
             couleurFond: couleurFond,
-            nbPoints: nbPoints
+            nbPoints: nbPoints,
+            coefGrey: coefGrey
         })
 
     }

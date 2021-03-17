@@ -26,3 +26,10 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 #### npm i three-orbitcontrols
 #### npm i three-trackballcontrols
 #### npm i react-dat-gui
+#### npm install jspm
+#### jspm install github:Doodle3D/ThreeJS-export-STL
+#### npm install threejs-export-stl --save
+voir https://github.com/Doodle3D/ThreeJS-export-STL
+
+#### npm i file-saver
+https://www.npmjs.com/package/file-saver

@@ -11,6 +11,7 @@ class Bg3dParam extends Component {
             epaisseurBase: props.data.epaisseurBase,
             couleurFond: props.data.couleurFond,
             nbPoints: props.data.nbPoints,
+            coefGrey: props.data.coefGrey,
             titre: '2D23D',
 
         };
@@ -35,7 +36,7 @@ class Bg3dParam extends Component {
         this.setState({
             [event.target.id]: event.target.value
         })
-        this.props.updateParam(this.state.epaisseurBase, this.state.couleurFond, this.state.nbPoints);
+        this.props.updateParam(this.state.epaisseurBase, this.state.couleurFond, this.state.nbPoints,this.state.coefGrey);
 
     }
 
@@ -52,18 +53,23 @@ class Bg3dParam extends Component {
                         </tr>
                         <tr>
                             <td>Epaisseur Base:</td>
-                            <td><input type="text" id="epaisseurBase" defaultValue={this.state.epaisseurBase} onChange={this.handleChange} /> </td>
+                            <td><input type="text" id="epaisseurBase" value={this.state.epaisseurBase} onChange={this.handleChange} /> </td>
                             <td>epaisseur 2 base</td>
                         </tr>
                         <tr>
                             <td>Couleur fond:</td>
-                            <td> <input type="text" id="couleurFond" defaultValue={this.state.couleurFond} onChange={this.handleChange} /> </td>
+                            <td> <input type="text" id="couleurFond" value={this.state.couleurFond} onChange={this.handleChange} /> </td>
                             <td>Couleur du fond d'image </td>
                         </tr>
                         <tr>
                             <td>Nombre de points:</td>
-                            <td> <input type="text" id="nbPoints" defaultValue={this.state.nbPoints} onChange={this.handleChange} /> </td>
+                            <td> <input type="text" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
                             <td>Nombre de points du maillage</td>
+                        </tr>
+                        <tr>
+                            <td>coefGrey:</td>
+                            <td> <input type="text" id="coefGrey" value={this.state.coefGrey} onMouseLeave={this.handleChange} onChange={this.handleChange} /> </td>
+                            <td>coefGrey</td>
                         </tr>
 
                         <tr>
