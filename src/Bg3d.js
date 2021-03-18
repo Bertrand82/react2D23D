@@ -4,12 +4,10 @@ import TrackballControls from './TrackballControls';
 import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
-import * as STLExporter from 'three-stlexporter';
-
-
+import { STLExporter } from "three/examples/jsm/exporters/STLExporter";
 
 const ctx = initCanvasText();
-const debug = false;
+
 
 function initCanvasText() {
     const ctx = document.createElement('canvas').getContext('2d');
@@ -61,7 +59,7 @@ class Bg3d extends Component {
         this.start();
     }
 
-    cubes;
+  
     imageData;
     w;
     h;
@@ -77,23 +75,20 @@ class Bg3d extends Component {
         this.imageData = ctx2.getImageData(0, 0, this.w, this.h);
         console.log("Init 3D canvas1 ", canvas1);
         console.log("Init 3D canvas1 ctx ", ctx2);
-
         console.log("Init 3D w " + this.w + "  h: " + this.h);
     }
 
-    init2D23D_light() {
+    init2D23D_light2(sceneInit) {
         var nbPoints = this.state.nbPoints;
         console.log("nbPoints ::", nbPoints);
         var kk = Math.round(this.w / nbPoints);
-        return this.init2D23D_full(kk);
+        return this.init2D23D_full(sceneInit,kk);
     }
 
-    init2D23D_full(kk) {
-        
-        console.log("init2D23D_full  kk " + kk);
-        var rangee;
-        for (var i = 0; i < this.w; i = i + kk) {
-            var cube_z_1;
+    init2D23D_full(sceneInit,kk) {
+       
+        console.log("init2D23D_full  kk " + kk);       
+        for (var i = 0; i < this.w; i = i + kk) {            
             for (var j = 0; j < this.h; j = j + kk) {
                 var indexPixel = this.getPixelXYIndex(i, j);
                 var pixel = this.getPixelRGB(indexPixel);                
@@ -102,30 +97,16 @@ class Bg3d extends Component {
                     var greyLevel = this.getPixelGreyLevel(indexPixel);
                     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
                     var eGrey = Math.floor((this.state.coefGrey * greyLevel) / 0xff);
-                    console.log("this.state.coefGrey "+this.state.coefGrey+"   "+0xff+" greyLevel "+greyLevel+"  eGrey "+eGrey);
                     var epaisseur = this.state.epaisseurBase + eGrey ;
                     const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * epaisseur);
                     cubeGeometry.translate(i, j, epaisseur);
                     const cube = new THREE.Mesh(cubeGeometry, material);
-
-                    if (cube_z_1) {
-                        cube.add(cube_z_1);
-                    }
-                    cube_z_1 = cube;
+                    sceneInit.add(cube);  
                 }
-            }
-            if (rangee) {
-                if (cube_z_1) {
-                    cube_z_1.add(rangee);
-                }
-            }
-            if (cube_z_1) {
-                rangee = cube_z_1;
-            }
-            cube_z_1 = null;
+            }           
         }
-        console.log("Pixels ::: h :" + this.h + "  w: " + this.w + "  kk :" + kk + "  rangee :", rangee);
-        return rangee;
+        console.log("Pixels ::: h :" + this.h + "  w: " + this.w + "  kk :" + kk +" group sceneInit.children.length :"+sceneInit.children.length);
+        return sceneInit;
     }
 
     isFondImage(pixel) {
@@ -151,18 +132,13 @@ class Bg3d extends Component {
         return pixel;
     }
 
-
-
     getPixelXYIndex(x, y) {
         return 4 * (y * this.imageData.width + x);
     }
 
     create3D() {
-
-        this.cubes = this.init2D23D_light();
-        this.scene.add(this.cubes);
-        console.log("cubes", this.cubes);
-        console.log("scene", this.scene);
+        this.scene =  new THREE.Scene()
+        this.calcul();
 
     }
 
@@ -220,22 +196,29 @@ class Bg3d extends Component {
 
     calcul = () => {
         console.log("calcul start -----");
-        this.scene.remove(this.cubes);
-        this.cubes = this.init2D23D_light();
-        this.scene.add(this.cubes);
+        this.scene.clear();
+        this.init2D23D_light2(this.scene);        
         console.log("calcul  scene updated!!!!!!!!");
     }
 
     
     getStl = () => {
         console.log("getStl start -----"+THREE);
-        var exporter = new STLExporter();
-        var mesh = this.init2D23D_full(1);
-        const buffer = exporter.parse( this.cubes );
-        const blob = new Blob([buffer], { type: 'text/plain' });
-        saveAs(blob, 'cube'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
-       
-        console.log("getStl done");
+        //var exporter = new STLExporter();
+        var exporter  = new STLExporter();
+        //var sceneStl = new THREE.Scene();
+        var  sceneStl = new THREE.Group();
+        this.init2D23D_full(sceneStl,1);     
+        const bufferBinary = exporter.parse( sceneStl, { binary: true } );
+        const bufferAscee = exporter.parse( sceneStl, { binary: false } );
+        const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
+        const blobAscee = new Blob([bufferAscee], { type: 'plain/text' });
+        saveAs(blobBinary, 'cubeBin'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
+        saveAs(blobAscee, 'cubeAscee'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
+        console.log("sceneStl.isMesh ",sceneStl.isMesh)
+        console.log("getStl done nb de cubes sceneStl : "+sceneStl.children.length);
+        console.log("getStl bufferBinary : ",bufferBinary);
+        console.log("getStl bufferBinary : ",bufferAscee);
     }
 
     render() {
