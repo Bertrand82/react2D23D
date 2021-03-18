@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import TrackballControls from './TrackballControls';
-import * as bgexportSTL from './BgStlUtil'
+
 import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
+import * as STLExporter from 'three-stlexporter';
+
+
 
 const ctx = initCanvasText();
 const debug = false;
@@ -29,6 +32,7 @@ class Bg3d extends Component {
         this.initImageData(props.image2Dsrc);
         this.updateParam = this.updateParam.bind(this);
     }
+
 
     componentDidMount() {
         const width = 2 * this.mount.clientWidth;
@@ -87,8 +91,7 @@ class Bg3d extends Component {
             var cube_z_1;
             for (var j = 0; j < this.h; j = j + kk) {
                 var indexPixel = this.getPixelXYIndex(i, j);
-                var pixel = this.getPixelRGB(indexPixel);
-                
+                var pixel = this.getPixelRGB(indexPixel);                
                 //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
                     var greyLevel = this.getPixelGreyLevel(indexPixel);
@@ -115,7 +118,6 @@ class Bg3d extends Component {
                 rangee = cube_z_1;
             }
             cube_z_1 = null;
-
         }
         console.log("Pixels ::: h :" + this.h + "  w: " + this.w + "  kk :" + kk + "  rangee :", rangee);
         return rangee;
@@ -219,11 +221,14 @@ class Bg3d extends Component {
         console.log("calcul  scene updated!!!!!!!!");
     }
 
+    
     getStl = () => {
         console.log("getStl start -----"+THREE);
-        const buffer = bgexportSTL.fromMesh(this.cubes);
-        const blob = new Blob([buffer], { type: bgexportSTL.mimeType });
-        saveAs(blob, 'cube.stl');
+        var exporter = new STLExporter();
+        const buffer = exporter.parse( this.cubes );
+        const blob = new Blob([buffer], { type: 'text/plain' });
+        saveAs(blob, 'cube'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
+       
         console.log("getStl done");
     }
 

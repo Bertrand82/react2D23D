@@ -17,10 +17,12 @@ class Bg3dParam extends Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleButtonClick2 = this.handleButtonClick2.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     handleButtonClick1 = (event) => {
         console.log("Button Calcul was clicked.");
+        this.handleUpdate(event);
         this.props.calcul();
     };
     handleButtonClick2 = (event) => {
@@ -36,8 +38,11 @@ class Bg3dParam extends Component {
         this.setState({
             [event.target.id]: event.target.value
         })
-        this.props.updateParam(this.state.epaisseurBase, this.state.couleurFond, this.state.nbPoints,this.state.coefGrey);
+        this.handleUpdate(event);
+    }
 
+    handleUpdate(event){
+        this.props.updateParam(this.state.epaisseurBase, this.state.couleurFond, this.state.nbPoints,this.state.coefGrey);
     }
 
     render() {
@@ -73,7 +78,7 @@ class Bg3dParam extends Component {
                         </tr>
 
                         <tr>
-                            <td></td>
+                            <td><input type="button" onClick={this.handleUpdate} value="Update" /> </td>
                             <td> <input type="button" onClick={this.handleButtonClick1} value="Calcul" /> </td>
                             <td><input type="button" onClick={this.handleButtonClick2} value="getStl" /></td>
                         </tr>
