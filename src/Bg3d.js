@@ -210,15 +210,14 @@ class Bg3d extends Component {
         var  sceneStl = new THREE.Group();
         this.init2D23D_full(sceneStl,1);     
         const bufferBinary = exporter.parse( sceneStl, { binary: true } );
-        const bufferAscee = exporter.parse( sceneStl, { binary: false } );
+        //const bufferAscee = exporter.parse( sceneStl, { binary: false } );
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
-        const blobAscee = new Blob([bufferAscee], { type: 'plain/text' });
+        //const blobAscee = new Blob([bufferAscee], { type: 'plain/text' });
         saveAs(blobBinary, 'cubeBin'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
-        saveAs(blobAscee, 'cubeAscee'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
-        console.log("sceneStl.isMesh ",sceneStl.isMesh)
+        //saveAs(blobAscee, 'cubeAscee'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
         console.log("getStl done nb de cubes sceneStl : "+sceneStl.children.length);
         console.log("getStl bufferBinary : ",bufferBinary);
-        console.log("getStl bufferBinary : ",bufferAscee);
+        //console.log("getStl bufferBinary : ",bufferAscee);
     }
 
     render() {

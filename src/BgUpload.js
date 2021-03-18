@@ -85,7 +85,7 @@ class BgUpload extends React.Component {
             return (
                 <div>
 
-                    <input type="file" onChange={this.handleChange} />
+                    <input type="file" onChange={this.handleChange} inputProps={{ accept: 'image/*' }}/>
                     <input type="button" onClick={this.handleProcess} value="processImage" />
                     <input type="button" onClick={this.handleDisplay3D} value="render3D" />
                     <img id="imageBg" alt={this.state.fileName} width="100" src={this.state.file} />
