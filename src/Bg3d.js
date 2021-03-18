@@ -81,11 +81,16 @@ class Bg3d extends Component {
         console.log("Init 3D w " + this.w + "  h: " + this.h);
     }
 
-    init2D23D() {
+    init2D23D_light() {
         var nbPoints = this.state.nbPoints;
         console.log("nbPoints ::", nbPoints);
         var kk = Math.round(this.w / nbPoints);
-        console.log("nbPoints ::" + nbPoints + "  kk " + kk);
+        return this.init2D23D_full(kk);
+    }
+
+    init2D23D_full(kk) {
+        
+        console.log("init2D23D_full  kk " + kk);
         var rangee;
         for (var i = 0; i < this.w; i = i + kk) {
             var cube_z_1;
@@ -154,7 +159,7 @@ class Bg3d extends Component {
 
     create3D() {
 
-        this.cubes = this.init2D23D();
+        this.cubes = this.init2D23D_light();
         this.scene.add(this.cubes);
         console.log("cubes", this.cubes);
         console.log("scene", this.scene);
@@ -216,7 +221,7 @@ class Bg3d extends Component {
     calcul = () => {
         console.log("calcul start -----");
         this.scene.remove(this.cubes);
-        this.cubes = this.init2D23D();
+        this.cubes = this.init2D23D_light();
         this.scene.add(this.cubes);
         console.log("calcul  scene updated!!!!!!!!");
     }
@@ -225,6 +230,7 @@ class Bg3d extends Component {
     getStl = () => {
         console.log("getStl start -----"+THREE);
         var exporter = new STLExporter();
+        var mesh = this.init2D23D_full(1);
         const buffer = exporter.parse( this.cubes );
         const blob = new Blob([buffer], { type: 'text/plain' });
         saveAs(blob, 'cube'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
