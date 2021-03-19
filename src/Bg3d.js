@@ -142,7 +142,7 @@ class Bg3d extends Component {
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
-        var alpha = data[i + 3];
+        //var alpha = data[i + 3];
         var pixel = red * 0x10000 + green * 0x100 + blue;
         return pixel;
     }

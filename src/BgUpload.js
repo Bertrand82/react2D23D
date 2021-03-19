@@ -91,34 +91,35 @@ class BgUpload extends React.Component {
         console.log("filtreImageData");
         for (var i = 0; i < this.w; i++) {
             for (var j = 0; j < this.h; j++) {
-                this.processPixel(i, j);
+                this.filtreImageDataPixel(i, j);
             }
         }
     }
 
 
-    processPixel(x, y) {
+    filtreImageDataPixel(x, y) {
         var i = 4 * (y * this.w + x);
         var data = this.imageData.data;
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
         var alpha = data[i + 3];
-        if (red > 0xf0 && green > 0xf0 && blue > 0xf0) {
+        var seuill = 0xA0;
+        if ((red > seuill) && (green > seuill) && (blue > seuill)) {
             data[i] = 0xff;
             data[i + 1] = 0xff;
             data[i + 2] = 0xff;
-        } else if (red > 0x80) {
+        } else if (red > seuill) {
             data[i] = 0xff;
             data[i + 1] = 0;
             data[i + 2] = 0;
 
-        } else if (green > 0x80) {
+        } else if (green > seuill) {
             data[i] = 0;
             data[i + 1] = 0xff;
             data[i + 2] = 0;
 
-        } else if (blue > 0x80) {
+        } else if (blue > seuill) {
             data[i] = 0;
             data[i + 1] = 0;
             data[i + 2] = 0xff;
