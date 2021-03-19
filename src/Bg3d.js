@@ -22,13 +22,17 @@ class Bg3d extends Component {
         super(props)
         this.state = {
             image2Dsrc: props.image2Dsrc,
-            epaisseurBase: 4,
-            couleurFond: '0xffffff',
+            hauteurNoir: 12,
+            hauteurRouge: 10,
+            hauteurVert: 11,
+            hauteurBleu: 13,
             nbPoints: 20,
-            coefGrey: 10,
+            couleurFond: 0xffffff,
+            titre: 'r2d23d'
+            
         }
         this.initImageData(props.image2Dsrc);
-        this.updateParam = this.updateParam.bind(this);
+        this.updateParam2 = this.updateParam2.bind(this);
     }
 
 
@@ -94,13 +98,13 @@ class Bg3d extends Component {
                 var pixel = this.getPixelRGB(indexPixel);                
                 //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
-                    var greyLevel = this.getPixelGreyLevel(indexPixel);
+                    var hauteur2 = this.getHauteurFromColor(indexPixel);
                     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-                    var eGrey = Math.floor((this.state.coefGrey * greyLevel) / 0xff);
-                    var epaisseur = this.state.epaisseurBase + eGrey ;
-                    const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * epaisseur);
-                    cubeGeometry.translate(i, j, epaisseur);
-                    const cube = new THREE.Mesh(cubeGeometry, material);
+                   
+                    const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * hauteur2);
+                    var geometry  = cubeGeometry.translate(i, j, hauteur2);
+                    //console.log(" geometry ",geometry)
+                    const cube = new THREE.Mesh(geometry, material);
                     sceneInit.add(cube);  
                 }
             }           
@@ -114,13 +118,24 @@ class Bg3d extends Component {
         return (pixel == this.state.couleurFond);
     }
 
-    getPixelGreyLevel(i) {
+    getHauteurFromColor(i) {
         var data = this.imageData.data;
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
-        var grey = .2126 * red + .7152 * green + .0722 * blue;
-        return grey;
+        if (red == 0xff && green ==0xff && blue==0xff){
+            // blanc ... Should nor happen;
+            return 1;
+        }else if (red==0xff){
+            return this.state.hauteurRouge;
+        }else if (green==0xff){
+            return this.state.hauteurVert;
+        }else if (blue==0xff){
+            return this.state.hauteurBleu;
+        }else {
+            return this.state.hauteurNoir;
+        }
+        
     }
     getPixelRGB(i) {
         var data = this.imageData.data;
@@ -183,14 +198,17 @@ class Bg3d extends Component {
     renderScene = () => {
         this.renderer.render(this.scene, this.camera)
     }
-    updateParam = (epaisseurBase, couleurFond, nbPoints,coefGrey) => {
-        console.log("updateParam ----- epaisseurBase: " + epaisseurBase + "  couleurFond: " + couleurFond + "  nbPoints: " + nbPoints+"  coefGrey "+coefGrey);
+    updateParam2 = (hauteurNoir, hauteurRouge, hauteurVert,hauteurBleu, nbPoints) => {
+        console.log("updateParam2 1 ----- hauteurNoir: " + hauteurNoir + "  hauteurRouge: " + hauteurRouge + "  nbPoints: " +nbPoints);
         this.setState({
-            epaisseurBase: epaisseurBase,
-            couleurFond: couleurFond,
-            nbPoints: nbPoints,
-            coefGrey: coefGrey
+            hauteurNoir: hauteurNoir,
+            hauteurRouge: hauteurRouge,
+            hauteurVert: hauteurVert,
+            hauteurBleu: hauteurBleu,
+            nbPoints: nbPoints            
         })
+        console.log("updateParam2 2 ----- hauteurNoir: " + this.state.hauteurNoir + "  hauteurRouge: " + this.state.hauteurRouge + "  nbPoints: "+nbPoints );
+        
 
     }
 
@@ -216,15 +234,13 @@ class Bg3d extends Component {
         saveAs(blobBinary, 'cubeBin'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
         //saveAs(blobAscee, 'cubeAscee'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
         console.log("getStl done nb de cubes sceneStl : "+sceneStl.children.length);
-        console.log("getStl bufferBinary : ",bufferBinary);
-        //console.log("getStl bufferBinary : ",bufferAscee);
     }
 
     render() {
         return (
 
             <div>
-                <Bg3dParam updateParam={this.updateParam} calcul={this.calcul} getStl={this.getStl} data={this.state} />
+                <Bg3dParam updateParam2={this.updateParam2} calcul={this.calcul} getStl={this.getStl} data={this.state} />
                 <div style={{ width: '600px', height: '600px' }}>
                     <div
                         style={{ width: '300px', height: '300px', backgroundColor: "yellow" }}

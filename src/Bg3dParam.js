@@ -6,15 +6,16 @@ import React, { Component } from 'react';
 class Bg3dParam extends Component {
     constructor(props) {
         super(props);
-        console.log("Bg3dParam  props :",props)
+        
         this.state = {           
-            epaisseurBase: props.data.epaisseurBase,
-            couleurFond: props.data.couleurFond,
+            hauteurNoir: props.data.hauteurNoir,
+            hauteurRouge: props.data.hauteurRouge,
+            hauteurVert: props.data.hauteurVert,
+            hauteurBleu: props.data.hauteurBleu,
             nbPoints: props.data.nbPoints,
-            coefGrey: props.data.coefGrey,
-            titre: '2D23D',
-
+            titre: props.data.titre
         };
+        console.log("Bg3dParam  props :",props)
         this.handleChange = this.handleChange.bind(this);
         this.handleButtonClick2 = this.handleButtonClick2.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
@@ -42,7 +43,7 @@ class Bg3dParam extends Component {
     }
 
     handleUpdate(event){
-        this.props.updateParam(this.state.epaisseurBase, this.state.couleurFond, this.state.nbPoints,this.state.coefGrey);
+        this.props.updateParam2(this.state.hauteurNoir, this.state.hauteurRouge,this.state.hauteurVert, this.state.hauteurBleu,this.state.nbPoints);
     }
 
     render() {
@@ -57,27 +58,31 @@ class Bg3dParam extends Component {
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Epaisseur Base:</td>
-                            <td><input type="text" id="epaisseurBase" value={this.state.epaisseurBase} onChange={this.handleChange} /> </td>
-                            <td>epaisseur 2 base</td>
+                            <td>Hauteur Noir:</td>
+                            <td><input type="text" id="hauteurNoir" value={this.state.hauteurNoir} onChange={this.handleChange} /> </td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td>Couleur fond:</td>
-                            <td> <input type="text" id="couleurFond" value={this.state.couleurFond} onChange={this.handleChange} /> </td>
-                            <td>Couleur du fond d'image </td>
+                            <td>Hauteur Rouge:</td>
+                            <td><input type="number" id="hauteurRouge" value={this.state.hauteurRouge} onChange={this.handleChange} /> </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Hauteur Vert:</td>
+                            <td> <input type="number" id="hauteurVert" value={this.state.hauteurVert} onChange={this.handleChange} /> </td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>Hauteur Bleu:</td>
+                            <td> <input type="number" id="hauteurBleu" value={this.state.hauteurBleu} onChange={this.handleChange} /> </td>
+                            <td> </td>
                         </tr>
                         <tr>
                             <td>Nombre de points:</td>
-                            <td> <input type="text" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
+                            <td> <input type="number" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
                             <td>Nombre de points du maillage</td>
                         </tr>
-                        <tr>
-                            <td>coefGrey:</td>
-                            <td> <input type="text" id="coefGrey" value={this.state.coefGrey} onMouseLeave={this.handleChange} onChange={this.handleChange} /> </td>
-                            <td>coefGrey</td>
-                        </tr>
-
-                        <tr>
+                         <tr>
                             <td><input type="button" onClick={this.handleUpdate} value="Update" /> </td>
                             <td> <input type="button" onClick={this.handleButtonClick1} value="Calcul" /> </td>
                             <td><input type="button" onClick={this.handleButtonClick2} value="getStl" /></td>
