@@ -201,11 +201,11 @@ class Bg3d extends Component {
     updateParam2 = (hauteurNoir, hauteurRouge, hauteurVert,hauteurBleu, nbPoints) => {
         console.log("updateParam2 1 ----- hauteurNoir: " + hauteurNoir + "  hauteurRouge: " + hauteurRouge + "  nbPoints: " +nbPoints);
         this.setState({
-            hauteurNoir: hauteurNoir,
-            hauteurRouge: hauteurRouge,
-            hauteurVert: hauteurVert,
-            hauteurBleu: hauteurBleu,
-            nbPoints: nbPoints            
+            hauteurNoir: new Number(hauteurNoir),
+            hauteurRouge: new Number(hauteurRouge),
+            hauteurVert: new Number(hauteurVert),
+            hauteurBleu: new Number(hauteurBleu),
+            nbPoints: new Number(nbPoints)            
         })
         console.log("updateParam2 2 ----- hauteurNoir: " + this.state.hauteurNoir + "  hauteurRouge: " + this.state.hauteurRouge + "  nbPoints: "+nbPoints );
         
@@ -214,6 +214,9 @@ class Bg3d extends Component {
 
     calcul = () => {
         console.log("calcul start -----");
+        var hauteurNoir = this.state.hauteurNoir;
+        console.log("updateParam2 2 ----- hauteurNoir: isNaN ::" + isNaN(hauteurNoir)+"  "+hauteurNoir,(hauteurNoir instanceof Number) );
+       
         this.scene.clear();
         this.init2D23D_light2(this.scene);        
         console.log("calcul  scene updated!!!!!!!!");
