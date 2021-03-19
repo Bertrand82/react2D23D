@@ -2,20 +2,17 @@
 import Bg3d from './Bg3d';
 const React = require('react');
 
-const debug = false;
-
-
 class BgUpload extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             fileName: "No Image",
             display3D: false,
-
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleProcess = this.handleProcess.bind(this);
         this.handleDisplay3D = this.handleDisplay3D.bind(this);
+        this.handleInverse = this.handleInverse.bind(this);
         this.initCanvasText();
     }
     ctx;
@@ -56,8 +53,6 @@ class BgUpload extends React.Component {
         console.log("Image h: ", this.h);
         this.imageData = this.ctx.getImageData(0, 0, this.w, this.h);
 
-        var width = this.imageData.width;
-        var height = this.imageData.height;
         this.filtreImageData(this.imageData);
         this.ctx.putImageData(this.imageData, 0, 0);
         console.log("newImage : ", newImage);
@@ -67,6 +62,28 @@ class BgUpload extends React.Component {
         console.log("ImageData.height : ", this.imageData.height);
         console.log("ImageData.data.length : ", this.imageData.data.length);
 
+    }
+
+    handleInverse() {
+        console.log("handleInverse w:"+this.imageData.width+"h:"+this.imageData.height);
+        var newImageData = new ImageData(this.imageData.width, this.imageData.height);
+        for (var i = 0; i < this.w; i++) {
+            //var ii = this.w -i-1;
+            var ii = i;
+            for (var j = 0; j < this.h; j++) {
+                var jj = this.h-j-1;
+                var k = 4 * (i * this.w + j);
+                var kk = 4 * (ii * this.w + jj);
+                newImageData.data[kk]=this.imageData.data[k];
+                newImageData.data[kk+1]=this.imageData.data[k+1];
+                newImageData.data[kk+2]=this.imageData.data[k+2];
+                newImageData.data[kk+3]=this.imageData.data[k+3];
+                newImageData.data[kk+4]=this.imageData.data[k+4];
+            }
+        }
+        console.log("handleInverse done");
+        this.imageData = newImageData;
+        this.ctx.putImageData(this.imageData, 0, 0);
     }
 
     filtreImageData() {
@@ -137,12 +154,42 @@ class BgUpload extends React.Component {
         } else {
             return (
                 <div>
-
-                    <input type="file" onChange={this.handleChange} inputProps={{ accept: 'image/*' }} />
-                    <input type="button" onClick={this.handleProcess} value="processImage" />
-                    <input type="button" onClick={this.handleDisplay3D} value="render3D" />
-                    <img id="imageBg" alt={this.state.fileName} width="100" src={this.state.file} />
-
+                    <table border="1">
+                        <tbody>
+                        <tr>
+                        <td>Etape 1</td>
+                        <td>Etape 2</td>
+                        <td>Etape 3</td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <input type="file" onChange={this.handleChange} inputProps={{ accept: 'image/*' }} />
+                            </td>
+                            <td>
+                            <input type="button" onClick={this.handleProcess} value="processImage" />
+                            </td>
+                            <td>
+                            <input type="button" onClick={this.handleDisplay3D} value="render3D" />
+                   
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <img id="imageBg" alt={this.state.fileName} width="100" src={this.state.file} />
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    
+                     
                 </div>
             );
         }

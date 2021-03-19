@@ -115,7 +115,7 @@ class Bg3d extends Component {
 
     isFondImage(pixel) {
         //return (pixel == 0xffffff);
-        return (pixel == this.state.couleurFond);
+        return (pixel === this.state.couleurFond);
     }
 
     getHauteurFromColor(i) {
@@ -123,14 +123,14 @@ class Bg3d extends Component {
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
-        if (red == 0xff && green ==0xff && blue==0xff){
+        if (red === 0xff && green ===0xff && blue===0xff){
             // blanc ... Should nor happen;
             return 1;
-        }else if (red==0xff){
+        }else if (red===0xff){
             return this.state.hauteurRouge;
-        }else if (green==0xff){
+        }else if (green===0xff){
             return this.state.hauteurVert;
-        }else if (blue==0xff){
+        }else if (blue===0xff){
             return this.state.hauteurBleu;
         }else {
             return this.state.hauteurNoir;
@@ -234,7 +234,8 @@ class Bg3d extends Component {
         //const bufferAscee = exporter.parse( sceneStl, { binary: false } );
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
         //const blobAscee = new Blob([bufferAscee], { type: 'plain/text' });
-        saveAs(blobBinary, 'cubeBin'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
+        var fileName = "cube_r2d23d_R"+this.state.hauteurRouge+"V"+this.state.hauteurVert+"B"+this.state.hauteurBleu+"N"+this.state.hauteurNoir
+        saveAs(blobBinary, fileName+'.stl');
         //saveAs(blobAscee, 'cubeAscee'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
         console.log("getStl done nb de cubes sceneStl : "+sceneStl.children.length);
     }
