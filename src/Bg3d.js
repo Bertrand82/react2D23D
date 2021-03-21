@@ -28,7 +28,7 @@ class Bg3d extends Component {
             hauteurRouge: 10,
             hauteurVert: 11,
             hauteurBleu: 13,
-            nbPoints: 20,
+            nbPoints: 50,
             couleurFond: 0xffffff,
             titre: 'r2d23d',
             scale: 0.4
@@ -93,96 +93,115 @@ class Bg3d extends Component {
         var nbPoints = this.state.nbPoints;
         console.log("nbPoints ::", nbPoints);
         var kk = Math.round(this.w / nbPoints);
+        console.log("kk ::", kk);
         return this.init2D23D_full(sceneInit, kk, 0, 0);
     }
 
 
     init2D23D_full(scene, kk) {
         ///  ////////////////////////////////////////////////////////////////////////
-        
+
         const listPBordureA = [];
         const listPBordureB = [];
+        var pointB ;
         const positionsHaut = [];
         const positionsBas = [];
         const positionsBordure = [];
         const normalsHaut = [];
         const normalsBas = [];
         const normalsBordure = [];
-        var nBordure= 0;
-        const w = 10;
-        const h = 10;
+        var nBordure = 0;
+        
         var plancher = 0;
-        for (var i = 0; i < w; i++) {
-            for (var j = 0; j < h; j++) {
+        console.log(" this.w "+this.w);
+        console.log(" this.h "+this.h);
+        console.log("init2D23D_full  kk " + kk);
+        for (var i = 0; i < this.w; i=i+kk) {
+            
+            for (var j = 0; j < this.h; j=j+kk) {
+               
+                var isBorderA =true;
+                var isBorderB = false;
+                var indexPixel = this.getPixelXYIndex(i, j);
+                var pixel = this.getPixelRGB(indexPixel);
+                var isDisplayable = !this.isFondImage(pixel);
+                if (isDisplayable) {
+                    //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
+                    var hauteurPixel = this.getHauteurFromColor(indexPixel) * this.state.scale;
+                    var hauteur = 50 +hauteurPixel;
+                    var positionHaut1 = [i, j, hauteur];
+                    var positionHaut2 = [i + kk, j, hauteur];
+                    var positionHaut3 = [i, j + kk, hauteur];
+                    positionsHaut.push(...positionHaut1);
+                    positionsHaut.push(...positionHaut2);
+                    positionsHaut.push(...positionHaut3);
 
-                var hauteur = 20;
-                var positionHaut1 = [i, j, hauteur];
-                var positionHaut2 = [i + 1, j, hauteur];
-                var positionHaut3 = [i, j + 1, hauteur];               
-                positionsHaut.push(...positionHaut1);
-                positionsHaut.push(...positionHaut2);
-                positionsHaut.push(...positionHaut3);
+                    var positionBas1 = [i, j, plancher];
+                    var positionBas2 = [i +kk, j, plancher];
+                    var positionBas3 = [i, j + kk, plancher];
+                    positionsBas.push(...positionBas1);
+                    positionsBas.push(...positionBas2);
+                    positionsBas.push(...positionBas3);
 
-                var positionBas1 = [i, j, plancher];
-                var positionBas2 = [i + 1, j, plancher];
-                var positionBas3 = [i, j + 1, plancher];
-                positionsBas.push(...positionBas1);
-                positionsBas.push(...positionBas2);
-                positionsBas.push(...positionBas3);
-
-                var normalHaut = [0, 0, 1];
-                var normalBas = [0, 0, -1];
-                normalsHaut.push(...normalHaut);
-                normalsHaut.push(...normalHaut);
-                normalsHaut.push(...normalHaut);
-                normalsBas.push(...normalBas);
-                normalsBas.push(...normalBas);
-                normalsBas.push(...normalBas);
-                // if (i,j) is bordure
-              if (j === 0) {
-                    var pointA = [i,j,hauteur];
-                    listPBordureA.push(...pointA);
-                    nBordure++;
-                }  
-                if (j === h-1) {
-                    var pointB = [i,j+1,hauteur];
-                    listPBordureB.push(...pointB);
+                    var normalHaut = [0, 0, 1];
+                    var normalBas = [0, 0, -1];
+                    normalsHaut.push(...normalHaut);
+                    normalsHaut.push(...normalHaut);
+                    normalsHaut.push(...normalHaut);
+                    normalsBas.push(...normalBas);
+                    normalsBas.push(...normalBas);
+                    normalsBas.push(...normalBas);
+                    // if (i,j) is bordure
+                    if (isBorderA) {
+                        isBorderA=false;
+                        var pointA = [i, j, hauteur];
+                        //listPBordureA.push(...pointA);
+                       // nBordure++;
+                    }
+                    pointB = [i, j + 1, hauteur];
+                    
+                }
+                if (j === this.h - 1) { 
+                    if (pointB){
+                        var pointBB = [pointB[0],pointB[1], pointB[2]];                       
+                      //  listPBordureB.push(...pointB);
+                    }
                 }
             }
         }
-        console.log("bordure listPBordureA : ",listPBordureA)
-        console.log("bordure listPBordureB : ",listPBordureB)
-        for(var iB=0; iB < nBordure; iB++){ 
-            if (iB===0){
-                var pZ_1=[listPBordureB[0],listPBordureB[1],listPBordureB[2]]
-            }else {
-                var pZ_1=[listPBordureA[3*(iB-1)],listPBordureA[3*(iB-1)+1],listPBordureA[3*(iB-1)+2]] ;
+        console.log("bordure listPBordureA : ", listPBordureA)
+        console.log("bordure listPBordureB : ", listPBordureB)
+        for (var iB = 0; iB < nBordure; iB++) {
+            if (iB === 0) {
+                var pZ_1 = [listPBordureB[0], listPBordureB[1], listPBordureB[2]]
+            } else {
+                var pZ_1 = [listPBordureA[3 * (iB - 1)], listPBordureA[3 * (iB - 1) + 1], listPBordureA[3 * (iB - 1) + 2]];
             }
-            
-            var pZ_0 =[listPBordureA[3*(iB)],listPBordureA[3*(iB)+1],listPBordureA[3*(iB)+2]] ;
-            this.processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) ;     
-                  
+
+            var pZ_0 = [listPBordureA[3 * (iB)], listPBordureA[3 * (iB) + 1], listPBordureA[3 * (iB) + 2]];
+            this.processBordure(pZ_1, pZ_0, positionsBordure, normalsBordure);
+
         }
-        for(var iC=0; iC < nBordure; iC++){ 
-           // var iB = nBordure-iC-1;
-            
-            if (iC===(nBordure-1)){
-                var pZ_0=[listPBordureA[3*iC],listPBordureA[3*iC+1],listPBordureA[3*iC+2]]
-            }else {
-                var pZ_0=[listPBordureB[3*(iC+1)],listPBordureB[3*(iC+1)+1],listPBordureB[3*(iC+1)+2]] ;
-            }            
-            var pZ_1 =[listPBordureB[3*iC],listPBordureB[(3*iC)+1],listPBordureB[(3*iC)+2]] ;
-            this.processBordure(pZ_0,pZ_1,positionsBordure,normalsBordure) ;     
-                  
+        for (var iC = 0; iC < nBordure; iC++) {
+            // var iB = nBordure-iC-1;
+
+            if (iC === (nBordure - 1)) {
+                var pZ_0 = [listPBordureA[3 * iC], listPBordureA[3 * iC + 1], listPBordureA[3 * iC + 2]]
+            } else {
+                var pZ_0 = [listPBordureB[3 * (iC + 1)], listPBordureB[3 * (iC + 1) + 1], listPBordureB[3 * (iC + 1) + 2]];
+            }
+            var pZ_1 = [listPBordureB[3 * iC], listPBordureB[(3 * iC) + 1], listPBordureB[(3 * iC) + 2]];
+            this.processBordure(pZ_0, pZ_1, positionsBordure, normalsBordure);
+
         }
-        console.log("bordure positionsBordure :",positionsBordure)
-        console.log("bordure normalsBordure :",normalsBordure)
-        console.log("positionsHaut :",positionsHaut)
-        console.log("positionsBas :",positionsBas)
-        
+        console.log("bordure positionsBordure :", positionsBordure)
+        console.log("bordure normalsBordure :", normalsBordure)
+        console.log("positionsHaut :", positionsHaut)
+        console.log("positionsBas :", positionsBas)
+
         var positions = positionsHaut.concat(positionsBas).concat(positionsBordure);
         var normals = normalsHaut.concat(normalsBas).concat(normalsBordure);
-        
+
         const geometry = new THREE.BufferGeometry();
         const positionNumComponents = 3;
         const normalNumComponents = 3;
@@ -203,13 +222,13 @@ class Bg3d extends Component {
         ///  ///////////////////////////////////////////////////////////////////////
 
     }
-    processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) {
-       
-        console.log("bordure  pZ_0:, ", pZ_0 ,"  pZ_1",pZ_1);
+    processBordure(pZ_1, pZ_0, positionsBordure, normalsBordure) {
+
+        console.log("bordure  pZ_0:, ", pZ_0, "  pZ_1", pZ_1);
         var positionBordure1 = [pZ_0[0], pZ_0[1], 0];
         var positionBordure2 = [pZ_0[0], pZ_0[1], pZ_0[2]];
         var positionBordure3 = [pZ_1[0], pZ_1[1], pZ_1[2]];
-        var positionBordure4 = [pZ_1[0], pZ_1[1],pZ_1[2]];
+        var positionBordure4 = [pZ_1[0], pZ_1[1], pZ_1[2]];
         var positionBordure5 = [pZ_1[0], pZ_1[1], 0];
         var positionBordure6 = [pZ_0[0], pZ_0[1], 0];
         positionsBordure.push(...positionBordure1);
@@ -218,23 +237,23 @@ class Bg3d extends Component {
         positionsBordure.push(...positionBordure4);
         positionsBordure.push(...positionBordure5);
         positionsBordure.push(...positionBordure6);
-        var dx = pZ_0[0]-pZ_1[0];
-        var dy = pZ_0[1]-pZ_1[1];
-        var yNormal ;
-        if (dy ===0){
-            yNormal=20;
-        }else {
-            yNormal = -dx/dy;
+        var dx = pZ_0[0] - pZ_1[0];
+        var dy = pZ_0[1] - pZ_1[1];
+        var yNormal;
+        if (dy === 0) {
+            yNormal = 20;
+        } else {
+            yNormal = -dx / dy;
         }
-        
-        var normalBordure = [1,yNormal,0];
-       
+
+        var normalBordure = [1, yNormal, 0];
+
         normalsBordure.push(...normalBordure)
         normalsBordure.push(...normalBordure)
         normalsBordure.push(...normalBordure)
         normalsBordure.push(...normalBordure)
         normalsBordure.push(...normalBordure)
-        normalsBordure.push(...normalBordure) 
+        normalsBordure.push(...normalBordure)
     }
     initMinimums() {
 

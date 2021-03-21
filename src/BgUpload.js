@@ -103,6 +103,7 @@ class BgUpload extends React.Component {
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
+        // eslint-disable-next-line
         var alpha = data[i + 3];
         var seuill = 0xA0;
         if ((red > seuill) && (green > seuill) && (blue > seuill)) {
