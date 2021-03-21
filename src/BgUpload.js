@@ -149,7 +149,7 @@ class BgUpload extends React.Component {
             return (
                 <div>
 
-                    <Bg3d image2Dsrc={this.ctx.canvas.id} />
+                    <Bg3d image2Dsrc={this.ctx.canvas.id} fileName={this.state.fileName} />
                 </div>
             )
         } else {

@@ -13,7 +13,8 @@ class Bg3dParam extends Component {
             hauteurVert: props.data.hauteurVert,
             hauteurBleu: props.data.hauteurBleu,
             nbPoints: props.data.nbPoints,
-            titre: props.data.titre
+            titre: props.data.titre,
+            scale: props.data.scale
         };
         console.log("Bg3dParam  props :",props)
         this.handleChange = this.handleChange.bind(this);
@@ -43,7 +44,7 @@ class Bg3dParam extends Component {
     }
 
     handleUpdate(event){
-        this.props.updateParam2(this.state.hauteurNoir, this.state.hauteurRouge,this.state.hauteurVert, this.state.hauteurBleu,this.state.nbPoints);
+        this.props.updateParam2(this.state.hauteurNoir, this.state.hauteurRouge,this.state.hauteurVert, this.state.hauteurBleu,this.state.nbPoints,this.state.scale);
     }
 
     render() {
@@ -81,6 +82,11 @@ class Bg3dParam extends Component {
                             <td>Nombre de points:</td>
                             <td> <input type="number" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
                             <td>Nombre de points du maillage</td>
+                        </tr>
+                        <tr>
+                            <td>Echelle sortie:</td>
+                            <td> <input type="number" id="scale" value={this.state.scale} onChange={this.handleChange} /> </td>
+                            <td>Echelle</td>
                         </tr>
                          <tr>
                             <td><input type="button" onClick={this.handleUpdate} value="Update" /> </td>

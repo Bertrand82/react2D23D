@@ -22,17 +22,20 @@ class Bg3d extends Component {
         super(props)
         this.state = {
             image2Dsrc: props.image2Dsrc,
+            fileName: props.fileName,
             hauteurNoir: 12,
             hauteurRouge: 10,
             hauteurVert: 11,
             hauteurBleu: 13,
             nbPoints: 20,
             couleurFond: 0xffffff,
-            titre: 'r2d23d'
-            
+            titre: 'r2d23d',
+            scale: 0.4
+
         }
         this.initImageData(props.image2Dsrc);
         this.updateParam2 = this.updateParam2.bind(this);
+
     }
 
 
@@ -61,12 +64,15 @@ class Bg3d extends Component {
         this.controls = new TrackballControls(this.camera, this.renderer.domElement);
         this.initControls();
         this.start();
+        this.animate();
     }
 
-  
+
     imageData;
     w;
     h;
+    iMin = 0;
+    jMin = 0;
     initImageData(idCanvas) {
         console.log("Init 3D", idCanvas);
         var canvas1 = document.getElementById(idCanvas);
@@ -86,30 +92,167 @@ class Bg3d extends Component {
         var nbPoints = this.state.nbPoints;
         console.log("nbPoints ::", nbPoints);
         var kk = Math.round(this.w / nbPoints);
-        return this.init2D23D_full(sceneInit,kk);
+        return this.init2D23D_full(sceneInit, kk, 0, 0);
     }
 
-    init2D23D_full(sceneInit,kk) {
+
+    init2D23D_full(scene, kk) {
+        ///  ////////////////////////////////////////////////////////////////////////
+        
+        const listPBordureA = [];
+        const listPBordureB = [];
+        const positionsHaut = [];
+        const positionsBas = [];
+        const positionsBordure = [];
+        const normalsHaut = [];
+        const normalsBas = [];
+        const normalsBordure = [];
+        var nBordure= 0;
+        const w = 10;
+        const h = 10;
+        var plancher = 0;
+        for (var i = 0; i < w; i++) {
+            for (var j = 0; j < h; j++) {
+
+                var hauteur = 20;
+                var positionHaut1 = [i, j, hauteur];
+                var positionHaut2 = [i + 1, j, hauteur];
+                var positionHaut3 = [i, j + 1, hauteur];
+
+                var positionBas1 = [i, j, plancher];
+                var positionBas2 = [i + 1, j, plancher];
+                var positionBas3 = [i, j + 1, plancher];
+                positionsHaut.push(...positionHaut1);
+                positionsHaut.push(...positionHaut2);
+                positionsHaut.push(...positionHaut3);
+
+
+
+                positionsBas.push(...positionBas1);
+                positionsBas.push(...positionBas2);
+                positionsBas.push(...positionBas3);
+                var normalHaut = [0, 0, 1];
+                var normalBas = [0, 0, -1];
+                normalsHaut.push(...normalHaut);
+                normalsHaut.push(...normalHaut);
+                normalsHaut.push(...normalHaut);
+                normalsBas.push(...normalBas);
+                normalsBas.push(...normalBas);
+                normalsBas.push(...normalBas);
+                // if (i,j) is bordure
+              if (j === 0) {
+                    var pointA = [i,j,hauteur];
+                    listPBordureA.push(...pointA);
+                    nBordure++;
+                }  
+                if (j === h-1) {
+                    var pointB = [i,j,hauteur];
+                    listPBordureB.push(...pointB);
+                }
+            }
+        }
+        console.log("bordure listPBordureA : ",listPBordureA)
+        console.log("bordure listPBordureB : ",listPBordureB)
+        for(var iB=0; iB < nBordure; iB++){ 
+            if (iB==0){
+                var pZ_1=[listPBordureB[0],listPBordureB[1],listPBordureB[2]]
+            }else {
+                var pZ_1=[listPBordureA[2*(iB-1)],listPBordureA[2*(iB-1)+1],,listPBordureA[2*(iB-1)+1]] ;
+            }
+            
+            var pZ_0 =[listPBordureA[2*(iB)],listPBordureA[2*(iB)+1],listPBordureA[2*(iB)+2]] ;
+            this.processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) ;     
+                  
+        }
+        console.log("bordure positionsBordure :",positionsBordure)
+        console.log("bordure normalsBordure :",normalsBordure)
+        var positions = positionsHaut.concat(positionsBas).concat(positionsBordure);
+        var normals = normalsHaut.concat(normalsBas).concat(normalsBordure);
+        
+        const geometry = new THREE.BufferGeometry();
+        const positionNumComponents = 3;
+        const normalNumComponents = 3;
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
+        const color = 0xffFF88;
+        const material = new THREE.MeshBasicMaterial({ color: color, wireframe: true });
+
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.x = 0;
+        cube.position.y = 0;
+        cube.position.z = 0;
+        scene.add(cube);
+
+
+        return cube;
+
+        ///  ///////////////////////////////////////////////////////////////////////
+
+    }
+    processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) {
+        var hauteur= 10;
+        console.log("bordure  pZ_0:, ", pZ_0 ,"  pZ_1",pZ_1);
+        var positionBordure1 = [pZ_0[0], pZ_0[1], 0];
+        var positionBordure2 = [pZ_0[0], pZ_0[1], hauteur];
+        var positionBordure3 = [pZ_1[0], pZ_1[1], hauteur];
+        var positionBordure4 = [pZ_1[0], pZ_1[1],hauteur];
+        var positionBordure5 = [pZ_1[0], pZ_1[1], 0];
+        var positionBordure6= [pZ_0[0], pZ_0[1], 0];
+        positionsBordure.push(...positionBordure1);
+        positionsBordure.push(...positionBordure2);
+        positionsBordure.push(...positionBordure3);
+        positionsBordure.push(...positionBordure4);
+        positionsBordure.push(...positionBordure5);
+        positionsBordure.push(...positionBordure6);
+        var normalBordure = [1,0,0];
        
-        console.log("init2D23D_full  kk " + kk);       
-        for (var i = 0; i < this.w; i = i + kk) {            
+        normalsBordure.push(...normalBordure)
+        normalsBordure.push(...normalBordure)
+        normalsBordure.push(...normalBordure)
+        normalsBordure.push(...normalBordure)
+        normalsBordure.push(...normalBordure)
+        normalsBordure.push(...normalBordure) 
+
+
+    }
+    initMinimums() {
+
+        console.log("initMinimum   ");
+        for (var i = 0; i < this.w; i++) {
+            for (var j = 0; j < this.h; j++) {
+                var indexPixel = this.getPixelXYIndex(i, j);
+                var pixel = this.getPixelRGB(indexPixel);
+                if (!this.isFondImage(pixel)) {
+                    if (i < this.iMin) { this.iMin = i; }
+                    if (j < this.jMin) { this.jMin = j; }
+                }
+            }
+        }
+
+    }
+
+
+    init2D23D_full__old(sceneInit, kk) {
+
+        console.log("init2D23D_full  kk " + kk);
+        for (var i = 0; i < this.w; i = i + kk) {
             for (var j = 0; j < this.h; j = j + kk) {
                 var indexPixel = this.getPixelXYIndex(i, j);
-                var pixel = this.getPixelRGB(indexPixel);                
+                var pixel = this.getPixelRGB(indexPixel);
                 //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
-                    var hauteur2 = this.getHauteurFromColor(indexPixel);
+                    var hauteur2 = this.getHauteurFromColor(indexPixel) * this.state.scale;
                     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-                   
+
                     const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * hauteur2);
-                    var geometry  = cubeGeometry.translate(i, j, hauteur2);
+                    var geometry = cubeGeometry.translate((i - this.iMin) * this.state.scale, (j - this.jMin) * this.state.scale, hauteur2);
                     //console.log(" geometry ",geometry)
                     const cube = new THREE.Mesh(geometry, material);
-                    sceneInit.add(cube);  
+                    sceneInit.add(cube);
                 }
-            }           
+            }
         }
-        console.log("Pixels ::: h :" + this.h + "  w: " + this.w + "  kk :" + kk +" group sceneInit.children.length :"+sceneInit.children.length);
+        console.log("Pixels ::: h :" + this.h + "  w: " + this.w + "  kk :" + kk + " group sceneInit.children.length :" + sceneInit.children.length);
         return sceneInit;
     }
 
@@ -123,19 +266,19 @@ class Bg3d extends Component {
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
-        if (red === 0xff && green ===0xff && blue===0xff){
+        if (red === 0xff && green === 0xff && blue === 0xff) {
             // blanc ... Should nor happen;
             return 1;
-        }else if (red===0xff){
+        } else if (red === 0xff) {
             return this.state.hauteurRouge;
-        }else if (green===0xff){
+        } else if (green === 0xff) {
             return this.state.hauteurVert;
-        }else if (blue===0xff){
+        } else if (blue === 0xff) {
             return this.state.hauteurBleu;
-        }else {
+        } else {
             return this.state.hauteurNoir;
         }
-        
+
     }
     getPixelRGB(i) {
         var data = this.imageData.data;
@@ -152,7 +295,7 @@ class Bg3d extends Component {
     }
 
     create3D() {
-        this.scene =  new THREE.Scene()
+        this.scene = new THREE.Scene()
         this.calcul();
 
     }
@@ -188,8 +331,8 @@ class Bg3d extends Component {
         cancelAnimationFrame(this.frameId)
     }
     animate = () => {
-        // this.cylindre.rotation.x += 0.01
-        // this.cylindre.rotation.y += 0.01
+        // this.scene.rotation.x += 0.01
+        // this.scene.rotation.rotation.y += 0.01
         this.renderScene()
         this.frameId = window.requestAnimationFrame(this.animate);
         this.controls.update();
@@ -198,46 +341,52 @@ class Bg3d extends Component {
     renderScene = () => {
         this.renderer.render(this.scene, this.camera)
     }
-    updateParam2 = (hauteurNoir, hauteurRouge, hauteurVert,hauteurBleu, nbPoints) => {
-        console.log("updateParam2 1 ----- hauteurNoir: " + hauteurNoir + "  hauteurRouge: " + hauteurRouge + "  nbPoints: " +nbPoints);
+    updateParam2 = (hauteurNoir, hauteurRouge, hauteurVert, hauteurBleu, nbPoints, scale) => {
+        console.log("updateParam22 1 ----- hauteurNoir: " + hauteurNoir + "  hauteurRouge: " + hauteurRouge + "  nbPoints: " + nbPoints);
         this.setState({
             hauteurNoir: new Number(hauteurNoir),
             hauteurRouge: new Number(hauteurRouge),
             hauteurVert: new Number(hauteurVert),
             hauteurBleu: new Number(hauteurBleu),
-            nbPoints: new Number(nbPoints)            
+            nbPoints: new Number(nbPoints),
+            scale: new Number(scale)
         })
-        console.log("updateParam2 2 ----- hauteurNoir: " + this.state.hauteurNoir + "  hauteurRouge: " + this.state.hauteurRouge + "  nbPoints: "+nbPoints );
-        
+        console.log("updateParam22 2 ----- hauteurNoir: " + this.state.hauteurNoir + "  hauteurRouge: " + this.state.hauteurRouge + "  nbPoints: " + nbPoints);
+
 
     }
 
     calcul = () => {
         console.log("calcul start -----");
         var hauteurNoir = this.state.hauteurNoir;
-        console.log("updateParam2 2 ----- hauteurNoir: isNaN ::" + isNaN(hauteurNoir)+"  "+hauteurNoir,(hauteurNoir instanceof Number) );
-       
+
         this.scene.clear();
-        this.init2D23D_light2(this.scene);        
+        this.init2D23D_light2(this.scene);
         console.log("calcul  scene updated!!!!!!!!");
     }
 
-    
+
     getStl = () => {
-        console.log("getStl start -----"+THREE);
+        console.log("getStl start -----" + THREE);
+        this.initMinimums();
         //var exporter = new STLExporter();
-        var exporter  = new STLExporter();
+        var exporter = new STLExporter();
         //var sceneStl = new THREE.Scene();
-        var  sceneStl = new THREE.Group();
-        this.init2D23D_full(sceneStl,1);     
-        const bufferBinary = exporter.parse( sceneStl, { binary: true } );
+        var sceneStl = new THREE.Scene();
+        this.init2D23D_full(sceneStl, 1);
+        const bufferBinary = exporter.parse(sceneStl, { binary: true });
         //const bufferAscee = exporter.parse( sceneStl, { binary: false } );
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
         //const blobAscee = new Blob([bufferAscee], { type: 'plain/text' });
-        var fileName = "cube_r2d23d_R"+this.state.hauteurRouge+"V"+this.state.hauteurVert+"B"+this.state.hauteurBleu+"N"+this.state.hauteurNoir
-        saveAs(blobBinary, fileName+'.stl');
+        var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
+        saveAs(blobBinary, fileName + '.stl');
         //saveAs(blobAscee, 'cubeAscee'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
-        console.log("getStl done nb de cubes sceneStl : "+sceneStl.children.length);
+        console.log("getStl done nb de cubes sceneStl : " + sceneStl.children.length);
+    }
+
+    getSrcName = () => {
+        console.log("getSrcName ", this.state.fileName);
+        return this.state.fileName.split(".")[0];
     }
 
     render() {
@@ -254,5 +403,14 @@ class Bg3d extends Component {
             </div>
         )
     }
+}
+
+class Point {
+    constructor(ii, jj) {
+        this.i = ii;
+        this.j = jj;
+    }
+    i;
+    j;
 }
 export default Bg3d;
