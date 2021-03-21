@@ -24,11 +24,11 @@ class Bg3d extends Component {
         this.state = {
             image2Dsrc: props.image2Dsrc,
             fileName: props.fileName,
-            hauteurNoir: 12,
-            hauteurRouge: 10,
-            hauteurVert: 11,
-            hauteurBleu: 13,
-            nbPoints: 10,
+            hauteurNoir: 25,
+            hauteurRouge: 25,
+            hauteurVert: 20,
+            hauteurBleu: 20,
+            nbPoints: 200,
             couleurFond: 0xffffff,
             titre: 'r2d23d',
             scale: 0.4
@@ -103,6 +103,7 @@ class Bg3d extends Component {
 
         const listPBordureA = [];
         const listPBordureB = [];
+        let listPBordureC = [];
         var pointB = false;
         const positionsHaut = [];
         const positionsBas = [];
@@ -116,29 +117,29 @@ class Bg3d extends Component {
         console.log(" this.w " + this.w);
         console.log(" this.h " + this.h);
         console.log("init2D23D_full  kk " + kk);
+        var scale = this.state.scale;
         for (var i = 0; i < this.w; i = i + kk) {
+            listPBordureC = [];
             var isBorderA = true;
             var isBorderB = false;
-            for (var j = 0; j < this.h; j = j + kk) {
-
-               
+            for (var j = 0; j < this.h; j = j + kk) {               
                 var indexPixel = this.getPixelXYIndex(i, j);
                 var pixel = this.getPixelRGB(indexPixel);
                 var isDisplayable = !this.isFondImage(pixel);
                 if (isDisplayable) {
                     //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                     var hauteurPixel = this.getHauteurFromColor(indexPixel) * this.state.scale;
-                    var hauteur = 50 + hauteurPixel;
-                    var positionHaut1 = [i, j, hauteur];
-                    var positionHaut2 = [i + kk, j, hauteur];
-                    var positionHaut3 = [i, j + kk, hauteur];
+                    var hauteur =  hauteurPixel;
+                    var positionHaut1 = [i * scale, j* scale, hauteur* scale];
+                    var positionHaut2 = [(i + kk)* scale, j* scale, hauteur* scale];
+                    var positionHaut3 = [(i + kk)* scale, (j + kk)* scale, hauteur* scale];
                     positionsHaut.push(...positionHaut1);
                     positionsHaut.push(...positionHaut2);
                     positionsHaut.push(...positionHaut3);
 
-                    var positionBas1 = [i, j, plancher];
-                    var positionBas2 = [i + kk, j, plancher];
-                    var positionBas3 = [i, j + kk, plancher];
+                    var positionBas1 = [i* scale, j* scale, plancher* scale];
+                    var positionBas2 = [(i + kk)* scale, j* scale, plancher* scale];
+                    var positionBas3 = [i* scale, (j + kk)* scale, plancher* scale];
                     positionsBas.push(...positionBas1);
                     positionsBas.push(...positionBas2);
                     positionsBas.push(...positionBas3);
@@ -155,15 +156,16 @@ class Bg3d extends Component {
                     if (isBorderA) {
                         console.log("Border A : i: ",i,"  j :",j)
                         isBorderA = false;
-                        var pointA = [i, j, hauteur];
+                        var pointA = [i* scale, j* scale, hauteur* scale];
                         listPBordureA.push(...pointA);
                         nBordure++;
                     }
-                    pointB = [i, j + kk, hauteur];
-
+                    pointB = [i* scale, (j + kk)* scale, hauteur* scale];
+                    listPBordureC.push(... [(i + kk)* scale, (j )* scale, hauteur* scale]);
                 }  // End displayable             
 
             }// Endloop j
+            
             if (pointB) {
                 var pointBB = [pointB[0], pointB[1], pointB[2]];
                 listPBordureB.push(...pointBB);
@@ -194,6 +196,15 @@ class Bg3d extends Component {
             var pZ_1 = [listPBordureB[3 * iC], listPBordureB[(3 * iC) + 1], listPBordureB[(3 * iC) + 2]];
             this.processBordure(pZ_0, pZ_1, positionsBordure, normalsBordure);
 
+        }
+        for (var iC = 0; iC < listPBordureC.length; iC++) {
+            if (iC === (listPBordureC.length - 1)) {
+                var pZ_0 = [listPBordureA[3 * (nBordure-1)], listPBordureB[3 * (nBordure-1) + 1], listPBordureB[3 * (nBordure-1) + 2]]
+            } else {
+                var pZ_0 = [listPBordureB[3 * (iC + 1)], listPBordureB[3 * (iC + 1) + 1], listPBordureB[3 * (iC + 1) + 2]];
+            }
+            var pZ_1 = [listPBordureC[3 * iC], listPBordureC[(3 * iC) + 1], listPBordureC[(3 * iC) + 2]];
+            this.processBordure(pZ_0, pZ_1, positionsBordure, normalsBordure);
         }
         console.log("bordure positionsBordure :", positionsBordure)
         console.log("bordure normalsBordure :", normalsBordure)
