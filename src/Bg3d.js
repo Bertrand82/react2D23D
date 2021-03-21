@@ -117,20 +117,18 @@ class Bg3d extends Component {
                 var hauteur = 20;
                 var positionHaut1 = [i, j, hauteur];
                 var positionHaut2 = [i + 1, j, hauteur];
-                var positionHaut3 = [i, j + 1, hauteur];
-
-                var positionBas1 = [i, j, plancher];
-                var positionBas2 = [i + 1, j, plancher];
-                var positionBas3 = [i, j + 1, plancher];
+                var positionHaut3 = [i, j + 1, hauteur];               
                 positionsHaut.push(...positionHaut1);
                 positionsHaut.push(...positionHaut2);
                 positionsHaut.push(...positionHaut3);
 
-
-
+                var positionBas1 = [i, j, plancher];
+                var positionBas2 = [i + 1, j, plancher];
+                var positionBas3 = [i, j + 1, plancher];
                 positionsBas.push(...positionBas1);
                 positionsBas.push(...positionBas2);
                 positionsBas.push(...positionBas3);
+
                 var normalHaut = [0, 0, 1];
                 var normalBas = [0, 0, -1];
                 normalsHaut.push(...normalHaut);
@@ -157,15 +155,18 @@ class Bg3d extends Component {
             if (iB==0){
                 var pZ_1=[listPBordureB[0],listPBordureB[1],listPBordureB[2]]
             }else {
-                var pZ_1=[listPBordureA[2*(iB-1)],listPBordureA[2*(iB-1)+1],,listPBordureA[2*(iB-1)+1]] ;
+                var pZ_1=[listPBordureA[3*(iB-1)],listPBordureA[3*(iB-1)+1],listPBordureA[3*(iB-1)+1]] ;
             }
             
-            var pZ_0 =[listPBordureA[2*(iB)],listPBordureA[2*(iB)+1],listPBordureA[2*(iB)+2]] ;
+            var pZ_0 =[listPBordureA[3*(iB)],listPBordureA[3*(iB)+1],listPBordureA[3*(iB)+2]] ;
             this.processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) ;     
                   
         }
         console.log("bordure positionsBordure :",positionsBordure)
         console.log("bordure normalsBordure :",normalsBordure)
+        console.log("positionsHaut :",positionsHaut)
+        console.log("positionsBas :",positionsBas)
+        
         var positions = positionsHaut.concat(positionsBas).concat(positionsBordure);
         var normals = normalsHaut.concat(normalsBas).concat(normalsBordure);
         
@@ -190,14 +191,14 @@ class Bg3d extends Component {
 
     }
     processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) {
-        var hauteur= 10;
+       
         console.log("bordure  pZ_0:, ", pZ_0 ,"  pZ_1",pZ_1);
         var positionBordure1 = [pZ_0[0], pZ_0[1], 0];
-        var positionBordure2 = [pZ_0[0], pZ_0[1], hauteur];
-        var positionBordure3 = [pZ_1[0], pZ_1[1], hauteur];
-        var positionBordure4 = [pZ_1[0], pZ_1[1],hauteur];
+        var positionBordure2 = [pZ_0[0], pZ_0[1], pZ_0[2]];
+        var positionBordure3 = [pZ_1[0], pZ_1[1], pZ_1[2]];
+        var positionBordure4 = [pZ_1[0], pZ_1[1],pZ_1[2]];
         var positionBordure5 = [pZ_1[0], pZ_1[1], 0];
-        var positionBordure6= [pZ_0[0], pZ_0[1], 0];
+        var positionBordure6 = [pZ_0[0], pZ_0[1], 0];
         positionsBordure.push(...positionBordure1);
         positionsBordure.push(...positionBordure2);
         positionsBordure.push(...positionBordure3);
