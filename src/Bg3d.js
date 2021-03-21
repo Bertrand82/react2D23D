@@ -5,6 +5,7 @@ import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter";
+import { IcosahedronGeometry } from 'three';
 
 const ctx = initCanvasText();
 
@@ -152,13 +153,25 @@ class Bg3d extends Component {
         console.log("bordure listPBordureA : ",listPBordureA)
         console.log("bordure listPBordureB : ",listPBordureB)
         for(var iB=0; iB < nBordure; iB++){ 
-            if (iB==0){
+            if (iB===0){
                 var pZ_1=[listPBordureB[0],listPBordureB[1],listPBordureB[2]]
             }else {
-                var pZ_1=[listPBordureA[3*(iB-1)],listPBordureA[3*(iB-1)+1],listPBordureA[3*(iB-1)+1]] ;
+                var pZ_1=[listPBordureA[3*(iB-1)],listPBordureA[3*(iB-1)+1],listPBordureA[3*(iB-1)+2]] ;
             }
             
             var pZ_0 =[listPBordureA[3*(iB)],listPBordureA[3*(iB)+1],listPBordureA[3*(iB)+2]] ;
+            this.processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) ;     
+                  
+        }
+        for(var iC=0; iC < nBordure; iC++){ 
+           // var iB = nBordure-iC-1;
+            
+            if (iC===(nBordure-1)){
+                var pZ_0=[listPBordureA[iC],listPBordureA[iC+1],listPBordureA[iC+2]]
+            }else {
+                var pZ_0=[listPBordureB[3*(iC+1)],listPBordureB[3*(iC+1)+1],listPBordureB[3*(iC+1)+2]] ;
+            }            
+            var pZ_1 =[listPBordureB[3*(iC)],listPBordureB[3*(IcosahedronGeometry)+1],listPBordureB[3*(iC)+2]] ;
             this.processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) ;     
                   
         }
@@ -213,8 +226,6 @@ class Bg3d extends Component {
         normalsBordure.push(...normalBordure)
         normalsBordure.push(...normalBordure)
         normalsBordure.push(...normalBordure) 
-
-
     }
     initMinimums() {
 
