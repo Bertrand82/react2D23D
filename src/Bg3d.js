@@ -145,7 +145,7 @@ class Bg3d extends Component {
                     nBordure++;
                 }  
                 if (j === h-1) {
-                    var pointB = [i,j,hauteur];
+                    var pointB = [i,j+1,hauteur];
                     listPBordureB.push(...pointB);
                 }
             }
@@ -167,12 +167,12 @@ class Bg3d extends Component {
            // var iB = nBordure-iC-1;
             
             if (iC===(nBordure-1)){
-                var pZ_0=[listPBordureA[iC],listPBordureA[iC+1],listPBordureA[iC+2]]
+                var pZ_0=[listPBordureA[3*iC],listPBordureA[3*iC+1],listPBordureA[3*iC+2]]
             }else {
                 var pZ_0=[listPBordureB[3*(iC+1)],listPBordureB[3*(iC+1)+1],listPBordureB[3*(iC+1)+2]] ;
             }            
-            var pZ_1 =[listPBordureB[3*(iC)],listPBordureB[3*(IcosahedronGeometry)+1],listPBordureB[3*(iC)+2]] ;
-            this.processBordure(pZ_1,pZ_0,positionsBordure,normalsBordure) ;     
+            var pZ_1 =[listPBordureB[3*iC],listPBordureB[(3*iC)+1],listPBordureB[(3*iC)+2]] ;
+            this.processBordure(pZ_0,pZ_1,positionsBordure,normalsBordure) ;     
                   
         }
         console.log("bordure positionsBordure :",positionsBordure)
@@ -218,7 +218,16 @@ class Bg3d extends Component {
         positionsBordure.push(...positionBordure4);
         positionsBordure.push(...positionBordure5);
         positionsBordure.push(...positionBordure6);
-        var normalBordure = [1,0,0];
+        var dx = pZ_0[0]-pZ_1[0];
+        var dy = pZ_0[1]-pZ_1[1];
+        var yNormal ;
+        if (dy ===0){
+            yNormal=20;
+        }else {
+            yNormal = -dx/dy;
+        }
+        
+        var normalBordure = [1,yNormal,0];
        
         normalsBordure.push(...normalBordure)
         normalsBordure.push(...normalBordure)
