@@ -137,9 +137,22 @@ class Bg3d extends Component {
                     positionsHaut.push(...positionHaut2);
                     positionsHaut.push(...positionHaut3);
 
+                    var positionHaut4 = [i * scale, j* scale, hauteur* scale];
+                    var positionHaut5 = [(i + kk)* scale, (j+kk)* scale, hauteur* scale];
+                    var positionHaut6 = [(i )* scale, (j + kk)* scale, hauteur* scale];
+
+                    positionsHaut.push(...positionHaut4);
+                    positionsHaut.push(...positionHaut5);
+                    positionsHaut.push(...positionHaut6);
+
                     var positionBas1 = [i* scale, j* scale, plancher* scale];
                     var positionBas2 = [(i + kk)* scale, j* scale, plancher* scale];
-                    var positionBas3 = [i* scale, (j + kk)* scale, plancher* scale];
+                    var positionBas3 = [(i+kk)* scale, (j + kk)* scale, plancher* scale];
+
+                    var positionBas4 = [i* scale, j* scale, plancher* scale];
+                    var positionBas5 = [(i + kk)* scale, (j+kk)* scale, plancher* scale];
+                    var positionBas6 = [i* scale, (j + kk)* scale, plancher* scale];
+                 
                     positionsBas.push(...positionBas1);
                     positionsBas.push(...positionBas2);
                     positionsBas.push(...positionBas3);
@@ -149,6 +162,13 @@ class Bg3d extends Component {
                     normalsHaut.push(...normalHaut);
                     normalsHaut.push(...normalHaut);
                     normalsHaut.push(...normalHaut);
+                    normalsHaut.push(...normalHaut);
+                    normalsHaut.push(...normalHaut);
+                    normalsHaut.push(...normalHaut);
+
+                    normalsBas.push(...normalBas);
+                    normalsBas.push(...normalBas);
+                    normalsBas.push(...normalBas);
                     normalsBas.push(...normalBas);
                     normalsBas.push(...normalBas);
                     normalsBas.push(...normalBas);
