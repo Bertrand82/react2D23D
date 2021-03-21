@@ -28,7 +28,7 @@ class Bg3d extends Component {
             hauteurRouge: 10,
             hauteurVert: 11,
             hauteurBleu: 13,
-            nbPoints: 50,
+            nbPoints: 10,
             couleurFond: 0xffffff,
             titre: 'r2d23d',
             scale: 0.4
@@ -103,7 +103,7 @@ class Bg3d extends Component {
 
         const listPBordureA = [];
         const listPBordureB = [];
-        var pointB ;
+        var pointB = false;
         const positionsHaut = [];
         const positionsBas = [];
         const positionsBordure = [];
@@ -111,24 +111,24 @@ class Bg3d extends Component {
         const normalsBas = [];
         const normalsBordure = [];
         var nBordure = 0;
-        
+
         var plancher = 0;
-        console.log(" this.w "+this.w);
-        console.log(" this.h "+this.h);
+        console.log(" this.w " + this.w);
+        console.log(" this.h " + this.h);
         console.log("init2D23D_full  kk " + kk);
-        for (var i = 0; i < this.w; i=i+kk) {
-            
-            for (var j = 0; j < this.h; j=j+kk) {
+        for (var i = 0; i < this.w; i = i + kk) {
+            var isBorderA = true;
+            var isBorderB = false;
+            for (var j = 0; j < this.h; j = j + kk) {
+
                
-                var isBorderA =true;
-                var isBorderB = false;
                 var indexPixel = this.getPixelXYIndex(i, j);
                 var pixel = this.getPixelRGB(indexPixel);
                 var isDisplayable = !this.isFondImage(pixel);
                 if (isDisplayable) {
                     //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                     var hauteurPixel = this.getHauteurFromColor(indexPixel) * this.state.scale;
-                    var hauteur = 50 +hauteurPixel;
+                    var hauteur = 50 + hauteurPixel;
                     var positionHaut1 = [i, j, hauteur];
                     var positionHaut2 = [i + kk, j, hauteur];
                     var positionHaut3 = [i, j + kk, hauteur];
@@ -137,7 +137,7 @@ class Bg3d extends Component {
                     positionsHaut.push(...positionHaut3);
 
                     var positionBas1 = [i, j, plancher];
-                    var positionBas2 = [i +kk, j, plancher];
+                    var positionBas2 = [i + kk, j, plancher];
                     var positionBas3 = [i, j + kk, plancher];
                     positionsBas.push(...positionBas1);
                     positionsBas.push(...positionBas2);
@@ -153,20 +153,21 @@ class Bg3d extends Component {
                     normalsBas.push(...normalBas);
                     // if (i,j) is bordure
                     if (isBorderA) {
-                        isBorderA=false;
+                        console.log("Border A : i: ",i,"  j :",j)
+                        isBorderA = false;
                         var pointA = [i, j, hauteur];
-                        //listPBordureA.push(...pointA);
-                       // nBordure++;
+                        listPBordureA.push(...pointA);
+                        nBordure++;
                     }
-                    pointB = [i, j + 1, hauteur];
-                    
-                }
-                if (j === this.h - 1) { 
-                    if (pointB){
-                        var pointBB = [pointB[0],pointB[1], pointB[2]];                       
-                      //  listPBordureB.push(...pointB);
-                    }
-                }
+                    pointB = [i, j + kk, hauteur];
+
+                }  // End displayable             
+
+            }// Endloop j
+            if (pointB) {
+                var pointBB = [pointB[0], pointB[1], pointB[2]];
+                listPBordureB.push(...pointBB);
+                pointB = false;
             }
         }
         console.log("bordure listPBordureA : ", listPBordureA)
