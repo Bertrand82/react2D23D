@@ -10,13 +10,20 @@ class BgUpload extends React.Component {
         this.state = {
             fileName: "No Image",
             display3D: false,
+            drawTextInput: "text a ecrire",
+            drawCircleRayon: 100,
+            colorSelected: '#ff0000'
         }
         this.handleChange = this.handleChange.bind(this);
+        this.handleChangeLoadImage = this.handleChangeLoadImage.bind(this);
         this.handleProcess = this.handleProcess.bind(this);
         this.handleDisplay3D = this.handleDisplay3D.bind(this);
         this.handleInverse = this.handleInverse.bind(this);
         this.handleFiltre1 = this.handleFiltre1.bind(this);
         this.handleSaveImage = this.handleSaveImage.bind(this);
+        this.handleDrawTextAlongArc = this.handleDrawTextAlongArc.bind(this);
+        this.handleDrawCercle = this.handleDrawCercle.bind(this);
+        this.handleSelectColor = this.handleSelectColor.bind(this);
         this.initCanvasText();
     }
     ctx;
@@ -33,7 +40,7 @@ class BgUpload extends React.Component {
         })
 
     }
-    handleChange(event) {
+    handleChangeLoadImage(event) {
         console.log("fileName", event.target.files[0]);
         this.setState({
             file: URL.createObjectURL(event.target.files[0]),
@@ -97,9 +104,9 @@ class BgUpload extends React.Component {
             for (var j = 1; j < this.h - 1; j++) {
                 var k = 4 * (i * this.w + j);
                 var nPixelConnec = this.isPixelIsolated(i, j, this.imageData)
-               
-                if (nPixelConnec < 2 ) {
-                    var k2 = 4 * (i * this.w + j+1);
+
+                if (nPixelConnec < 2) {
+                    var k2 = 4 * (i * this.w + j + 1);
                 } else {
                     var k2 = k;
                 }
@@ -117,9 +124,63 @@ class BgUpload extends React.Component {
 
     handleSaveImage() {
         var canvas = document.getElementById('bg2dCanvas');
-        canvas.toBlob(function(blob) {
+        canvas.toBlob(function (blob) {
             saveAs(blob, "r2d23d_screenshot.png");
         });
+    }
+
+    handleDrawTextAlongArc() {
+        console.log("handleDrawTextAlongArc " + this.state.drawTextInput);
+        var rayon = 100;
+        var angleByChar = 30.0 / rayon;
+        this.drawTextAlongArc( this.state.drawTextInput, this.w / 2, this.h / 2, rayon, angleByChar)
+    }
+
+    handleDrawCercle() {
+        console.log("handleDrawCercle ");
+        console.log("handleDrawCercle B >"+this.state.colorSelected+"<");
+        var rayon = this.state.drawCircleRayon;
+        this.ctx.beginPath();
+
+        this.ctx.arc(this.w / 2, this.h / 2, rayon, 0, 2 * Math.PI);
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+
+    handleSelectColor(event){
+        console.log("handleSelectColor A >"+event.target.value+"<");
+        this.setState({
+            colorSelected: event.target.value
+        });
+        this.ctx.fillStyle = event.target.value; 
+        this.ctx.strokeStyle = event.target.value;
+        console.log("handleSelectColor B >"+this.state.colorSelected+"<");
+    }
+    drawTextAlongArc( str, centerX, centerY, radius, angleByChar) {
+        console.log("drawTextAlongArc B >"+this.state.colorSelected+"<");
+        var len = str.length,    s;
+        var angle = len * angleByChar;
+        console.log("handleDrawTextAlongArc str " + str);
+        console.log("handleDrawTextAlongArc angle " + angle);
+        this.ctx.font = "60px Arial";
+        console.log("handleDrawTextAlongArc ", this.ctx);
+        this.ctx.save();
+
+        this.ctx.translate(centerX, centerY);
+        this.ctx.rotate(-1 * angle / 2);
+        this.ctx.rotate(-1 * (angle / len) / 2);
+        for (var n = 0; n < len; n++) {
+            this.ctx.rotate(angleByChar );
+            this.ctx.save();
+            this.ctx.translate(0, -1 * radius);
+            s = str[n];
+            this.ctx.fillStyle = this.state.colorSelected; 
+            this.ctx.strokeStyle = this.state.colorSelected;
+            this.ctx.fillStyle =this.state.colorSelected;
+            this.ctx.fillText(s, 0, 0);
+            this.ctx.restore();
+        }
+        this.ctx.restore();
     }
     isPixelIsolated(i, j, imageData) {
         var color = this.getColor(i, j, imageData);
@@ -214,11 +275,21 @@ class BgUpload extends React.Component {
 
     }
 
+    handleChange(event) {
+        console.log("handleChange event : ", event);
+        console.log("handleChange event.target : ", event.target);
+        console.log("handleChange event.target.value : ", event.target.value);
+        console.log("handleChange event.target.id : ", event.target.id);
+        this.setState({
+            [event.target.id]: event.target.value
+        })
+
+    }
+
     render() {
         if (this.state.display3D) {
             return (
                 <div>
-
                     <Bg3d image2Dsrc={this.ctx.canvas.id} fileName={this.state.fileName} />
                 </div>
             )
@@ -234,7 +305,7 @@ class BgUpload extends React.Component {
                             </tr>
                             <tr>
                                 <td>
-                                    <input type="file" onChange={this.handleChange} />
+                                    <input type="file" onChange={this.handleChangeLoadImage} />
                                 </td>
                                 <td>
                                     <input type="button" onClick={this.handleProcess} value="processImage" />
@@ -245,7 +316,15 @@ class BgUpload extends React.Component {
                                 </td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>
+                                    <select id="selectedColor" onChange={this.handleSelectColor}>
+                                        <option value="rgb(255,0,0)">r ff0000</option>
+                                        <option value="rgb(0,255,0)">v 00ff00</option>
+                                        <option value="rgb(0,0,255)">b 0000ff</option>
+                                        <option value="rgb(0,0,0)">n 000000</option>
+                                        <option value="rgb(255,255,255)">b ffffff</option>
+                                    </select>
+                                </td>
                                 <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
                                 </td>
                                 <td></td>
@@ -253,6 +332,18 @@ class BgUpload extends React.Component {
                             <tr>
                                 <td></td>
                                 <td><input type="button" onClick={this.handleFiltre1} value="Filtre pixel" />
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChange} /></td>
+                                <td><input type="button" onClick={this.handleDrawTextAlongArc} value="DrawText" />
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="drawCircleRayon" value={this.state.drawCircleRayon} onChange={this.handleChange} /></td>
+                                <td><input type="button" onClick={this.handleDrawCercle} value="DrawCircle" />
                                 </td>
                                 <td></td>
                             </tr>
