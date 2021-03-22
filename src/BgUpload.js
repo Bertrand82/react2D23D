@@ -1,5 +1,7 @@
 
+import { Blending } from 'three';
 import Bg3d from './Bg3d';
+import { saveAs } from 'file-saver';
 const React = require('react');
 
 class BgUpload extends React.Component {
@@ -13,6 +15,8 @@ class BgUpload extends React.Component {
         this.handleProcess = this.handleProcess.bind(this);
         this.handleDisplay3D = this.handleDisplay3D.bind(this);
         this.handleInverse = this.handleInverse.bind(this);
+        this.handleFiltre1 = this.handleFiltre1.bind(this);
+        this.handleSaveImage = this.handleSaveImage.bind(this);
         this.initCanvasText();
     }
     ctx;
@@ -65,26 +69,91 @@ class BgUpload extends React.Component {
     }
 
     handleInverse() {
-        console.log("handleInverse w:"+this.imageData.width+"h:"+this.imageData.height);
+        console.log("handleInverse w:" + this.imageData.width + "h:" + this.imageData.height);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
         for (var i = 0; i < this.w; i++) {
             //var ii = this.w -i-1;
             var ii = i;
             for (var j = 0; j < this.h; j++) {
-                var jj = this.h-j-1;
+                var jj = this.h - j - 1;
                 var k = 4 * (i * this.w + j);
                 var kk = 4 * (ii * this.w + jj);
-                newImageData.data[kk]=this.imageData.data[k];
-                newImageData.data[kk+1]=this.imageData.data[k+1];
-                newImageData.data[kk+2]=this.imageData.data[k+2];
-                newImageData.data[kk+3]=this.imageData.data[k+3];
-                newImageData.data[kk+4]=this.imageData.data[k+4];
+                newImageData.data[kk] = this.imageData.data[k];
+                newImageData.data[kk + 1] = this.imageData.data[k + 1];
+                newImageData.data[kk + 2] = this.imageData.data[k + 2];
+                newImageData.data[kk + 3] = this.imageData.data[k + 3];
+                newImageData.data[kk + 4] = this.imageData.data[k + 4];
             }
         }
         console.log("handleInverse done");
         this.imageData = newImageData;
         this.ctx.putImageData(this.imageData, 0, 0);
     }
+
+    handleFiltre1() {
+        console.log("filtre pixel 1")
+        var newImageData = new ImageData(this.imageData.width, this.imageData.height);
+        for (var i = 1; i < this.w - 1; i++) {
+            for (var j = 1; j < this.h - 1; j++) {
+                var k = 4 * (i * this.w + j);
+                var nPixelConnec = this.isPixelIsolated(i, j, this.imageData)
+               
+                if (nPixelConnec < 2 ) {
+                    var k2 = 4 * (i * this.w + j+1);
+                } else {
+                    var k2 = k;
+                }
+                newImageData.data[k] = this.imageData.data[k2];
+                newImageData.data[k + 1] = this.imageData.data[k2 + 1];
+                newImageData.data[k + 2] = this.imageData.data[k2 + 2];
+                newImageData.data[k + 3] = this.imageData.data[k2 + 3];
+                newImageData.data[k + 4] = this.imageData.data[k2 + 4];
+            }
+        }
+        console.log("filtre pixel 1 done");
+        this.imageData = newImageData;
+        this.ctx.putImageData(this.imageData, 0, 0);
+    }
+
+    handleSaveImage() {
+        var canvas = document.getElementById('bg2dCanvas');
+        canvas.toBlob(function(blob) {
+            saveAs(blob, "r2d23d_screenshot.png");
+        });
+    }
+    isPixelIsolated(i, j, imageData) {
+        var color = this.getColor(i, j, imageData);
+        var nPixelConnect = 0;
+        var color4 = this.getColor(i, j - 1, imageData);
+        if (color4 === color) {
+            nPixelConnect++;
+        }
+        var color3 = this.getColor(i, j + 1, imageData);
+        if (color3 === color) {
+            nPixelConnect++;
+        }
+        var color2 = this.getColor(i - 1, j, imageData);
+        if (color === color2) {
+            nPixelConnect++;
+        }
+        var color1 = this.getColor(i + 1, j, imageData);
+        if (color === color1) {
+            nPixelConnect++;
+        }
+        return nPixelConnect;
+
+    }
+
+    getColor(i, j, imageData) {
+        var k = 4 * (i * this.w + j);
+        var red = imageData.data[k];
+        var green = imageData.data[k + 1];
+        var blue = imageData.data[k + 2];
+        var color = red * 0x10000 + green * 0x100 + blue;
+        return color;
+    }
+
+
 
     filtreImageData() {
 
@@ -158,40 +227,46 @@ class BgUpload extends React.Component {
                 <div>
                     <table border="1">
                         <tbody>
-                        <tr>
-                        <td>Etape 1</td>
-                        <td>Etape 2</td>
-                        <td>Etape 3</td>
-                        </tr>
-                        <tr>
-                            <td>
-                            <input type="file" onChange={this.handleChange} />
-                            </td>
-                            <td>
-                            <input type="button" onClick={this.handleProcess} value="processImage" />
-                            </td>
-                            <td>
-                            <input type="button" onClick={this.handleDisplay3D} value="render3D" />
-                   
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
-                            </td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>
-                            <img id="imageBg" alt={this.state.fileName} width="100" src={this.state.file} />
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                            <tr>
+                                <td>Etape 1</td>
+                                <td>Etape 2</td>
+                                <td>Etape 3</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="file" onChange={this.handleChange} />
+                                </td>
+                                <td>
+                                    <input type="button" onClick={this.handleProcess} value="processImage" />
+                                </td>
+                                <td>
+                                    <input type="button" onClick={this.handleDisplay3D} value="render3D" />
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="button" onClick={this.handleFiltre1} value="Filtre pixel" />
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img id="imageBg" alt={this.state.fileName} width="100" src={this.state.file} />
+                                </td>
+                                <td><input type="button" onClick={this.handleSaveImage} value="Save Image" /></td>
+                                <td></td>
+                            </tr>
                         </tbody>
                     </table>
-                    
-                     
+
+
                 </div>
             );
         }
