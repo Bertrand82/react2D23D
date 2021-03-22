@@ -24,6 +24,7 @@ class BgUpload extends React.Component {
         this.handleDrawTextAlongArc = this.handleDrawTextAlongArc.bind(this);
         this.handleDrawCercle = this.handleDrawCercle.bind(this);
         this.handleSelectColor = this.handleSelectColor.bind(this);
+        this.handlePatern = this.handlePatern.bind(this);
         this.initCanvasText();
     }
     ctx;
@@ -133,32 +134,49 @@ class BgUpload extends React.Component {
         console.log("handleDrawTextAlongArc " + this.state.drawTextInput);
         var rayon = 100;
         var angleByChar = 30.0 / rayon;
-        this.drawTextAlongArc( this.state.drawTextInput, this.w / 2, this.h / 2, rayon, angleByChar)
+        this.drawTextAlongArc(this.state.drawTextInput,  rayon, angleByChar)
     }
 
     handleDrawCercle() {
         console.log("handleDrawCercle ");
-        console.log("handleDrawCercle B >"+this.state.colorSelected+"<");
+        console.log("handleDrawCercle B >" + this.state.colorSelected + "<");
         var rayon = this.state.drawCircleRayon;
+        this.drawCercleFill(rayon);
+    }
+
+
+
+    handleSelectColor(event) {
+        var color = event.target.value;
+        console.log("handleSelectColor A >" + color + "<");
+        this.selectColor(color);
+    }
+    handlePatern(event) {
+        console.log("Pattern ");
+        this.selectColor("rgb(0,0,0)")
+        this.drawCercleFill(150);
+        this.selectColor("rgb(255,0,0)");
+        this.drawCercleFill(140);
+        this.selectColor("black");
+        var text = this.state.drawTextInput;
+        var r =95;
+        this.drawTextAlongArc(text,r, 30.0 / r);
+    }
+    drawCercleFill(rayon) {
+        console.log("drawCercle ");
+        console.log("drawCercle B >" + this.state.colorSelected + "<");
+
         this.ctx.beginPath();
 
         this.ctx.arc(this.w / 2, this.h / 2, rayon, 0, 2 * Math.PI);
         this.ctx.closePath();
         this.ctx.fill();
     }
-
-    handleSelectColor(event){
-        console.log("handleSelectColor A >"+event.target.value+"<");
-        this.setState({
-            colorSelected: event.target.value
-        });
-        this.ctx.fillStyle = event.target.value; 
-        this.ctx.strokeStyle = event.target.value;
-        console.log("handleSelectColor B >"+this.state.colorSelected+"<");
-    }
-    drawTextAlongArc( str, centerX, centerY, radius, angleByChar) {
-        console.log("drawTextAlongArc B >"+this.state.colorSelected+"<");
-        var len = str.length,    s;
+    drawTextAlongArc(str, radius, angleByChar) {
+        var centerX = this.w / 2;
+        var centerY =  this.h / 2;
+        console.log("drawTextAlongArc B >" + this.state.colorSelected + "<");
+        var len = str.length, s;
         var angle = len * angleByChar;
         console.log("handleDrawTextAlongArc str " + str);
         console.log("handleDrawTextAlongArc angle " + angle);
@@ -170,17 +188,26 @@ class BgUpload extends React.Component {
         this.ctx.rotate(-1 * angle / 2);
         this.ctx.rotate(-1 * (angle / len) / 2);
         for (var n = 0; n < len; n++) {
-            this.ctx.rotate(angleByChar );
+            this.ctx.rotate(angleByChar);
             this.ctx.save();
             this.ctx.translate(0, -1 * radius);
             s = str[n];
-            this.ctx.fillStyle = this.state.colorSelected; 
+            this.ctx.fillStyle = this.state.colorSelected;
             this.ctx.strokeStyle = this.state.colorSelected;
-            this.ctx.fillStyle =this.state.colorSelected;
+            this.ctx.fillStyle = this.state.colorSelected;
             this.ctx.fillText(s, 0, 0);
             this.ctx.restore();
         }
         this.ctx.restore();
+    }
+    selectColor(color) {
+        this.setState({
+            colorSelected: color
+        });
+        this.ctx.fillStyle = color;
+        this.ctx.strokeStyle = color;
+        
+        console.log("selectColor B >" + color + "<");
     }
     isPixelIsolated(i, j, imageData) {
         var color = this.getColor(i, j, imageData);
@@ -344,6 +371,12 @@ class BgUpload extends React.Component {
                             <tr>
                                 <td><input type="text" id="drawCircleRayon" value={this.state.drawCircleRayon} onChange={this.handleChange} /></td>
                                 <td><input type="button" onClick={this.handleDrawCercle} value="DrawCircle" />
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="button" onClick={this.handlePatern} value="Pattern Predefini" />
                                 </td>
                                 <td></td>
                             </tr>
