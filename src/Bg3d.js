@@ -192,8 +192,6 @@ class Bg3d extends Component {
                 pointB = false;
             }
         }
-        console.log("bordure listPBordureA : ", listPBordureA)
-        console.log("bordure listPBordureB : ", listPBordureB)
         for (var iB = 0; iB < nBordure; iB++) {
             if (iB === 0) {
                 var pZ_1 = [listPBordureB[0], listPBordureB[1], listPBordureB[2]]
@@ -226,11 +224,7 @@ class Bg3d extends Component {
             var pZ_1 = [listPBordureC[3 * iC], listPBordureC[(3 * iC) + 1], listPBordureC[(3 * iC) + 2]];
             this.processBordure(pZ_0, pZ_1, positionsBordure, normalsBordure);
         }
-        console.log("bordure positionsBordure :", positionsBordure)
-        console.log("bordure normalsBordure :", normalsBordure)
-        console.log("positionsHaut :", positionsHaut)
-        console.log("positionsBas :", positionsBas)
-
+        
         var positions = positionsHaut.concat(positionsBas).concat(positionsBordure);
         var normals = normalsHaut.concat(normalsBas).concat(normalsBordure);
 
