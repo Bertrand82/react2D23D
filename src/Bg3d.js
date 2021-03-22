@@ -81,7 +81,7 @@ class Bg3d extends Component {
         this.h = canvas1.height;
         var ctx2 = canvas1.getContext('2d');
         this.imageData = ctx2.getImageData(0, 0, this.w, this.h);
-         console.log("Init 3D w " + this.w + "  h: " + this.h);
+        console.log("Init 3D w " + this.w + "  h: " + this.h);
     }
 
     init2D23D_light2(sceneInit) {
@@ -95,63 +95,56 @@ class Bg3d extends Component {
 
     init2D23D_full(scene, kk) {  ///  ////////////////////////////////////////////////////////////////////////
 
-        const listPBordureA = [];
-        const listPBordureB = [];
-        let listPBordureC = [];
+
         var pointB = false;
         const positionsHaut = [];
         const positionsBas = [];
-        const positionsBordure = [];
+
         const normalsHaut = [];
         const normalsBas = [];
-        const normalsBordure = [];
-        var nBordure = 0;
+
 
         var plancher = 0;
         console.log(" this.w " + this.w);
         console.log(" this.h " + this.h);
         console.log("init2D23D_full  kk " + kk);
         var scale = this.state.scale;
+        var nDisplayable = 0;
+        var nDisplayableNo = 0;
         for (var i = 0; i < this.w; i = i + kk) {
-            listPBordureC = [];
-            var isBorderA = true;
             for (var j = 0; j < this.h; j = j + kk) {
-                var indexPixel = this.getPixelXYIndex(i, j);
-                var pixel = this.getPixelRGB(indexPixel);
-                var isDisplayable = !this.isFondImage(pixel);
-                if (isDisplayable) {
-                    //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
-                    var hauteurPixel = this.getHauteurFromColor(indexPixel) * this.state.scale;
-                    var hauteur = hauteurPixel;
-                    var positionHaut1 = [i * scale, j * scale, hauteur * scale];
-                    var positionHaut2 = [(i + kk) * scale, j * scale, hauteur * scale];
-                    var positionHaut3 = [(i + kk) * scale, (j + kk) * scale, hauteur * scale];
-                    positionsHaut.push(...positionHaut1);
-                    positionsHaut.push(...positionHaut2);
-                    positionsHaut.push(...positionHaut3);
 
-                    var positionHaut4 = [i * scale, j * scale, hauteur * scale];
-                    var positionHaut5 = [(i + kk) * scale, (j + kk) * scale, hauteur * scale];
-                    var positionHaut6 = [(i) * scale, (j + kk) * scale, hauteur * scale];
 
-                    positionsHaut.push(...positionHaut4);
-                    positionsHaut.push(...positionHaut5);
-                    positionsHaut.push(...positionHaut6);
+                var isDisplayable2 = this.isDisplayableConnex(i, j, kk)
+                if (isDisplayable2) {
+                    nDisplayable++
+                } else {
+                    nDisplayableNo++;
+                }
 
-                    var positionBas1 = [i * scale, j * scale, plancher * scale];
-                    var positionBas2 = [(i + kk) * scale, j * scale, plancher * scale];
-                    var positionBas3 = [(i + kk) * scale, (j + kk) * scale, plancher * scale];
+                //console.log(" i " + i + " j " + j + "  isDisplayable " + isDisplayable2 + "  isFondImagePixel2 :" + this.isFondImagePixel2(i, j));
 
-                    var positionBas4 = [i * scale, j * scale, plancher * scale];
-                    var positionBas5 = [(i + kk) * scale, (j + kk) * scale, plancher * scale];
-                    var positionBas6 = [i * scale, (j + kk) * scale, plancher * scale];
+                if (isDisplayable2) {
 
-                    positionsBas.push(...positionBas1);
-                    positionsBas.push(...positionBas2);
-                    positionsBas.push(...positionBas3);
-                    positionsBas.push(...positionBas4);
-                    positionsBas.push(...positionBas5);
-                    positionsBas.push(...positionBas6);
+                    var indexPixel = this.getPixelXYIndex(i, j);
+                    var pixel = this.getPixelRGB(indexPixel);
+                    //console.log("pixelA   i: " + i + " j: "+j);
+
+                    this.processPosition(i, j, positionsHaut, true);
+                    this.processPosition(i + kk, j, positionsHaut, true);
+                    this.processPosition(i + kk, j + kk, positionsHaut,true);
+                    this.processPosition(i, j, positionsHaut,true);
+                    this.processPosition(i + kk, j + kk, positionsHaut,true);
+                    this.processPosition(i, j + kk, positionsHaut,true);
+
+                    this.processPosition(i, j, positionsBas, false);
+                    this.processPosition(i + kk, j, positionsBas, false);
+                    this.processPosition(i + kk, j + kk, positionsBas, false);
+                    this.processPosition(i, j, positionsBas, false);
+                    this.processPosition(i + kk, j + kk, positionsBas, false);
+                    this.processPosition(i, j + kk, positionsBas, false);
+
+                   
 
                     var normalHaut = [0, 0, 1];
                     var normalBas = [0, 0, -1];
@@ -169,59 +162,18 @@ class Bg3d extends Component {
                     normalsBas.push(...normalBas);
                     normalsBas.push(...normalBas);
                     // if (i,j) is bordure
-                    if (isBorderA) {
-                        isBorderA = false;
-                        var pointA = [i * scale, j * scale, hauteur * scale];
-                        listPBordureA.push(...pointA);
-                        nBordure++;
-                    }
-                    pointB = [i * scale, (j + kk) * scale, hauteur * scale];
-                    listPBordureC.push(...[(i + kk) * scale, (j) * scale, hauteur * scale]);
+
+
                 }  // End displayable             
 
             }// Endloop j
-            // Traitement eventuel de la bordure droite (ou B)
-            if (pointB) {
-                var pointBB = [pointB[0], pointB[1], pointB[2]];
-                listPBordureB.push(...pointBB);
-                pointB = false;
-            }
-        }
-        for (var iB = 0; iB < nBordure; iB++) {
-            if (iB === 0) {
-                var pZ_1 = [listPBordureB[0], listPBordureB[1], listPBordureB[2]]
-            } else {
-                var pZ_1 = [listPBordureA[3 * (iB - 1)], listPBordureA[3 * (iB - 1) + 1], listPBordureA[3 * (iB - 1) + 2]];
-            }
-
-            var pZ_0 = [listPBordureA[3 * (iB)], listPBordureA[3 * (iB) + 1], listPBordureA[3 * (iB) + 2]];
-            this.processBordure(pZ_1, pZ_0, positionsBordure, normalsBordure);
 
         }
-        for (var iC = 0; iC < nBordure; iC++) {
-            // var iB = nBordure-iC-1;
 
-            if (iC === (nBordure - 1)) {
-                var pZ_0 = [listPBordureA[3 * iC], listPBordureA[3 * iC + 1], listPBordureA[3 * iC + 2]]
-            } else {
-                var pZ_0 = [listPBordureB[3 * (iC + 1)], listPBordureB[3 * (iC + 1) + 1], listPBordureB[3 * (iC + 1) + 2]];
-            }
-            var pZ_1 = [listPBordureB[3 * iC], listPBordureB[(3 * iC) + 1], listPBordureB[(3 * iC) + 2]];
-            this.processBordure(pZ_0, pZ_1, positionsBordure, normalsBordure);
+        console.log(" nDisplayableNo " + nDisplayableNo + "  nDisplayable " + nDisplayable);
 
-        }
-        for (var iC = 0; iC < listPBordureC.length; iC++) {
-            if (iC === (listPBordureC.length - 1)) {
-                var pZ_0 = [listPBordureA[3 * (nBordure - 1)], listPBordureB[3 * (nBordure - 1) + 1], listPBordureB[3 * (nBordure - 1) + 2]]
-            } else {
-                var pZ_0 = [listPBordureB[3 * (iC + 1)], listPBordureB[3 * (iC + 1) + 1], listPBordureB[3 * (iC + 1) + 2]];
-            }
-            var pZ_1 = [listPBordureC[3 * iC], listPBordureC[(3 * iC) + 1], listPBordureC[(3 * iC) + 2]];
-            this.processBordure(pZ_0, pZ_1, positionsBordure, normalsBordure);
-        }
-
-        var positions = positionsHaut.concat(positionsBas).concat(positionsBordure);
-        var normals = normalsHaut.concat(normalsBas).concat(normalsBordure);
+        var positions = positionsHaut.concat(positionsBas);
+        var normals = normalsHaut.concat(normalsBas);
 
         const geometry = new THREE.BufferGeometry();
         const positionNumComponents = 3;
@@ -239,40 +191,23 @@ class Bg3d extends Component {
 
 
         return cube;
- 
+
 
     }  ///  ///////////////////////////////////////////////////////////////////////
-    processBordure(pZ_1, pZ_0, positionsBordure, normalsBordure) {
 
-        var positionBordure1 = [pZ_0[0], pZ_0[1], 0];
-        var positionBordure2 = [pZ_0[0], pZ_0[1], pZ_0[2]];
-        var positionBordure3 = [pZ_1[0], pZ_1[1], pZ_1[2]];
-        var positionBordure4 = [pZ_1[0], pZ_1[1], pZ_1[2]];
-        var positionBordure5 = [pZ_1[0], pZ_1[1], 0];
-        var positionBordure6 = [pZ_0[0], pZ_0[1], 0];
-        positionsBordure.push(...positionBordure1);
-        positionsBordure.push(...positionBordure2);
-        positionsBordure.push(...positionBordure3);
-        positionsBordure.push(...positionBordure4);
-        positionsBordure.push(...positionBordure5);
-        positionsBordure.push(...positionBordure6);
-        var dx = pZ_0[0] - pZ_1[0];
-        var dy = pZ_0[1] - pZ_1[1];
-        var yNormal;
-        if (dy === 0) {
-            yNormal = 20;
-        } else {
-            yNormal = -dx / dy;
+    processPosition(i, j, positions, isHaut) {
+        var hauteur = 0;
+        if (isHaut) {
+            if ((i < this.w) && (j < this.h)) {
+                hauteur = this.getHauteurFromColor2(i, j);
+            } else {
+                hauteur = 0;
+            }
         }
 
-        var normalBordure = [1, yNormal, 0];
-
-        normalsBordure.push(...normalBordure)
-        normalsBordure.push(...normalBordure)
-        normalsBordure.push(...normalBordure)
-        normalsBordure.push(...normalBordure)
-        normalsBordure.push(...normalBordure)
-        normalsBordure.push(...normalBordure)
+        var scale = this.state.scale;
+        var positionHaut2 = [i * scale, j * scale, hauteur * scale];
+        positions.push(...positionHaut2);
     }
     initMinimums() {
 
@@ -281,7 +216,7 @@ class Bg3d extends Component {
             for (var j = 0; j < this.h; j++) {
                 var indexPixel = this.getPixelXYIndex(i, j);
                 var pixel = this.getPixelRGB(indexPixel);
-                if (!this.isFondImage(pixel)) {
+                if (!this.isFondImageConnex(pixel)) {
                     if (i < this.iMin) { this.iMin = i; }
                     if (j < this.jMin) { this.jMin = j; }
                 }
@@ -313,18 +248,52 @@ class Bg3d extends Component {
         return sceneInit;
     }
 
-    isFondImage(pixel) {
-        return (pixel === this.state.couleurFond);
+
+    isFondImagePixel2(i, j) {
+        var indexPixel = this.getPixelXYIndex(i, j);
+        var pixel = this.getPixelRGB(indexPixel);
+        var isFondImage = (pixel === this.state.couleurFond);
+        //console.log("isFondImagePixel2 " +i+"  "+j+"  isFondImage "+isFondImage+"  "+pixel+"   "+this.state.couleurFond);
+        return isFondImage;
     }
 
-    getHauteurFromColor(i) {
+    isDisplayableConnex(i, j, kk) {
+
+
+        if (!this.isFondImagePixel2(i, j)) {
+            return true;
+        }
+        if ((i + kk) < this.w) {
+            if (!this.isFondImagePixel2(i + kk, j)) {
+                return true;
+            }
+           /* if (!this.isFondImagePixel2(i + kk, j + kk)) {
+                return true;
+            }*/
+        }
+        if ((j + kk) < this.h) {
+            if (!this.isFondImagePixel2(i, j + kk)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    getHauteurFromColor2(ii, jj) {
+        if (ii >= this.w) {
+            return 0;
+        }
+        if (jj > this.h) {
+            return 0;
+        }
+        var k = 4 * (jj * this.imageData.width + ii);
         var data = this.imageData.data;
-        var red = data[i];
-        var green = data[i + 1];
-        var blue = data[i + 2];
+        var red = data[k];
+        var green = data[k + 1];
+        var blue = data[k + 2];
         if (red === 0xff && green === 0xff && blue === 0xff) {
-            // blanc ... Should nor happen;
-            return 1;
+            return 0;// Blanc
         } else if (red === 0xff) {
             return this.state.hauteurRouge;
         } else if (green === 0xff) {
@@ -413,7 +382,7 @@ class Bg3d extends Component {
     }
 
     calcul = () => {
-        console.log("calcul start -----");        
+        console.log("calcul start -----");
         this.scene.clear();
         this.init2D23D_light2(this.scene);
         console.log("calcul  scene updated!!!!!!!!");
@@ -430,11 +399,11 @@ class Bg3d extends Component {
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
         var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
         saveAs(blobBinary, fileName + '.stl');
-         console.log("getStl done nb de cubes sceneStl : " + sceneStl.children.length);
+        console.log("getStl done nb de cubes sceneStl : " + sceneStl.children.length);
     }
 
     getSrcName = () => {
-       return this.state.fileName.split(".")[0];
+        return this.state.fileName.split(".")[0];
     }
 
     render() {
