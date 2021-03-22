@@ -165,7 +165,7 @@ class BgUpload extends React.Component {
                         </tr>
                         <tr>
                             <td>
-                            <input type="file" onChange={this.handleChange} inputProps={{ accept: 'image/*' }} />
+                            <input type="file" onChange={this.handleChange} />
                             </td>
                             <td>
                             <input type="button" onClick={this.handleProcess} value="processImage" />

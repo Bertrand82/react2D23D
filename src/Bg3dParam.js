@@ -16,7 +16,6 @@ class Bg3dParam extends Component {
             titre: props.data.titre,
             scale: props.data.scale
         };
-        console.log("Bg3dParam  props :",props)
         this.handleChange = this.handleChange.bind(this);
         this.handleButtonClick2 = this.handleButtonClick2.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);

@@ -5,9 +5,8 @@ import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter";
-import { IcosahedronGeometry } from 'three';
 
-const ctx = initCanvasText();
+initCanvasText();
 
 
 function initCanvasText() {
@@ -54,14 +53,15 @@ class Bg3d extends Component {
             5000
         );
         // Grosseur initiale de l'objet
-        this.camera.position.z = 400;
+        this.camera.position.z = 200;
         //ADD RENDERER 
         this.renderer = new THREE.WebGLRenderer({ antialias: true })
         this.renderer.setClearColor('#110000');
         this.renderer.setSize(width, height);
         this.mount.appendChild(this.renderer.domElement);
-        //ADD CROISEE        
+        //ADD Object        
         this.create3D();
+        //ADD Control
         this.controls = new TrackballControls(this.camera, this.renderer.domElement);
         this.initControls();
         this.start();
@@ -77,16 +77,11 @@ class Bg3d extends Component {
     initImageData(idCanvas) {
         console.log("Init 3D", idCanvas);
         var canvas1 = document.getElementById(idCanvas);
-        console.log("canvas1 ", canvas1);
-        console.log("canvas1 width ", canvas1.width);
-        console.log("canvas1 height ", canvas1.height);
         this.w = canvas1.width;
         this.h = canvas1.height;
         var ctx2 = canvas1.getContext('2d');
         this.imageData = ctx2.getImageData(0, 0, this.w, this.h);
-        console.log("Init 3D canvas1 ", canvas1);
-        console.log("Init 3D canvas1 ctx ", ctx2);
-        console.log("Init 3D w " + this.w + "  h: " + this.h);
+         console.log("Init 3D w " + this.w + "  h: " + this.h);
     }
 
     init2D23D_light2(sceneInit) {
@@ -98,8 +93,7 @@ class Bg3d extends Component {
     }
 
 
-    init2D23D_full(scene, kk) {
-        ///  ////////////////////////////////////////////////////////////////////////
+    init2D23D_full(scene, kk) {  ///  ////////////////////////////////////////////////////////////////////////
 
         const listPBordureA = [];
         const listPBordureB = [];
@@ -121,41 +115,43 @@ class Bg3d extends Component {
         for (var i = 0; i < this.w; i = i + kk) {
             listPBordureC = [];
             var isBorderA = true;
-            var isBorderB = false;
-            for (var j = 0; j < this.h; j = j + kk) {               
+            for (var j = 0; j < this.h; j = j + kk) {
                 var indexPixel = this.getPixelXYIndex(i, j);
                 var pixel = this.getPixelRGB(indexPixel);
                 var isDisplayable = !this.isFondImage(pixel);
                 if (isDisplayable) {
                     //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                     var hauteurPixel = this.getHauteurFromColor(indexPixel) * this.state.scale;
-                    var hauteur =  hauteurPixel;
-                    var positionHaut1 = [i * scale, j* scale, hauteur* scale];
-                    var positionHaut2 = [(i + kk)* scale, j* scale, hauteur* scale];
-                    var positionHaut3 = [(i + kk)* scale, (j + kk)* scale, hauteur* scale];
+                    var hauteur = hauteurPixel;
+                    var positionHaut1 = [i * scale, j * scale, hauteur * scale];
+                    var positionHaut2 = [(i + kk) * scale, j * scale, hauteur * scale];
+                    var positionHaut3 = [(i + kk) * scale, (j + kk) * scale, hauteur * scale];
                     positionsHaut.push(...positionHaut1);
                     positionsHaut.push(...positionHaut2);
                     positionsHaut.push(...positionHaut3);
 
-                    var positionHaut4 = [i * scale, j* scale, hauteur* scale];
-                    var positionHaut5 = [(i + kk)* scale, (j+kk)* scale, hauteur* scale];
-                    var positionHaut6 = [(i )* scale, (j + kk)* scale, hauteur* scale];
+                    var positionHaut4 = [i * scale, j * scale, hauteur * scale];
+                    var positionHaut5 = [(i + kk) * scale, (j + kk) * scale, hauteur * scale];
+                    var positionHaut6 = [(i) * scale, (j + kk) * scale, hauteur * scale];
 
                     positionsHaut.push(...positionHaut4);
                     positionsHaut.push(...positionHaut5);
                     positionsHaut.push(...positionHaut6);
 
-                    var positionBas1 = [i* scale, j* scale, plancher* scale];
-                    var positionBas2 = [(i + kk)* scale, j* scale, plancher* scale];
-                    var positionBas3 = [(i+kk)* scale, (j + kk)* scale, plancher* scale];
+                    var positionBas1 = [i * scale, j * scale, plancher * scale];
+                    var positionBas2 = [(i + kk) * scale, j * scale, plancher * scale];
+                    var positionBas3 = [(i + kk) * scale, (j + kk) * scale, plancher * scale];
 
-                    var positionBas4 = [i* scale, j* scale, plancher* scale];
-                    var positionBas5 = [(i + kk)* scale, (j+kk)* scale, plancher* scale];
-                    var positionBas6 = [i* scale, (j + kk)* scale, plancher* scale];
-                 
+                    var positionBas4 = [i * scale, j * scale, plancher * scale];
+                    var positionBas5 = [(i + kk) * scale, (j + kk) * scale, plancher * scale];
+                    var positionBas6 = [i * scale, (j + kk) * scale, plancher * scale];
+
                     positionsBas.push(...positionBas1);
                     positionsBas.push(...positionBas2);
                     positionsBas.push(...positionBas3);
+                    positionsBas.push(...positionBas4);
+                    positionsBas.push(...positionBas5);
+                    positionsBas.push(...positionBas6);
 
                     var normalHaut = [0, 0, 1];
                     var normalBas = [0, 0, -1];
@@ -174,18 +170,17 @@ class Bg3d extends Component {
                     normalsBas.push(...normalBas);
                     // if (i,j) is bordure
                     if (isBorderA) {
-                        console.log("Border A : i: ",i,"  j :",j)
                         isBorderA = false;
-                        var pointA = [i* scale, j* scale, hauteur* scale];
+                        var pointA = [i * scale, j * scale, hauteur * scale];
                         listPBordureA.push(...pointA);
                         nBordure++;
                     }
-                    pointB = [i* scale, (j + kk)* scale, hauteur* scale];
-                    listPBordureC.push(... [(i + kk)* scale, (j )* scale, hauteur* scale]);
+                    pointB = [i * scale, (j + kk) * scale, hauteur * scale];
+                    listPBordureC.push(...[(i + kk) * scale, (j) * scale, hauteur * scale]);
                 }  // End displayable             
 
             }// Endloop j
-            
+            // Traitement eventuel de la bordure droite (ou B)
             if (pointB) {
                 var pointBB = [pointB[0], pointB[1], pointB[2]];
                 listPBordureB.push(...pointBB);
@@ -217,14 +212,14 @@ class Bg3d extends Component {
         }
         for (var iC = 0; iC < listPBordureC.length; iC++) {
             if (iC === (listPBordureC.length - 1)) {
-                var pZ_0 = [listPBordureA[3 * (nBordure-1)], listPBordureB[3 * (nBordure-1) + 1], listPBordureB[3 * (nBordure-1) + 2]]
+                var pZ_0 = [listPBordureA[3 * (nBordure - 1)], listPBordureB[3 * (nBordure - 1) + 1], listPBordureB[3 * (nBordure - 1) + 2]]
             } else {
                 var pZ_0 = [listPBordureB[3 * (iC + 1)], listPBordureB[3 * (iC + 1) + 1], listPBordureB[3 * (iC + 1) + 2]];
             }
             var pZ_1 = [listPBordureC[3 * iC], listPBordureC[(3 * iC) + 1], listPBordureC[(3 * iC) + 2]];
             this.processBordure(pZ_0, pZ_1, positionsBordure, normalsBordure);
         }
-        
+
         var positions = positionsHaut.concat(positionsBas).concat(positionsBordure);
         var normals = normalsHaut.concat(normalsBas).concat(normalsBordure);
 
@@ -244,13 +239,11 @@ class Bg3d extends Component {
 
 
         return cube;
+ 
 
-        ///  ///////////////////////////////////////////////////////////////////////
-
-    }
+    }  ///  ///////////////////////////////////////////////////////////////////////
     processBordure(pZ_1, pZ_0, positionsBordure, normalsBordure) {
 
-        console.log("bordure  pZ_0:, ", pZ_0, "  pZ_1", pZ_1);
         var positionBordure1 = [pZ_0[0], pZ_0[1], 0];
         var positionBordure2 = [pZ_0[0], pZ_0[1], pZ_0[2]];
         var positionBordure3 = [pZ_1[0], pZ_1[1], pZ_1[2]];
@@ -305,14 +298,12 @@ class Bg3d extends Component {
             for (var j = 0; j < this.h; j = j + kk) {
                 var indexPixel = this.getPixelXYIndex(i, j);
                 var pixel = this.getPixelRGB(indexPixel);
-                //console.log("pixelA   0h" + pixel.toString(16) + "  fond: " + this.isFondImage(pixel));
                 if (!this.isFondImage(pixel)) {
                     var hauteur2 = this.getHauteurFromColor(indexPixel) * this.state.scale;
                     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
 
                     const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * hauteur2);
                     var geometry = cubeGeometry.translate((i - this.iMin) * this.state.scale, (j - this.jMin) * this.state.scale, hauteur2);
-                    //console.log(" geometry ",geometry)
                     const cube = new THREE.Mesh(geometry, material);
                     sceneInit.add(cube);
                 }
@@ -323,7 +314,6 @@ class Bg3d extends Component {
     }
 
     isFondImage(pixel) {
-        //return (pixel == 0xffffff);
         return (pixel === this.state.couleurFond);
     }
 
@@ -423,9 +413,7 @@ class Bg3d extends Component {
     }
 
     calcul = () => {
-        console.log("calcul start -----");
-        var hauteurNoir = this.state.hauteurNoir;
-
+        console.log("calcul start -----");        
         this.scene.clear();
         this.init2D23D_light2(this.scene);
         console.log("calcul  scene updated!!!!!!!!");
@@ -435,24 +423,18 @@ class Bg3d extends Component {
     getStl = () => {
         console.log("getStl start -----" + THREE);
         this.initMinimums();
-        //var exporter = new STLExporter();
         var exporter = new STLExporter();
-        //var sceneStl = new THREE.Scene();
         var sceneStl = new THREE.Scene();
         this.init2D23D_full(sceneStl, 1);
         const bufferBinary = exporter.parse(sceneStl, { binary: true });
-        //const bufferAscee = exporter.parse( sceneStl, { binary: false } );
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
-        //const blobAscee = new Blob([bufferAscee], { type: 'plain/text' });
         var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
         saveAs(blobBinary, fileName + '.stl');
-        //saveAs(blobAscee, 'cubeAscee'+this.state.nbPoints+'x'+this.state.nbPoints+'.stl');
-        console.log("getStl done nb de cubes sceneStl : " + sceneStl.children.length);
+         console.log("getStl done nb de cubes sceneStl : " + sceneStl.children.length);
     }
 
     getSrcName = () => {
-        console.log("getSrcName ", this.state.fileName);
-        return this.state.fileName.split(".")[0];
+       return this.state.fileName.split(".")[0];
     }
 
     render() {
