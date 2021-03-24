@@ -23,7 +23,7 @@ function App() {
 
       <BgUpload/>
 
-     vBeta.0.0.1
+    
 
     </div>
   );

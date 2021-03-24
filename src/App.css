@@ -1,3 +1,29 @@
+
+@font-face {
+  font-family: "carolingia";
+  src: local('carolingia'),url("fonts/carolingia.ttf");
+}
+@font-face {
+  font-family: "crom";
+  src: local('crom.regular'),url("fonts/crom.regular.ttf");
+}
+@font-face {
+  font-family: "Roman_SD";
+  src: local('Roman_SD'),url("fonts/Roman SD.ttf");
+}
+@font-face {
+  font-family: "DOMINICA";
+  src: local('DOMINICA'),url("fonts/DOMINICA.TTF");
+}
+@font-face {
+  font-family: "MorrisRomanAlternate";
+  src: local('MorrisRomanAlternate-Black'),url("fonts/MorrisRomanAlternate-Black.ttf");
+}
+@font-face {
+  font-family: "MorrisRomanAlternate";
+  src: local('MorrisRoman-Black'),url("fonts/MorrisRoman-Black.ttf");
+}
+
 .App {
   text-align: center;
 }
@@ -26,6 +52,23 @@
 
 .App-link {
   color: #61dafb;
+}
+
+#global {
+  overflow:auto;
+  border:1px solid black;
+}
+#gauche {
+  float:left;
+  width:40%;
+  border:1px solid black;
+}
+#droit {
+  overflow:auto;
+  border:1px solid black;
+}
+#bgCanvasAuxilliaire{
+  border:1px solid red;
 }
 
 @keyframes App-logo-spin {

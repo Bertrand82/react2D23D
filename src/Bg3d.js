@@ -210,7 +210,6 @@ class Bg3d extends Component {
         positions.push(...positionHaut2);
     }
     initMinimums() {
-
         console.log("initMinimum   ");
         for (var i = 0; i < this.w; i++) {
             for (var j = 0; j < this.h; j++) {
@@ -391,7 +390,7 @@ class Bg3d extends Component {
 
     getStl = () => {
         console.log("getStl start -----" + THREE);
-        this.initMinimums();
+       // this.initMinimums();
         var exporter = new STLExporter();
         var sceneStl = new THREE.Scene();
         this.init2D23D_full(sceneStl, 1);

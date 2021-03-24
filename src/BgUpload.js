@@ -12,11 +12,12 @@ class BgUpload extends React.Component {
             display3D: false,
             drawTextInput: "text a ecrire",
             drawCircleRayon: 100,
-            colorSelected: '#ff0000'
+            colorSelected: '#ff0000',
+            drawFontSize: '30px',
+            drawFontName: 'carolingia'
         }
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeString = this.handleChangeString.bind(this);
         this.handleChangeLoadImage = this.handleChangeLoadImage.bind(this);
-        this.handleProcess = this.handleProcess.bind(this);
         this.handleDisplay3D = this.handleDisplay3D.bind(this);
         this.handleInverse = this.handleInverse.bind(this);
         this.handleFiltre1 = this.handleFiltre1.bind(this);
@@ -25,8 +26,18 @@ class BgUpload extends React.Component {
         this.handleDrawCercle = this.handleDrawCercle.bind(this);
         this.handleSelectColor = this.handleSelectColor.bind(this);
         this.handlePatern = this.handlePatern.bind(this);
+        this.handleChangeNumber = this.handleChangeNumber.bind(this);
+        this.handleSelectFont = this.handleSelectFont.bind(this);
+        this.handleClean = this.handleClean.bind(this);
+        this.refCanvas = React.createRef();
+        console.log("refCanvas : ",this.refCanvas)
+        
+        
+    }
+    componentDidMount(){
         this.initCanvasText();
     }
+    refCanvas;
     ctx;
     w;
     h;
@@ -43,23 +54,38 @@ class BgUpload extends React.Component {
     }
     handleChangeLoadImage(event) {
         console.log("fileName", event.target.files[0]);
+        var url = URL.createObjectURL(event.target.files[0]);
         this.setState({
-            file: URL.createObjectURL(event.target.files[0]),
+            file: url,
             fileName: event.target.files[0].name
         })
-
+        this.displayOnCanvas2(url, "bg2dCanvas");
     }
 
-    handleProcess(event) {
+    displayOnCanvas2(urlImage, destCanvasId) {
+        var canvas = document.getElementById(destCanvasId);
+        var context = canvas.getContext('2d');
+        var base_image = new Image();
+        base_image.src = urlImage;
+        base_image.onload = function () {
+            context.drawImage(base_image, 0, 0);
+
+        }
+    }
+
+    handleClean() {
+        this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        this.ctx.fill();
+    }
+
+    handleProcess____DEPRECATED(event) {
         console.log("handleProcess");
         const newImage = new Image();
         newImage.src = this.state.file;
         const img2 = document.getElementById("imageBg");
         console.log("handleProcess ", img2);
         // Je remplis en blanc
-        this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        this.ctx.fill();
-        this.ctx.drawImage(img2, 0, 0);
+
         console.log("Image ctx : ", this.ctx);
         console.log("Image w: ", this.w);
         console.log("Image h: ", this.h);
@@ -124,7 +150,7 @@ class BgUpload extends React.Component {
     }
 
     handleSaveImage() {
-        var canvas = document.getElementById('bg2dCanvas');
+        var canvas = this.refCanvas.current;
         canvas.toBlob(function (blob) {
             saveAs(blob, "r2d23d_screenshot.png");
         });
@@ -134,7 +160,7 @@ class BgUpload extends React.Component {
         console.log("handleDrawTextAlongArc " + this.state.drawTextInput);
         var rayon = 100;
         var angleByChar = 30.0 / rayon;
-        this.drawTextAlongArc(this.state.drawTextInput,  rayon, angleByChar)
+        this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar)
     }
 
     handleDrawCercle() {
@@ -151,6 +177,16 @@ class BgUpload extends React.Component {
         console.log("handleSelectColor A >" + color + "<");
         this.selectColor(color);
     }
+
+    handleSelectFont(event) {
+        var font = event.target.value;
+        this.setState({
+            drawFontName: font
+        }
+        )
+        console.log("handleSelectFont A >" + font + "<");
+        this.setFont();
+    }
     handlePatern(event) {
         console.log("Pattern ");
         this.selectColor("rgb(0,0,0)")
@@ -159,8 +195,8 @@ class BgUpload extends React.Component {
         this.drawCercleFill(140);
         this.selectColor("black");
         var text = this.state.drawTextInput;
-        var r =95;
-        this.drawTextAlongArc(text,r, 30.0 / r);
+        var r = 95;
+        this.drawTextAlongArc(text, r, 30.0 / r);
     }
     drawCercleFill(rayon) {
         console.log("drawCercle ");
@@ -172,15 +208,23 @@ class BgUpload extends React.Component {
         this.ctx.closePath();
         this.ctx.fill();
     }
+    setFont() {
+        console.log(" Font size : " + this.state.drawFontSize)
+        var font = this.state.drawFontSize + " " + this.state.drawFontName;
+        console.log("Font  : " + font)
+        this.ctx.font = font;
+    }
+
     drawTextAlongArc(str, radius, angleByChar) {
+        this.setFont();
         var centerX = this.w / 2;
-        var centerY =  this.h / 2;
+        var centerY = this.h / 2;
         console.log("drawTextAlongArc B >" + this.state.colorSelected + "<");
         var len = str.length, s;
         var angle = len * angleByChar;
         console.log("handleDrawTextAlongArc str " + str);
         console.log("handleDrawTextAlongArc angle " + angle);
-        this.ctx.font = "60px Arial";
+
         console.log("handleDrawTextAlongArc ", this.ctx);
         this.ctx.save();
 
@@ -206,7 +250,7 @@ class BgUpload extends React.Component {
         });
         this.ctx.fillStyle = color;
         this.ctx.strokeStyle = color;
-        
+
         console.log("selectColor B >" + color + "<");
     }
     isPixelIsolated(i, j, imageData) {
@@ -244,7 +288,6 @@ class BgUpload extends React.Component {
 
 
     filtreImageData() {
-
         console.log("filtreImageData");
         for (var i = 0; i < this.w; i++) {
             for (var j = 0; j < this.h; j++) {
@@ -291,24 +334,62 @@ class BgUpload extends React.Component {
     }
 
     initCanvasText() {
-        var canvas = document.getElementById('bg2dCanvas');
+        //var canvas = document.getElementById('bg2dCanvas');
+        console.log("refCanvas : ",this.refCanvas)
+        var canvas =  this.refCanvas.current;
         this.ctx = canvas.getContext('2d');
         this.w = canvas.width;
         this.h = canvas.height;
         this.imageData = this.ctx.getImageData(0, 0, this.w, this.h);
+        this.handleClean();
         this.ctx.beginPath();
         this.ctx.rect(0, 0, canvas.width, canvas.height);
 
-
+        //canvas.addEventListener("dragend", bgListener);
+        function bgListener_DEPRECATED(event) {
+            console.log("CLICK YES", event);
+            console.log("CLICK YES event.clientX", event.clientX);
+            console.log("CLICK YES event.clientY", event.clientY);
+            var rect = event.target.getBoundingClientRect();
+            var x = event.clientX - rect.left; //x position within the element.
+            var y = event.clientY - rect.top;  //y position within the element.
+            console.log("CLICK YES X", x);
+            console.log("CLICK YES Y", y);
+        }
+        function copyCanvas____DEPRECATED(x, y) {
+            console.log("copyCanvas startb   " + canvas);
+            var canvas1 =    this.refCanvas.current;
+            var context1 = canvas1.getContext('2d');
+            var canvas2 = document.getElementById('bgCanvasAuxilliaire');
+            var img = document.getElementById('imageBg');
+            context1.drawImage(canvas2, x, y);
+            console.log("copyCanvas done   ");
+        }
     }
 
-    handleChange(event) {
-        console.log("handleChange event : ", event);
-        console.log("handleChange event.target : ", event.target);
-        console.log("handleChange event.target.value : ", event.target.value);
-        console.log("handleChange event.target.id : ", event.target.id);
+
+    handleChangeString(event) {
         this.setState({
             [event.target.id]: event.target.value
+        })
+
+    }
+    handleChangeNumber(event) {
+        console.log("handleChangeNumber event : ", event);
+        console.log("handleChangeNumber event.target : ", event.target);
+        console.log("handleChangeNumber event.target.value : ", event.target.value);
+        console.log("handleChangeNumber event.target.id : ", event.target.id);
+        console.log("handleChangeNumber event.target.id :isNan() : ", isNaN(event.target.value));
+        var value;
+        if (event.target.value === 'NaN') {
+            value = '0';
+        } else if (isNaN(event.target.value)) {
+            value = event.target.value;
+        } else {
+            value = parseInt(event.target.value, 10);
+        }
+        this.setState({
+            [event.target.id]: value
         })
 
     }
@@ -323,74 +404,117 @@ class BgUpload extends React.Component {
         } else {
             return (
                 <div>
-                    <table border="1">
-                        <tbody>
-                            <tr>
-                                <td>Etape 1</td>
-                                <td>Etape 2</td>
-                                <td>Etape 3</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="file" onChange={this.handleChangeLoadImage} />
-                                </td>
-                                <td>
-                                    <input type="button" onClick={this.handleProcess} value="processImage" />
-                                </td>
-                                <td>
-                                    <input type="button" onClick={this.handleDisplay3D} value="render3D" />
+                    <div id="global">
+                        <div id="gauche">
+                            <table border="1">
+                                <tbody>
+                                    <tr>
+                                        <td>Etape 1</td>
+                                        <td>Etape 2</td>
+                                        <td>Etape 3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="file" onChange={this.handleChangeLoadImage} />
+                                        </td>
+                                        <td>
+                                            <img id="imageBg" alt={this.state.fileName} width="30" src={this.state.file} />
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <select id="selectedColor" onChange={this.handleSelectColor}>
-                                        <option value="rgb(255,0,0)">r ff0000</option>
-                                        <option value="rgb(0,255,0)">v 00ff00</option>
-                                        <option value="rgb(0,0,255)">b 0000ff</option>
-                                        <option value="rgb(0,0,0)">n 000000</option>
-                                        <option value="rgb(255,255,255)">b ffffff</option>
-                                    </select>
-                                </td>
-                                <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td><input type="button" onClick={this.handleFiltre1} value="Filtre pixel" />
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChange} /></td>
-                                <td><input type="button" onClick={this.handleDrawTextAlongArc} value="DrawText" />
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" id="drawCircleRayon" value={this.state.drawCircleRayon} onChange={this.handleChange} /></td>
-                                <td><input type="button" onClick={this.handleDrawCercle} value="DrawCircle" />
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td><input type="button" onClick={this.handlePatern} value="Pattern Predefini" />
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <img id="imageBg" alt={this.state.fileName} width="100" src={this.state.file} />
-                                </td>
-                                <td><input type="button" onClick={this.handleSaveImage} value="Save Image" /></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                        </td>
+                                        <td>
+                                            <input type="button" onClick={this.handleDisplay3D} value="render3D" />
 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <input type="button" onClick={this.handleClean} value="clean / reset" />
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <select id="selectedColor" onChange={this.handleSelectColor}>
+                                                <option value="rgb(255,0,0)">r ff0000</option>
+                                                <option value="rgb(0,255,0)">v 00ff00</option>
+                                                <option value="rgb(0,0,255)">b 0000ff</option>
+                                                <option value="rgb(0,0,0)">n 000000</option>
+                                                <option value="rgb(255,255,255)">b ffffff</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="button" onClick={this.handleFiltre1} value="Filtre pixel" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Font size<input type="text" id="drawFontSize" value={this.state.drawFontSize} onChange={this.handleChangeString} />
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span> Font  </span>
+                                            <select id="drawFontName" onChange={this.handleSelectFont}>
+                                                <option value="carolingia">carolingia</option>
+                                                <option value="crom.regular">crom.regular</option>
+                                                <option value="Roman_SD">Roman_SD</option>
+                                                <option value="DOMINICA">DOMINICA</option>
+                                                <option value="MorrisRomanAlternate-Black">MorrisRomanAlternate-Black</option>
+                                                <option value="MorrisRoman-Black">MorrisRoman-Black</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChangeString} />
 
+                                        </td>
+                                        <td><input type="button" onClick={this.handleDrawTextAlongArc} value="DrawText" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="drawCircleRayon" value={this.state.drawCircleRayon} onChange={this.handleChangeString} /></td>
+                                        <td><input type="button" onClick={this.handleDrawCercle} value="DrawCircle" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="button" onClick={this.handlePatern} value="Pattern Predefini" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        </td>
+                                        <td><input type="button" onClick={this.handleSaveImage} value="Save Image" /></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="droit">
+                            <canvas ref={this.refCanvas} id="bg2dCanvas" width="500" height="500" draggable="true"></canvas>
+                        </div>
+                    </div>
                 </div>
             );
         }
