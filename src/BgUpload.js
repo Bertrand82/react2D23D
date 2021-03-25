@@ -1,5 +1,6 @@
 
 import { Blending } from 'three';
+
 import Bg3d from './Bg3d';
 import { saveAs } from 'file-saver';
 const React = require('react');
@@ -29,15 +30,20 @@ class BgUpload extends React.Component {
         this.handleChangeNumber = this.handleChangeNumber.bind(this);
         this.handleSelectFont = this.handleSelectFont.bind(this);
         this.handleClean = this.handleClean.bind(this);
-        this.handleFiltreImageSaturation= this.handleFiltreImageSaturation.bind(this);
-        this.refCanvas = React.createRef();
+        this.handleFiltreImageSaturation = this.handleFiltreImageSaturation.bind(this);
+        this.display = this.display.bind(this);
 
-        console.log("refCanvas : ",this.refCanvas)
-        
-        
+        this.refCanvas = React.createRef();
+        this.ref3d = React.createRef();
+
+        console.log("refCanvas : ", this.refCanvas)
+
+
     }
-    componentDidMount(){
+    componentDidMount() {
         this.initCanvasText();
+        this.display("2d");
+        
     }
     refCanvas;
     ctx;
@@ -52,11 +58,28 @@ class BgUpload extends React.Component {
         this.setState({
             display3D: !this.state.display3D,
         })
+        this.display("3d");  
+        this.ref3d.current.process3d();  
+        this.ref3d.current.calcul();  
+    }
 
+    display(viewToDisplay) {
+        console.log("BgUpload diplay value", viewToDisplay)
+        console.log("BgUpload diplay ref3d current: ",this.ref3d.current);
+        var bg3dDiv = document.getElementById("Bg3dDiv");
+        var bg2dDiv = document.getElementById("Bg2dDiv");
+        console.log("display : ", viewToDisplay);
+        if ("2d" === viewToDisplay){
+            bg3dDiv.style.display = "none";
+            bg2dDiv.style.display = "block";
+        }else if ("3d" === viewToDisplay){
+            bg2dDiv.style.display = "none";
+            bg3dDiv.style.display = "block";
+        }
     }
     handleChangeLoadImage(event) {
         console.log("fileName", event.target.files[0]);
-        
+
         var url = URL.createObjectURL(event.target.files[0]);
         this.setState({
             file: url,
@@ -82,7 +105,7 @@ class BgUpload extends React.Component {
         this.ctx.fill();
     }
 
-    
+
     handleInverse() {
         console.log("handleInverse w:" + this.imageData.width + "h:" + this.imageData.height);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
@@ -108,18 +131,18 @@ class BgUpload extends React.Component {
         this.filtreImageSaturation();
     }
     handleFiltrePixelOrphelin() {
-        console.log("handleFiltrePixelOrphelin start "+this.h+" "+this.w);
+        console.log("handleFiltrePixelOrphelin start " + this.h + " " + this.w);
         var oldImageData = this.ctx.getImageData(0, 0, this.h, this.w);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
-        console.log("handleFiltrePixelOrphelin start "+newImageData.width+" "+newImageData.height);
-       var nbPixelModified= 0;
-       var nbPixelModifiedNo = 0;
+        console.log("handleFiltrePixelOrphelin start " + newImageData.width + " " + newImageData.height);
+        var nbPixelModified = 0;
+        var nbPixelModifiedNo = 0;
 
-        for (var i = 0; i < oldImageData.width ; i++) {
-            for (var j = 0; j < oldImageData.height ; j++) {
+        for (var i = 0; i < oldImageData.width; i++) {
+            for (var j = 0; j < oldImageData.height; j++) {
                 var k = 4 * (i * this.w + j);
                 var nPixelConnec = this.isPixelIsolated(i, j, this.imageData)
-               
+
                 if (nPixelConnec < 2) {
                     var k2 = 4 * (i * this.w + j + 1);
                     nbPixelModified++;
@@ -131,14 +154,14 @@ class BgUpload extends React.Component {
                 newImageData.data[k + 1] = oldImageData.data[k2 + 1];
                 newImageData.data[k + 2] = oldImageData.data[k2 + 2];
                 newImageData.data[k + 3] = oldImageData.data[k2 + 3];
-                
+
             }
         }
-        console.log("handleFiltrePixelOrphelin done nbPixelModified ",nbPixelModified);
-        console.log("handleFiltrePixelOrphelin done nbPixelModifiedNo ",nbPixelModifiedNo);
+        console.log("handleFiltrePixelOrphelin done nbPixelModified ", nbPixelModified);
+        console.log("handleFiltrePixelOrphelin done nbPixelModifiedNo ", nbPixelModifiedNo);
         this.ctx.putImageData(newImageData, 0, 0);
         this.imageData = newImageData;
-        
+
     }
 
     handleSaveImage() {
@@ -156,7 +179,7 @@ class BgUpload extends React.Component {
     }
 
     handleDrawCercle() {
-       
+
         console.log("handleDrawCercle colorSelected :>" + this.state.colorSelected + "<");
         var rayon = this.state.drawCircleRayon;
         this.drawCercleFill(rayon);
@@ -180,22 +203,22 @@ class BgUpload extends React.Component {
         this.setFont();
     }
     handlePatern(event) {
-        console.log("handlePattern1 start colorSelected:"+this.state.colorSelected)
+        console.log("handlePattern1 start colorSelected:" + this.state.colorSelected)
         var r = 200;
         this.selectColor("rgb(0,0,0)")
         this.drawCercleFill(r);
         this.selectColor("rgb(255,0,0)");
-        this.drawCercleFill(r-20);
+        this.drawCercleFill(r - 20);
         this.selectColor("black");
         var text = this.state.drawTextInput;
-        
-        this.drawTextAlongArc(text, r-60, 30.0 / r);
+
+        this.drawTextAlongArc(text, r - 60, 30.0 / r);
         this.selectColor(this.state.colorSelected);
     }
 
     drawCercleFill(rayon) {
-       
-        console.log("drawCercle color >" + this.state.colorSelected + "< rayon : "+rayon);
+
+        console.log("drawCercle color >" + this.state.colorSelected + "< rayon : " + rayon);
 
         this.ctx.beginPath();
         this.ctx.arc(this.w / 2, this.h / 2, rayon, 0, 2 * Math.PI);
@@ -227,20 +250,20 @@ class BgUpload extends React.Component {
         this.ctx.rotate(-1 * (angle / len) / 2);
         for (var n = 0; n < len; n++) {
 
-            if (str[n]== str[n].toUpperCase()){
-                var isUpperCase=true;
+            if (str[n] == str[n].toUpperCase()) {
+                var isUpperCase = true;
                 var angle = 2.1 * angleByChar;
             } else {
-                var isUpperCase=false;
-                var angle =  angleByChar;
+                var isUpperCase = false;
+                var angle = angleByChar;
             }
-            console.log("drawTextAlongArc "+str[n]+"  "+isUpperCase)
-           
+            console.log("drawTextAlongArc " + str[n] + "  " + isUpperCase)
+
             this.ctx.save();
             this.ctx.translate(0, -1 * radius);
             s = str[n];
             this.ctx.fillText(s, 0, 0);
-            
+
             this.ctx.restore();
             this.ctx.rotate(angle);
         }
@@ -296,16 +319,16 @@ class BgUpload extends React.Component {
         console.log("filtreImageSaturation");
         for (var i = 0; i < this.w; i++) {
             for (var j = 0; j < this.h; j++) {
-                this.filtreImageSaturationPixel(i, j,data);
+                this.filtreImageSaturationPixel(i, j, data);
             }
         }
         this.ctx.putImageData(imageData, 0, 0);
     }
 
 
-    filtreImageSaturationPixel(x, y,data) {
+    filtreImageSaturationPixel(x, y, data) {
         var i = 4 * (y * this.w + x);
-        
+
         var red = data[i];
         var green = data[i + 1];
         var blue = data[i + 2];
@@ -341,21 +364,21 @@ class BgUpload extends React.Component {
 
     initCanvasText() {
         //var canvas = document.getElementById('bg2dCanvas');
-        console.log("refCanvas : ",this.refCanvas)
-        var canvas =  this.refCanvas.current;
+        console.log("refCanvas : ", this.refCanvas)
+        var canvas = this.refCanvas.current;
         this.ctx = canvas.getContext('2d');
         this.w = canvas.width;
         this.h = canvas.height;
         this.imageData = this.ctx.getImageData(0, 0, this.w, this.h);
-        
+
         this.ctx.rect(0, 0, this.w, this.h);
         this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
         this.ctx.fill();
         //this.handleClean();
-       
+
         //canvas.addEventListener("dragend", bgListener);
-       
-      
+
+
     }
 
 
@@ -386,15 +409,15 @@ class BgUpload extends React.Component {
     }
 
     render() {
-        if (this.state.display3D) {
-            return (
-                <div>
-                    <Bg3d image2Dsrc={this.ctx.canvas.id} fileName={this.state.fileName} />
+
+        return (
+             
+            <div>
+                <div id="Bg3dT">
+                <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("2d") }} value=" 2D" />
+                <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("3d") }} value=" 3D" />
                 </div>
-            )
-        } else {
-            return (
-                <div>
+                <div id="Bg2dDiv">
                     <div id="global">
                         <div id="gauche">
                             <table border="1">
@@ -413,7 +436,7 @@ class BgUpload extends React.Component {
 
                                         </td>
                                         <td>
-                                            <input type="button" onClick={this.handleDisplay3D} value="render3D" />
+                                            <input type="button" onClick={this.handleDisplay3D} value="Process 3D" />
 
                                         </td>
                                     </tr>
@@ -513,8 +536,14 @@ class BgUpload extends React.Component {
                         </div>
                     </div>
                 </div>
-            );
-        }
+                <div>
+                    <div id="Bg3dDiv">
+                        <Bg3d ref={this.ref3d} id="Bg3d_" image2Dsrc="bg2dCanvas" fileName={this.state.fileName} />
+                    </div>
+                </div>
+            </div>
+        );
+
     }
 }
 

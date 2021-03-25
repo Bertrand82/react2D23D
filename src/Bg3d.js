@@ -33,11 +33,18 @@ class Bg3d extends Component {
             scale: 0.4
 
         }
-        this.initImageData(props.image2Dsrc);
         this.updateParam2 = this.updateParam2.bind(this);
-
+        this.process3d();
     }
 
+    process3d() {
+        console.log("process3d start ",this.props);
+        this.initImageData(this.props.image2Dsrc);
+        
+        
+       
+    }
+    
 
     componentDidMount() {
         const width = 2 * this.mount.clientWidth;
@@ -77,11 +84,16 @@ class Bg3d extends Component {
     initImageData(idCanvas) {
         console.log("Init 3D", idCanvas);
         var canvas1 = document.getElementById(idCanvas);
-        this.w = canvas1.width;
-        this.h = canvas1.height;
-        var ctx2 = canvas1.getContext('2d');
-        this.imageData = ctx2.getImageData(0, 0, this.w, this.h);
-        console.log("Init 3D w " + this.w + "  h: " + this.h);
+        console.log("Init 3D", canvas1);
+        if (canvas1) {
+            this.w = canvas1.width;
+            this.h = canvas1.height;
+            var ctx2 = canvas1.getContext('2d');
+            this.imageData = ctx2.getImageData(0, 0, this.w, this.h);
+            console.log("Init 3D w " + this.w + "  h: " + this.h);
+        }else {
+            console.warn("bg NO CANVAS !!!! ")
+        }
     }
 
     init2D23D_light2(sceneInit) {
@@ -132,10 +144,10 @@ class Bg3d extends Component {
 
                     this.processPosition(i, j, positionsHaut, true);
                     this.processPosition(i + kk, j, positionsHaut, true);
-                    this.processPosition(i + kk, j + kk, positionsHaut,true);
-                    this.processPosition(i, j, positionsHaut,true);
-                    this.processPosition(i + kk, j + kk, positionsHaut,true);
-                    this.processPosition(i, j + kk, positionsHaut,true);
+                    this.processPosition(i + kk, j + kk, positionsHaut, true);
+                    this.processPosition(i, j, positionsHaut, true);
+                    this.processPosition(i + kk, j + kk, positionsHaut, true);
+                    this.processPosition(i, j + kk, positionsHaut, true);
 
                     this.processPosition(i, j, positionsBas, false);
                     this.processPosition(i + kk, j, positionsBas, false);
@@ -144,7 +156,7 @@ class Bg3d extends Component {
                     this.processPosition(i + kk, j + kk, positionsBas, false);
                     this.processPosition(i, j + kk, positionsBas, false);
 
-                   
+
 
                     var normalHaut = [0, 0, 1];
                     var normalBas = [0, 0, -1];
@@ -266,9 +278,9 @@ class Bg3d extends Component {
             if (!this.isFondImagePixel2(i + kk, j)) {
                 return true;
             }
-           /* if (!this.isFondImagePixel2(i + kk, j + kk)) {
-                return true;
-            }*/
+            /* if (!this.isFondImagePixel2(i + kk, j + kk)) {
+                 return true;
+             }*/
         }
         if ((j + kk) < this.h) {
             if (!this.isFondImagePixel2(i, j + kk)) {
@@ -390,7 +402,7 @@ class Bg3d extends Component {
 
     getStl = () => {
         console.log("getStl start -----" + THREE);
-       // this.initMinimums();
+        // this.initMinimums();
         var exporter = new STLExporter();
         var sceneStl = new THREE.Scene();
         this.init2D23D_full(sceneStl, 1);
@@ -405,11 +417,13 @@ class Bg3d extends Component {
         return this.state.fileName.split(".")[0];
     }
 
+    
+
     render() {
         return (
 
             <div>
-                <Bg3dParam updateParam2={this.updateParam2} calcul={this.calcul} getStl={this.getStl} data={this.state} />
+                 <Bg3dParam updateParam2={this.updateParam2} calcul={this.calcul} getStl={this.getStl} data={this.state} />
                 <div style={{ width: '600px', height: '600px' }}>
                     <div
                         style={{ width: '300px', height: '300px', backgroundColor: "yellow" }}
