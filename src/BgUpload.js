@@ -26,7 +26,8 @@ class BgUpload extends React.Component {
         this.handleDrawTextAlongArc = this.handleDrawTextAlongArc.bind(this);
         this.handleDrawCercle = this.handleDrawCercle.bind(this);
         this.handleSelectColor = this.handleSelectColor.bind(this);
-        this.handlePatern = this.handlePatern.bind(this);
+        this.handlePatern1 = this.handlePatern1.bind(this);
+        this.handlePatern2 = this.handlePatern2.bind(this);
         this.handleChangeNumber = this.handleChangeNumber.bind(this);
         this.handleSelectFont = this.handleSelectFont.bind(this);
         this.handleClean = this.handleClean.bind(this);
@@ -43,7 +44,7 @@ class BgUpload extends React.Component {
     componentDidMount() {
         this.initCanvasText();
         this.display("2d");
-        
+
     }
     refCanvas;
     ctx;
@@ -58,21 +59,21 @@ class BgUpload extends React.Component {
         this.setState({
             display3D: !this.state.display3D,
         })
-        this.display("3d");  
-        this.ref3d.current.process3d();  
-        this.ref3d.current.calcul();  
+        this.display("3d");
+        this.ref3d.current.process3d();
+        this.ref3d.current.calcul();
     }
 
     display(viewToDisplay) {
         console.log("BgUpload diplay value", viewToDisplay)
-        console.log("BgUpload diplay ref3d current: ",this.ref3d.current);
+        console.log("BgUpload diplay ref3d current: ", this.ref3d.current);
         var bg3dDiv = document.getElementById("Bg3dDiv");
         var bg2dDiv = document.getElementById("Bg2dDiv");
         console.log("display : ", viewToDisplay);
-        if ("2d" === viewToDisplay){
+        if ("2d" === viewToDisplay) {
             bg3dDiv.style.display = "none";
             bg2dDiv.style.display = "block";
-        }else if ("3d" === viewToDisplay){
+        } else if ("3d" === viewToDisplay) {
             bg2dDiv.style.display = "none";
             bg3dDiv.style.display = "block";
         }
@@ -142,12 +143,12 @@ class BgUpload extends React.Component {
             for (var j = 0; j < oldImageData.height; j++) {
                 var k = 4 * (i * this.w + j);
                 var nPixelConnec = this.isPixelIsolated(i, j, this.imageData)
-
+                var k2
                 if (nPixelConnec < 2) {
-                    var k2 = 4 * (i * this.w + j + 1);
+                    k2 = 4 * (i * this.w + j + 1);
                     nbPixelModified++;
                 } else {
-                    var k2 = k;
+                    k2 = k;
                     nbPixelModifiedNo++;
                 }
                 newImageData.data[k] = oldImageData.data[k2];
@@ -202,13 +203,20 @@ class BgUpload extends React.Component {
         console.log("handleSelectFont A >" + font + "<");
         this.setFont();
     }
-    handlePatern(event) {
+    handlePatern1(event) {
         console.log("handlePattern1 start colorSelected:" + this.state.colorSelected)
         var r = 200;
         this.selectColor("rgb(0,0,0)")
         this.drawCercleFill(r);
         this.selectColor("rgb(255,0,0)");
         this.drawCercleFill(r - 20);
+
+    }
+
+    handlePatern2(event) {
+        console.log("handlePattern2 start colorSelected:" + this.state.colorSelected)
+        var r = 200;
+        this.handlePatern1(event);
         this.selectColor("black");
         var text = this.state.drawTextInput;
 
@@ -249,13 +257,14 @@ class BgUpload extends React.Component {
         this.ctx.rotate(-1 * angle / 2);
         this.ctx.rotate(-1 * (angle / len) / 2);
         for (var n = 0; n < len; n++) {
-
-            if (str[n] == str[n].toUpperCase()) {
-                var isUpperCase = true;
-                var angle = 2.1 * angleByChar;
+            var angle
+            var isUpperCase
+            if (str[n] === str[n].toUpperCase()) {
+                isUpperCase = true;
+                angle = 2.1 * angleByChar;
             } else {
-                var isUpperCase = false;
-                var angle = angleByChar;
+                isUpperCase = false;
+                angle = angleByChar;
             }
             console.log("drawTextAlongArc " + str[n] + "  " + isUpperCase)
 
@@ -411,15 +420,15 @@ class BgUpload extends React.Component {
     render() {
 
         return (
-             
+
             <div>
-                <div id="Bg3dT">
-                <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("2d") }} value=" 2D" />
-                <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("3d") }} value=" 3D" />
+                <div  style={{ textAlign: 'left' ,border: '1px solid red'}} id="Bg3dT">
+                    <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("2d") }} value=" 2D" />
+                    <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("3d") }} value=" 3D" />
                 </div>
                 <div id="Bg2dDiv">
-                    <div id="global">
-                        <div id="gauche">
+                    <div class="global">
+                        <div class="gauche">
                             <table border="1">
                                 <tbody>
                                     <tr>
@@ -517,7 +526,13 @@ class BgUpload extends React.Component {
 
                                     <tr>
                                         <td></td>
-                                        <td><input type="button" onClick={this.handlePatern} value="Pattern Predefini" />
+                                        <td><input type="button" onClick={this.handlePatern1} value="Pattern Predefini 1" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><input type="button" onClick={this.handlePatern} value="Pattern Predefini 2" />
                                         </td>
                                         <td></td>
                                     </tr>
@@ -531,7 +546,7 @@ class BgUpload extends React.Component {
                             </table>
                         </div>
 
-                        <div id="droit">
+                        <div class="droit">
                             <canvas ref={this.refCanvas} id="bg2dCanvas" width="500" height="500" draggable="true"></canvas>
                         </div>
                     </div>

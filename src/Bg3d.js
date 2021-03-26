@@ -38,13 +38,13 @@ class Bg3d extends Component {
     }
 
     process3d() {
-        console.log("process3d start ",this.props);
+        console.log("process3d start ", this.props);
         this.initImageData(this.props.image2Dsrc);
-        
-        
-       
+
+
+
     }
-    
+
 
     componentDidMount() {
         const width = 2 * this.mount.clientWidth;
@@ -91,7 +91,7 @@ class Bg3d extends Component {
             var ctx2 = canvas1.getContext('2d');
             this.imageData = ctx2.getImageData(0, 0, this.w, this.h);
             console.log("Init 3D w " + this.w + "  h: " + this.h);
-        }else {
+        } else {
             console.warn("bg NO CANVAS !!!! ")
         }
     }
@@ -417,18 +417,20 @@ class Bg3d extends Component {
         return this.state.fileName.split(".")[0];
     }
 
-    
+
 
     render() {
         return (
 
-            <div>
-                 <Bg3dParam updateParam2={this.updateParam2} calcul={this.calcul} getStl={this.getStl} data={this.state} />
-                <div style={{ width: '600px', height: '600px' }}>
-                    <div
-                        style={{ width: '300px', height: '300px', backgroundColor: "yellow" }}
-                        ref={(mount) => { this.mount = mount }}
-                    />
+            <div class="global">
+                <div class="gauche">
+                    <Bg3dParam updateParam2={this.updateParam2} calcul={this.calcul} getStl={this.getStl} data={this.state} />
+                </div>
+                <div class="droit">
+                         <div
+                            style={{ width: '300px', height: '300px', backgroundColor: "yellow" ,border: "3px solid red"}}
+                            ref={(mount) => { this.mount = mount }}
+                        />                    
                 </div>
             </div>
         )

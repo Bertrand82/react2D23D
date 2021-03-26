@@ -56,16 +56,16 @@
   color: #61dafb;
 }
 
-#global {
+.global {
   overflow:auto;
   border:1px solid black;
 }
-#gauche {
+.gauche {
   float:left;
   width:40%;
   border:1px solid black;
 }
-#droit {
+.droit {
   overflow:auto;
   border:1px solid black;
 }
@@ -75,6 +75,14 @@
 #Bg3dT {
   
   border:3px solid green;
+}
+
+.contentCollapse {
+  padding: 0 18px;
+  display: none;
+  
+  background-color: #f1f1f1;
+  border:  3px solid red;
 }
 
 @keyframes App-logo-spin {
