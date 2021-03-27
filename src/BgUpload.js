@@ -460,10 +460,10 @@ class BgUpload extends React.Component {
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select id="selectedColor" onChange={this.handleSelectColor}>
-                                                <option value="rgb(255,0,0)">r: ff0000</option>
-                                                <option value="rgb(0,255,0)">v: 00ff00</option>
-                                                <option value="rgb(0,0,255)">b: 0000ff</option>
+                                            couleur courante <select id="selectedColor" style={{color: this.state.colorSelected}} onChange={this.handleSelectColor}>
+                                                <option value="rgb(255,0,0)" style={{color: '#ff0000'}}>r: ff0000</option>
+                                                <option value="rgb(0,255,0)" style={{color: '#00ff00'}}>v: 00ff00</option>
+                                                <option value="rgb(0,0,255)" style={{color: '#0000ff'}}>b: 0000ff</option>
                                                 <option value="rgb(0,0,0)">n: 000000</option>
                                                 <option value="rgb(255,255,255)">b: ffffff</option>
                                             </select>
