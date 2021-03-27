@@ -116,7 +116,7 @@ class Bg3d extends Component {
         const normalsBas = [];
 
 
-        var plancher = 0;
+        var plancher______________OLD = 0;
         console.log(" this.w " + this.w);
         console.log(" this.h " + this.h);
         console.log("init2D23D_full  kk " + kk);
@@ -237,28 +237,7 @@ class Bg3d extends Component {
     }
 
 
-    init2D23D_full__old(sceneInit, kk) {
-
-        console.log("init2D23D_full  kk " + kk);
-        for (var i = 0; i < this.w; i = i + kk) {
-            for (var j = 0; j < this.h; j = j + kk) {
-                var indexPixel = this.getPixelXYIndex(i, j);
-                var pixel = this.getPixelRGB(indexPixel);
-                if (!this.isFondImage(pixel)) {
-                    var hauteur2 = this.getHauteurFromColor(indexPixel) * this.state.scale;
-                    var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-
-                    const cubeGeometry = new THREE.BoxGeometry(kk, kk, 2 * hauteur2);
-                    var geometry = cubeGeometry.translate((i - this.iMin) * this.state.scale, (j - this.jMin) * this.state.scale, hauteur2);
-                    const cube = new THREE.Mesh(geometry, material);
-                    sceneInit.add(cube);
-                }
-            }
-        }
-        console.log("Pixels ::: h :" + this.h + "  w: " + this.w + "  kk :" + kk + " group sceneInit.children.length :" + sceneInit.children.length);
-        return sceneInit;
-    }
-
+    
 
     isFondImagePixel2(i, j) {
         var indexPixel = this.getPixelXYIndex(i, j);
@@ -273,20 +252,20 @@ class Bg3d extends Component {
 
         if (!this.isFondImagePixel2(i, j)) {
             return true;
-        }
-        if ((i + kk) < this.w) {
+        }else  if ((i + kk) < this.w) {
             if (!this.isFondImagePixel2(i + kk, j)) {
-                return true;
+                return true;                
             }
-            /* if (!this.isFondImagePixel2(i + kk, j + kk)) {
-                 return true;
-             }*/
-        }
-        if ((j + kk) < this.h) {
-            if (!this.isFondImagePixel2(i, j + kk)) {
-                return true;
+        }else if ((j+kk) < this.h){
+            if (!this.isFondImagePixel2(i, j+kk)) {
+                return true;                
+            }
+        }else if (( (j+kk) < this.h) && ( (i+kk) < this.w)){
+            if (!this.isFondImagePixel2(i+kk, j+kk)) {
+                return true;                
             }
         }
+
         return false;
 
     }
@@ -427,10 +406,10 @@ class Bg3d extends Component {
                     <Bg3dParam updateParam2={this.updateParam2} calcul={this.calcul} getStl={this.getStl} data={this.state} />
                 </div>
                 <div class="droit">
-                         <div
-                            style={{ width: '300px', height: '300px', backgroundColor: "yellow" ,border: "3px solid red"}}
-                            ref={(mount) => { this.mount = mount }}
-                        />                    
+                    <div
+                        style={{ width: '300px', height: '300px', backgroundColor: "yellow", border: "3px solid red" }}
+                        ref={(mount) => { this.mount = mount }}
+                    />
                 </div>
             </div>
         )

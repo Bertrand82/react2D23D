@@ -108,7 +108,7 @@ class Bg2d extends React.Component {
 
 
     handleInverse() {
-        console.log("handleInverse w:" + this.imageData.width + "h:" + this.imageData.height);
+        this.log("handleInverse w:" + this.imageData.width + "h:" + this.imageData.height);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
         for (var i = 0; i < this.w; i++) {
             //var ii = this.w -i-1;
@@ -132,20 +132,21 @@ class Bg2d extends React.Component {
         this.filtreImageSaturation();
     }
     handleFiltrePixelOrphelin() {
-        console.log("handleFiltrePixelOrphelin start " + this.h + " " + this.w);
+        this.log("handleFiltrePixelOrphelin start " + this.h + " " + this.w);
         var oldImageData = this.ctx.getImageData(0, 0, this.h, this.w);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
         console.log("handleFiltrePixelOrphelin start " + newImageData.width + " " + newImageData.height);
         var nbPixelModified = 0;
         var nbPixelModifiedNo = 0;
 
-        for (var i = 0; i < oldImageData.width; i++) {
-            for (var j = 0; j < oldImageData.height; j++) {
-                var k = 4 * (i * this.w + j);
-                var nPixelConnec = this.isPixelIsolated(i, j, this.imageData)
-                var k2
+        for (var i_ = 0; i_ < oldImageData.width; i_++) {
+            for (var j_ = 0; j_ < oldImageData.height; j_++) {
+                var k = 4 * (i_ * this.w + j_);
+                var nPixelConnec = this.isPixelIsolated(i_, j_, oldImageData)
+                var k2;
                 if (nPixelConnec < 2) {
-                    k2 = 4 * (i * this.w + j + 1);
+                    //k2 = 4 * (i_ * this.w + j_ + 1);
+                    k2 = this.getkNeareastColor(i_, j_, oldImageData)
                     nbPixelModified++;
                 } else {
                     k2 = k;
@@ -158,8 +159,8 @@ class Bg2d extends React.Component {
 
             }
         }
-        console.log("handleFiltrePixelOrphelin done nbPixelModified ", nbPixelModified);
-        console.log("handleFiltrePixelOrphelin done nbPixelModifiedNo ", nbPixelModifiedNo);
+        this.logAppend("handleFiltrePixelOrphelin done nbPixelModified ", nbPixelModified);
+        this.logAppend("handleFiltrePixelOrphelin done nbPixelModifiedNo ", nbPixelModifiedNo);
         this.ctx.putImageData(newImageData, 0, 0);
         this.imageData = newImageData;
 
@@ -241,6 +242,7 @@ class Bg2d extends React.Component {
     }
 
     drawTextAlongArc(str, radius, angleByChar) {
+        this.log("drawTextAlongArc " + str + "  radius : " + radius)
         this.setFont();
         var centerX = this.w / 2;
         var centerY = this.h / 2;
@@ -308,6 +310,43 @@ class Bg2d extends React.Component {
             nPixelConnect++;
         }
         return nPixelConnect;
+
+    }
+    getkNeareastColor(i, j, imageData) {
+        var color = this.getColor(i, j, imageData);
+        var nPixelConnect = 0;
+        var ii, jj, kk;
+        ii = i;
+        jj = j - 1;
+        var color4 = this.getColor(ii, jj, imageData);
+        if (color4 != color) {
+            kk = 4 * (ii * this.w + jj);
+            return kk;
+        }
+        ii = i;
+        jj = j + 1;
+        var color3 = this.getColor(ii, jj, imageData);
+        if (color3 != color) {
+            kk = 4 * (ii * this.w + jj);
+            return kk;
+        }
+        ii = i - 1;
+        jj = j;
+        var color2 = this.getColor(ii, jj, imageData);
+        if (color != color2) {
+            kk = 4 * (ii * this.w + jj);
+            return kk;
+        }
+        ii = i + 1;
+        jj = j;
+        var color1 = this.getColor(ii, jj, imageData);
+
+        if (color != color1) {
+            kk = 4 * (ii * this.w + jj);
+            return kk;
+        }
+        console.warn("should never hapen! ")
+        return 4 * (i * this.w + j);;
 
     }
 
@@ -417,12 +456,36 @@ class Bg2d extends React.Component {
 
     }
 
+    log(a, b) {
+        var element = document.getElementById("log");
+        while (element.hasChildNodes()) {
+            element.removeChild(element.lastChild);
+        }
+        this.logAppend(a, b);
+    }
+    logAppend(a, b) {
+        var s;
+        if (b) {
+            s = a + b;
+            console.log(a, b);
+
+        } else {
+            s = a;
+            console.log(a);
+        }
+        var element = document.getElementById("log");
+        var sPrevious = element.innerHTML;
+        var elemDiv = document.createElement('div');
+        elemDiv.innerText = "" + s;
+        element.appendChild(elemDiv);
+    }
+
     render() {
 
         return (
 
             <div>
-                <div  style={{ textAlign: 'left' ,border: '1px solid red'}} id="Bg3dT">
+                <div style={{ textAlign: 'left', border: '1px solid red' }} id="Bg3dT">
                     <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("2d") }} value=" 2D" />
                     <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("3d") }} value=" 3D" />
                 </div>
@@ -459,7 +522,7 @@ class Bg2d extends React.Component {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>                                        
+                                        <td>
                                         </td>
                                         <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
                                         </td>
@@ -479,10 +542,10 @@ class Bg2d extends React.Component {
                                     </tr>
                                     <tr>
                                         <td>
-                                            couleur courante <select id="selectedColor" style={{color: this.state.colorSelected}} onChange={this.handleSelectColor}>
-                                                <option value="rgb(255,0,0)" style={{color: '#ff0000'}}>r: ff0000</option>
-                                                <option value="rgb(0,255,0)" style={{color: '#00ff00'}}>v: 00ff00</option>
-                                                <option value="rgb(0,0,255)" style={{color: '#0000ff'}}>b: 0000ff</option>
+                                            couleur courante <select id="selectedColor" style={{ color: this.state.colorSelected }} onChange={this.handleSelectColor}>
+                                                <option value="rgb(255,0,0)" style={{ color: '#ff0000' }}>r: ff0000</option>
+                                                <option value="rgb(0,255,0)" style={{ color: '#00ff00' }}>v: 00ff00</option>
+                                                <option value="rgb(0,0,255)" style={{ color: '#0000ff' }}>b: 0000ff</option>
                                                 <option value="rgb(0,0,0)">n: 000000</option>
                                                 <option value="rgb(255,255,255)">b: ffffff</option>
                                             </select>
@@ -516,7 +579,7 @@ class Bg2d extends React.Component {
                                     </tr>
                                     <tr>
                                         <td>
-                                          Text:  <input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChangeString} />
+                                            Text:  <input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChangeString} />
 
                                         </td>
                                         <td><input type="button" onClick={this.handleDrawTextAlongArc} value="DrawText" />
@@ -550,9 +613,12 @@ class Bg2d extends React.Component {
                                     </tr>
                                 </tbody>
                             </table>
+                            <div id="log" style={{ border: "2px solid red",textAlign:"left" }}>
+
+                            </div>
                         </div>
 
-                        <div class="droit">
+                        <div   class="droit">
                             <canvas ref={this.refCanvas} id="bg2dCanvas" width="500" height="500" draggable="true"></canvas>
                         </div>
                     </div>
