@@ -70,27 +70,27 @@ class Bg3dParam extends Component {
                         <tr>
                             <td>Hauteur Vert:</td>
                             <td> <input type="number" id="hauteurVert" value={this.state.hauteurVert} onChange={this.handleChange} /> </td>
-                            <td> </td>
-                        </tr>
+                            <td></td>
+                      </tr>
                         <tr>
                             <td>Hauteur Bleu:</td>
                             <td> <input type="number" id="hauteurBleu" value={this.state.hauteurBleu} onChange={this.handleChange} /> </td>
-                            <td> </td>
-                        </tr>
+                            <td></td>
+                      </tr>
                         <tr>
-                            <td>Nombre de points:</td>
+                            <td>Nombre de points de maillage (1 coté):</td>
                             <td> <input type="number" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
-                            <td>Nombre de points du maillage</td>
-                        </tr>
+                            <td></td>
+                       </tr>
                         <tr>
                             <td>Echelle sortie:</td>
                             <td> <input type="number" id="scale" value={this.state.scale} onChange={this.handleChange} /> </td>
-                            <td>Echelle</td>
-                        </tr>
+                            <td></td>
+                       </tr>
                          <tr>
                             <td><input type="button" onClick={this.handleUpdate} value="Update" /> </td>
                             <td> <input type="button" onClick={this.handleButtonClick1} value="Calcul" /> </td>
-                            <td><input type="button" onClick={this.handleButtonClick2} value="getStl" /></td>
+                            <td><input type="button" style={{border: '3px solid red'}} onClick={this.handleButtonClick2} value="getStl" /></td>
                         </tr>
 
                     </tbody>

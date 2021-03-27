@@ -1,6 +1,6 @@
 
 import './App.css';
-import BgUpload from './BgUpload';
+import Bg2d from './Bg2d';
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
       </div>
 
 
-      <BgUpload />
+      <Bg2d />
 
 
 

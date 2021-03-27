@@ -5,7 +5,7 @@ import Bg3d from './Bg3d';
 import { saveAs } from 'file-saver';
 const React = require('react');
 
-class BgUpload extends React.Component {
+class Bg2d extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -459,14 +459,7 @@ class BgUpload extends React.Component {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            couleur courante <select id="selectedColor" style={{color: this.state.colorSelected}} onChange={this.handleSelectColor}>
-                                                <option value="rgb(255,0,0)" style={{color: '#ff0000'}}>r: ff0000</option>
-                                                <option value="rgb(0,255,0)" style={{color: '#00ff00'}}>v: 00ff00</option>
-                                                <option value="rgb(0,0,255)" style={{color: '#0000ff'}}>b: 0000ff</option>
-                                                <option value="rgb(0,0,0)">n: 000000</option>
-                                                <option value="rgb(255,255,255)">b: ffffff</option>
-                                            </select>
+                                        <td>                                        
                                         </td>
                                         <td><input type="button" onClick={this.handleInverse} value="InverseImage" />
                                         </td>
@@ -482,6 +475,19 @@ class BgUpload extends React.Component {
                                         <td></td>
                                         <td><input type="button" onClick={this.handleFiltreImageSaturation} value="Filtre Sturation" />
                                         </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            couleur courante <select id="selectedColor" style={{color: this.state.colorSelected}} onChange={this.handleSelectColor}>
+                                                <option value="rgb(255,0,0)" style={{color: '#ff0000'}}>r: ff0000</option>
+                                                <option value="rgb(0,255,0)" style={{color: '#00ff00'}}>v: 00ff00</option>
+                                                <option value="rgb(0,0,255)" style={{color: '#0000ff'}}>b: 0000ff</option>
+                                                <option value="rgb(0,0,0)">n: 000000</option>
+                                                <option value="rgb(255,255,255)">b: ffffff</option>
+                                            </select>
+                                        </td>
+                                        <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
@@ -510,7 +516,7 @@ class BgUpload extends React.Component {
                                     </tr>
                                     <tr>
                                         <td>
-                                            <input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChangeString} />
+                                          Text:  <input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChangeString} />
 
                                         </td>
                                         <td><input type="button" onClick={this.handleDrawTextAlongArc} value="DrawText" />
@@ -562,4 +568,4 @@ class BgUpload extends React.Component {
     }
 }
 
-export default BgUpload;
+export default Bg2d;
