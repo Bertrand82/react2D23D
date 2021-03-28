@@ -23,7 +23,7 @@ class Bg3d extends Component {
         this.state = {
             image2Dsrc: props.image2Dsrc,
             fileName: props.fileName,
-            hauteurNoir: 25,
+            hauteurNoir: 30,
             hauteurRouge: 25,
             hauteurVert: 20,
             hauteurBleu: 20,

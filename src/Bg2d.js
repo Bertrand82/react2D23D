@@ -2,6 +2,7 @@
 import { Blending } from 'three';
 
 import Bg3d from './Bg3d';
+import * as BgUtil from './BgUtil.js';
 import { saveAs } from 'file-saver';
 const React = require('react');
 
@@ -15,7 +16,9 @@ class Bg2d extends React.Component {
             drawCircleRayon: 140,
             colorSelected: '#ff0000',
             drawFontSize: '50px',
-            drawFontName: 'carolingia'
+            drawFontName: 'carolingia',
+            couleurPermutationSource: '0xffffff',
+            couleurPermutationDestination: '0xffff00',
         }
         this.handleChangeString = this.handleChangeString.bind(this);
         this.handleChangeLoadImage = this.handleChangeLoadImage.bind(this);
@@ -35,7 +38,7 @@ class Bg2d extends React.Component {
         this.handleFiltreImageSaturation = this.handleFiltreImageSaturation.bind(this);
         this.handleUndo = this.handleUndo.bind(this);
         this.display = this.display.bind(this);
-
+        this.handlePermuteCouleurs=this.handlePermuteCouleurs.bind(this);
         this.refCanvas = React.createRef();
         this.ref3d = React.createRef();
 
@@ -46,7 +49,8 @@ class Bg2d extends React.Component {
     componentDidMount() {
         this.initCanvasText();
         this.display("2d");
-
+        var color = this.state.colorSelected;        
+        this.selectColor(color);
     }
     refCanvas;
     ctx;
@@ -93,6 +97,11 @@ class Bg2d extends React.Component {
             fileName: event.target.files[0].name
         })
         this.displayOnCanvas2(url, "bg2dCanvas");
+    }
+
+    handlePermuteCouleurs(event){
+        this.log("Permute couleur de "+this.state.couleurPermutationSource+" à "+this.state.couleurPermutationDestination);
+        this.permuteCouleurs(this.state.couleurPermutationSource,this.state.couleurPermutationDestination);
     }
 
     displayOnCanvas2(urlImage, destCanvasId) {
@@ -424,6 +433,28 @@ class Bg2d extends React.Component {
         this.ctx.putImageData(imageData, 0, 0);
     }
 
+    permuteCouleurs(color1,color2){
+        this.process_Z_1();
+        var imageData = this.ctx.getImageData(0, 0, this.w, this.h);
+        var colors = BgUtil.getColorsArray(color1);
+        var colors2 = BgUtil.getColorsArray(color2);
+        this.log('colors ',colors)
+        this.log('colors2 ',colors2)
+        var data = imageData.data;
+        for (var i = 0; i < data.length; i=i+4) {
+            let r = data[i];
+            let v = data[i+1]
+            let b =data[i+1]
+            if ((r === colors[0])&&(v===colors[1]) && (b===colors[2])){
+                data[i]=colors2[0];
+                data[i+1]=colors2[1];
+                data[i+2]=colors2[2];
+            }
+        }
+        this.ctx.putImageData(imageData, 0, 0);
+        this.log('permuteCouleurs done')
+    }
+
 
     filtreImageSaturationPixel(x, y, data) {
         var i = 4 * (y * this.w + x);
@@ -581,14 +612,22 @@ class Bg2d extends React.Component {
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td></td>
+                                        <td>Elimine les pixels isolés</td>
                                         <td><input type="button" onClick={this.handleFiltrePixelOrphelin} value="Filtre pixel" />
                                         </td>
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td></td>
+                                        <td>Limite à 5 couleurs (R V B , noir, blanc)</td>
                                         <td><input type="button" onClick={this.handleFiltreImageSaturation} value="Filtre Sturation" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Permute 
+                                            <input style={{width: '40px'}} type="text" value={this.state.couleurPermutationSource}></input> et 
+                                            <input style={{width: '40px'}} type="text" value={this.state.couleurPermutationDestination}></input></td>
+                                        <td><input type="button" onClick={this.handlePermuteCouleurs} value="Permute Couleurs" />
                                         </td>
                                         <td></td>
                                     </tr>
@@ -654,7 +693,7 @@ class Bg2d extends React.Component {
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td><input type="button" onClick={this.handlePatern} value="Pattern Predefini 2" />
+                                        <td><input type="button" onClick={this.handlePatern2} value="Pattern Predefini 2" />
                                         </td>
                                         <td></td>
                                     </tr>
