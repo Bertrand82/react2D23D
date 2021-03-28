@@ -23,7 +23,8 @@ class Bg2d extends React.Component {
         this.handleInverse = this.handleInverse.bind(this);
         this.handleFiltrePixelOrphelin = this.handleFiltrePixelOrphelin.bind(this);
         this.handleSaveImage = this.handleSaveImage.bind(this);
-        this.handleDrawTextAlongArc = this.handleDrawTextAlongArc.bind(this);
+        this.handleDrawTextAlongArc1 = this.handleDrawTextAlongArc1.bind(this);
+        this.handleDrawTextAlongArc2 = this.handleDrawTextAlongArc2.bind(this);
         this.handleDrawCercle = this.handleDrawCercle.bind(this);
         this.handleSelectColor = this.handleSelectColor.bind(this);
         this.handlePatern1 = this.handlePatern1.bind(this);
@@ -140,7 +141,7 @@ class Bg2d extends React.Component {
         this.imageData_Z_1 =this.imageData_Z_2;
         this.imageData_Z_2 = this.imageData_Z_3;
         this.imageData_Z_3 = this.imageData_Z_4;
-        this.imageData_Z_4 = oldImageData;
+        this.imageData_Z_4 = oldImageData
         this.ctx.putImageData(this.imageData, 0, 0);
 
     }
@@ -214,13 +215,20 @@ class Bg2d extends React.Component {
         });
     }
 
-    handleDrawTextAlongArc() {
+    handleDrawTextAlongArc1() {
        this.process_Z_1();
-        console.log("handleDrawTextAlongArc " + this.state.drawTextInput);
+        this.log("handleDrawTextAlongArc1 " + this.state.drawTextInput);
         var rayon = this.state.drawCircleRayon;
         var angleByChar = 30.0 / rayon;
-        this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar)
+        this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar,1)
     }
+    handleDrawTextAlongArc2() {
+        this.process_Z_1();
+         this.log("handleDrawTextAlongArc " + this.state.drawTextInput);
+         var rayon = this.state.drawCircleRayon;
+         var angleByChar = 30.0 / rayon;
+         this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar,-1)
+     }
 
     handleDrawCercle() {
         this.process_Z_1();
@@ -283,37 +291,37 @@ class Bg2d extends React.Component {
         this.ctx.font = font;
     }
 
-    drawTextAlongArc(str, radius, angleByChar) {
-        this.log("drawTextAlongArc " + str + "  radius : " + radius)
+    drawTextAlongArc(str, radius, angleByChar, sens) {
+        this.log("drawTextAlongArc " + str + "  radius : " + radius+" sens:   "+sens)
         this.setFont();
         var centerX = this.w / 2;
         var centerY = this.h / 2;
         console.log("drawTextAlongArc B >" + this.state.colorSelected + "<");
         var len = str.length, s;
         var angle = len * angleByChar;
-        console.log("handleDrawTextAlongArc str " + str);
-        console.log("handleDrawTextAlongArc angle " + angle);
+        console.log("drawTextAlongArc str " + str);
+        console.log("drawTextAlongArc angle " + angle);
 
-        console.log("handleDrawTextAlongArc ", this.ctx);
+        console.log("drawTextAlongArc ", this.ctx);
         this.ctx.save();
 
         this.ctx.translate(centerX, centerY);
-        this.ctx.rotate(-1 * angle / 2);
-        this.ctx.rotate(-1 * (angle / len) / 2);
+        this.ctx.rotate(sens * angle / 2);
+        this.ctx.rotate(sens * (angle / len) / 2);
         for (var n = 0; n < len; n++) {
             var angle
             var isUpperCase
             if (str[n] === str[n].toUpperCase()) {
                 isUpperCase = true;
-                angle = 2.1 * angleByChar;
+                angle = sens * 2.1 * angleByChar;
             } else {
                 isUpperCase = false;
-                angle = angleByChar;
+                angle = sens *angleByChar;
             }
             console.log("drawTextAlongArc " + str[n] + "  " + isUpperCase)
 
             this.ctx.save();
-            this.ctx.translate(0, -1 * radius);
+            this.ctx.translate(0,-1* sens * radius);
             s = str[n];
             this.ctx.fillText(s, 0, 0);
 
@@ -626,9 +634,10 @@ class Bg2d extends React.Component {
                                             Text:  <input type="text" id="drawTextInput" value={this.state.drawTextInput} onChange={this.handleChangeString} />
 
                                         </td>
-                                        <td><input type="button" onClick={this.handleDrawTextAlongArc} value="DrawText" />
+                                        <td><input type="button" onClick={this.handleDrawTextAlongArc1} value="DrawText" />
                                         </td>
-                                        <td></td>
+                                        <td><input type="button" onClick={this.handleDrawTextAlongArc2} value="DrawText" />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><input type="text" id="drawCircleRayon" value={this.state.drawCircleRayon} onChange={this.handleChangeString} /></td>
