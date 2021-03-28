@@ -32,6 +32,7 @@ class Bg2d extends React.Component {
         this.handleSelectFont = this.handleSelectFont.bind(this);
         this.handleClean = this.handleClean.bind(this);
         this.handleFiltreImageSaturation = this.handleFiltreImageSaturation.bind(this);
+        this.handleUndo = this.handleUndo.bind(this);
         this.display = this.display.bind(this);
 
         this.refCanvas = React.createRef();
@@ -51,6 +52,7 @@ class Bg2d extends React.Component {
     w;
     h;
     imageData;
+    imageData_Z_1;
 
 
 
@@ -100,14 +102,38 @@ class Bg2d extends React.Component {
         }
     }
 
+    process_Z_1() {
+        let imageDataCurrent = this.ctx.getImageData(0, 0, this.w, this.h);
+        this.imageData_Z_1 = new ImageData(
+            imageDataCurrent.width,
+            imageDataCurrent.height
+        );
+        console.log("process_Z_1 imageDataCurrent ", imageDataCurrent);
+        console.log("process_Z_1 imageData_Z_1 ", this.imageData_Z_1);
+        for (let i = 0; i < imageDataCurrent.data.length; i++) {
+            let v = imageDataCurrent.data[i]
+            this.imageData_Z_1.data[i] = v
+        }
+    }
+
     handleClean() {
+        this.log("Clean")
+        this.process_Z_1();
         this.ctx.rect(0, 0, this.w, this.h);
         this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
         this.ctx.fill();
     }
 
+    handleUndo() {
+        this.log("Undo");
+        this.imageData = this.imageData_Z_1;
+        this.ctx.putImageData(this.imageData, 0, 0);
+
+    }
+
 
     handleInverse() {
+        
         this.log("handleInverse w:" + this.imageData.width + "h:" + this.imageData.height);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
         for (var i = 0; i < this.w; i++) {
@@ -132,6 +158,7 @@ class Bg2d extends React.Component {
         this.filtreImageSaturation();
     }
     handleFiltrePixelOrphelin() {
+        this.process_Z_1();
         this.log("handleFiltrePixelOrphelin start " + this.h + " " + this.w);
         var oldImageData = this.ctx.getImageData(0, 0, this.h, this.w);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
@@ -174,6 +201,7 @@ class Bg2d extends React.Component {
     }
 
     handleDrawTextAlongArc() {
+       this.process_Z_1();
         console.log("handleDrawTextAlongArc " + this.state.drawTextInput);
         var rayon = this.state.drawCircleRayon;
         var angleByChar = 30.0 / rayon;
@@ -181,7 +209,7 @@ class Bg2d extends React.Component {
     }
 
     handleDrawCercle() {
-
+        this.process_Z_1();
         console.log("handleDrawCercle colorSelected :>" + this.state.colorSelected + "<");
         var rayon = this.state.drawCircleRayon;
         this.drawCercleFill(rayon);
@@ -362,9 +390,10 @@ class Bg2d extends React.Component {
 
 
     filtreImageSaturation() {
+        this.process_Z_1();
         var imageData = this.ctx.getImageData(0, 0, this.w, this.h);
         var data = imageData.data;
-        console.log("filtreImageSaturation");
+        this.log("filtreImageSaturation");
         for (var i = 0; i < this.w; i++) {
             for (var j = 0; j < this.h; j++) {
                 this.filtreImageSaturationPixel(i, j, data);
@@ -519,6 +548,7 @@ class Bg2d extends React.Component {
                                             <input type="button" onClick={this.handleClean} value="clean / reset" />
                                         </td>
                                         <td>
+                                            <input type="button" onClick={this.handleUndo} value="Undo" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -613,12 +643,12 @@ class Bg2d extends React.Component {
                                     </tr>
                                 </tbody>
                             </table>
-                            <div id="log" style={{ border: "2px solid red",textAlign:"left" }}>
+                            <div id="log" style={{ border: "2px solid red", textAlign: "left" }}>
 
                             </div>
                         </div>
 
-                        <div   class="droit">
+                        <div class="droit">
                             <canvas ref={this.refCanvas} id="bg2dCanvas" width="500" height="500" draggable="true"></canvas>
                         </div>
                     </div>
