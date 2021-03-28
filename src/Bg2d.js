@@ -53,6 +53,9 @@ class Bg2d extends React.Component {
     h;
     imageData;
     imageData_Z_1;
+    imageData_Z_2;
+    imageData_Z_3;
+    imageData_Z_4;
 
 
 
@@ -104,16 +107,22 @@ class Bg2d extends React.Component {
 
     process_Z_1() {
         let imageDataCurrent = this.ctx.getImageData(0, 0, this.w, this.h);
-        this.imageData_Z_1 = new ImageData(
+        this.imageData_Z_4=this.imageData_Z_3;
+        this.imageData_Z_3=this.imageData_Z_2;
+        this.imageData_Z_2=this.imageData_Z_1;
+        this.imageData_Z_1 =this.cloneImageData(imageDataCurrent);
+    }
+
+    cloneImageData(imageDataCurrent){
+        var imd = new ImageData(
             imageDataCurrent.width,
             imageDataCurrent.height
         );
-        console.log("process_Z_1 imageDataCurrent ", imageDataCurrent);
-        console.log("process_Z_1 imageData_Z_1 ", this.imageData_Z_1);
         for (let i = 0; i < imageDataCurrent.data.length; i++) {
             let v = imageDataCurrent.data[i]
-            this.imageData_Z_1.data[i] = v
+            imd.data[i] = v
         }
+        return imd;
     }
 
     handleClean() {
@@ -126,7 +135,12 @@ class Bg2d extends React.Component {
 
     handleUndo() {
         this.log("Undo");
+        var oldImageData = this.ctx.getImageData(0, 0, this.h, this.w);
         this.imageData = this.imageData_Z_1;
+        this.imageData_Z_1 =this.imageData_Z_2;
+        this.imageData_Z_2 = this.imageData_Z_3;
+        this.imageData_Z_3 = this.imageData_Z_4;
+        this.imageData_Z_4 = oldImageData;
         this.ctx.putImageData(this.imageData, 0, 0);
 
     }
