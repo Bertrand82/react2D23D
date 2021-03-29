@@ -166,7 +166,8 @@ class Bg2d extends React.Component {
 
 
     handleInverse() {
-        
+        this.process_Z_1();
+        this.imageData = this.ctx.getImageData(0, 0, this.h, this.w);
         this.log("handleInverse w:" + this.imageData.width + "h:" + this.imageData.height);
         var newImageData = new ImageData(this.imageData.width, this.imageData.height);
         for (var i = 0; i < this.w; i++) {
@@ -304,9 +305,10 @@ class Bg2d extends React.Component {
     }
     setFont() {
         console.log(" Font size : " + this.state.drawFontSize)
-        var font = this.state.drawFontSize + " " + this.state.drawFontName;
+        var font = "bold "+this.state.drawFontSize + " " + this.state.drawFontName;
         console.log("Font  : " + font)
         this.ctx.font = font;
+        
     }
 
     drawTextAlongArc(str, radius, angleByChar, sens) {
