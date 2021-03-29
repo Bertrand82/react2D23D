@@ -199,8 +199,8 @@ class Bg3d extends Component {
         const material = new THREE.MeshBasicMaterial({ color: color, wireframe: true });
 
         const cube = new THREE.Mesh(geometry, material);
-        cube.position.x = this.w/2;
-        cube.position.y = this.h/2;
+        cube.position.x = 0;
+        cube.position.y = 0;
         cube.position.z = 0;
         scene.add(cube);
 
