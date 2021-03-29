@@ -331,7 +331,7 @@ class Bg2d extends React.Component {
             var isUpperCase
             if (str[n] === str[n].toUpperCase()) {
                 isUpperCase = true;
-                angle = sens * 2.1 * angleByChar;
+                angle = sens * 1.5 * angleByChar;
             } else {
                 isUpperCase = false;
                 angle = sens *angleByChar;

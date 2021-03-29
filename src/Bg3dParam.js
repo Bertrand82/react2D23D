@@ -12,6 +12,10 @@ class Bg3dParam extends Component {
             hauteurRouge: props.data.hauteurRouge,
             hauteurVert: props.data.hauteurVert,
             hauteurBleu: props.data.hauteurBleu,
+            bombageNoir: props.data.bombageNoir,
+            bombageRouge: props.data.bombageRouge,
+            bombageVert: props.data.bombageVert,
+            bombageBleu: props.data.bombageBleu,
             nbPoints: props.data.nbPoints,
             titre: props.data.titre,
             scale: props.data.scale
@@ -58,33 +62,33 @@ class Bg3dParam extends Component {
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Hauteur Noir:</td>
-                            <td><input type="text" id="hauteurNoir" value={this.state.hauteurNoir} onChange={this.handleChange} /> </td>
-                            <td></td>
+                            <td> Noir:</td>
+                            <td>Hauteur: <input style={{width:'60px'}} type="text" id="hauteurNoir" value={this.state.hauteurNoir} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{width:'30px'}} type="text" id="bombageNoir" value={this.state.bombageNoir} onChange={this.handleChange} /></td>
                         </tr>
                         <tr>
-                            <td>Hauteur Rouge:</td>
-                            <td><input type="number" id="hauteurRouge" value={this.state.hauteurRouge} onChange={this.handleChange} /> </td>
-                            <td></td>
+                            <td> Rouge:</td>
+                            <td>Hauteur <input style={{width:'60px'}} type="number" id="hauteurRouge" value={this.state.hauteurRouge} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{width:'30px'}} type="text" id="bombageRouge" value={this.state.bombageRouge} onChange={this.handleChange} /></td>
                         </tr>
                         <tr>
-                            <td>Hauteur Vert:</td>
-                            <td> <input type="number" id="hauteurVert" value={this.state.hauteurVert} onChange={this.handleChange} /> </td>
-                            <td></td>
+                            <td> Vert:</td>
+                            <td>Hauteur <input style={{width:'60px'}} type="number" id="hauteurVert" value={this.state.hauteurVert} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{width:'30px'}} type="text" id="bombageVert" value={this.state.bombageVert} onChange={this.handleChange} /> </td>
                       </tr>
                         <tr>
-                            <td>Hauteur Bleu:</td>
-                            <td> <input type="number" id="hauteurBleu" value={this.state.hauteurBleu} onChange={this.handleChange} /> </td>
-                            <td></td>
+                            <td>Bleu:</td>
+                            <td>Hauteur  <input style={{width:'60px'}} type="number" id="hauteurBleu" value={this.state.hauteurBleu} onChange={this.handleChange} /> </td>
+                            <td>Bombage <input style={{width:'30px'}} type="text" id="bombageBleu" value={this.state.bombageBleu} onChange={this.handleChange} /></td>
                       </tr>
                         <tr>
                             <td>Nombre de points de maillage (1 coté):</td>
-                            <td> <input type="number" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
+                            <td> <input style={{width:'60px'}} type="number" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
                             <td></td>
                        </tr>
                         <tr>
                             <td>Echelle sortie:</td>
-                            <td> <input type="number" id="scale" value={this.state.scale} onChange={this.handleChange} /> </td>
+                            <td> <input style={{width:'60px'}} type="number" id="scale" value={this.state.scale} onChange={this.handleChange} /> </td>
                             <td></td>
                        </tr>
                          <tr>

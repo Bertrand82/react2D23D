@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TrackballControls from './TrackballControls';
 
+import * as BgUtil from './BgUtil.js';
 import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
@@ -27,6 +28,10 @@ class Bg3d extends Component {
             hauteurRouge: 25,
             hauteurVert: 20,
             hauteurBleu: 20,
+            bombageNoir: 0.4,
+            bombageRouge: 0,
+            bombageVert: 0.4,
+            bombageBleu: 0.4,
             nbPoints: 200,
             couleurFond: 0xffffff,
             titre: 'r2d23d',
@@ -39,11 +44,12 @@ class Bg3d extends Component {
 
     process3d() {
         console.log("process3d start ", this.props);
+
         this.initImageData(this.props.image2Dsrc);
 
-
-
     }
+
+
 
 
     componentDidMount() {
@@ -81,6 +87,8 @@ class Bg3d extends Component {
     h;
     iMin = 0;
     jMin = 0;
+    arrondi = true;
+
     initImageData(idCanvas) {
         console.log("Init 3D", idCanvas);
         var canvas1 = document.getElementById(idCanvas);
@@ -88,7 +96,7 @@ class Bg3d extends Component {
         if (canvas1) {
             this.w = canvas1.width;
             this.h = canvas1.height;
-            var ctx2 = canvas1.getContext('2d');
+            let ctx2 = canvas1.getContext('2d');
             this.imageData = ctx2.getImageData(0, 0, this.w, this.h);
             console.log("Init 3D w " + this.w + "  h: " + this.h);
         } else {
@@ -115,8 +123,6 @@ class Bg3d extends Component {
         const normalsHaut = [];
         const normalsBas = [];
 
-
-        var plancher______________OLD = 0;
         console.log(" this.w " + this.w);
         console.log(" this.h " + this.h);
         console.log("init2D23D_full  kk " + kk);
@@ -133,8 +139,6 @@ class Bg3d extends Component {
                 } else {
                     nDisplayableNo++;
                 }
-
-                //console.log(" i " + i + " j " + j + "  isDisplayable " + isDisplayable2 + "  isFondImagePixel2 :" + this.isFondImagePixel2(i, j));
 
                 if (isDisplayable2) {
 
@@ -206,7 +210,8 @@ class Bg3d extends Component {
 
 
     }  ///  ///////////////////////////////////////////////////////////////////////
-
+    distanceBordArray;
+   
     processPosition(i, j, positions, isHaut) {
         var hauteur = 0;
         if (isHaut) {
@@ -221,29 +226,15 @@ class Bg3d extends Component {
         var positionHaut2 = [i * scale, j * scale, hauteur * scale];
         positions.push(...positionHaut2);
     }
-    initMinimums() {
-        console.log("initMinimum   ");
-        for (var i = 0; i < this.w; i++) {
-            for (var j = 0; j < this.h; j++) {
-                var indexPixel = this.getPixelXYIndex(i, j);
-                var pixel = this.getPixelRGB(indexPixel);
-                if (!this.isFondImageConnex(pixel)) {
-                    if (i < this.iMin) { this.iMin = i; }
-                    if (j < this.jMin) { this.jMin = j; }
-                }
-            }
-        }
-
-    }
 
 
-    
+
+
 
     isFondImagePixel2(i, j) {
         var indexPixel = this.getPixelXYIndex(i, j);
         var pixel = this.getPixelRGB(indexPixel);
         var isFondImage = (pixel === this.state.couleurFond);
-        //console.log("isFondImagePixel2 " +i+"  "+j+"  isFondImage "+isFondImage+"  "+pixel+"   "+this.state.couleurFond);
         return isFondImage;
     }
 
@@ -252,24 +243,24 @@ class Bg3d extends Component {
 
         if (!this.isFondImagePixel2(i, j)) {
             return true;
-        }else  if ((i + kk) < this.w) {
+        } else if ((i + kk) < this.w) {
             if (!this.isFondImagePixel2(i + kk, j)) {
-                return true;                
+                return true;
             }
-        }else if ((j+kk) < this.h){
-            if (!this.isFondImagePixel2(i, j+kk)) {
-                return true;                
+        } else if ((j + kk) < this.h) {
+            if (!this.isFondImagePixel2(i, j + kk)) {
+                return true;
             }
-        }else if (( (j+kk) < this.h) && ( (i+kk) < this.w)){
-            if (!this.isFondImagePixel2(i+kk, j+kk)) {
-                return true;                
+        } else if (((j + kk) < this.h) && ((i + kk) < this.w)) {
+            if (!this.isFondImagePixel2(i + kk, j + kk)) {
+                return true;
             }
         }
 
         return false;
 
     }
-
+    
     getHauteurFromColor2(ii, jj) {
         if (ii >= this.w) {
             return 0;
@@ -282,17 +273,24 @@ class Bg3d extends Component {
         var red = data[k];
         var green = data[k + 1];
         var blue = data[k + 2];
+
         if (red === 0xff && green === 0xff && blue === 0xff) {
             return 0;// Blanc
-        } else if (red === 0xff) {
-            return this.state.hauteurRouge;
-        } else if (green === 0xff) {
-            return this.state.hauteurVert;
-        } else if (blue === 0xff) {
-            return this.state.hauteurBleu;
-        } else {
-            return this.state.hauteurNoir;
         }
+        let distanceBord = 0;
+        if (this.arrondi) {
+            distanceBord = BgUtil.getDistanceBorder(ii, jj, this.imageData);
+        }
+        if (red === 0xff) {
+            return this.state.hauteurRouge + distanceBord * this.state.bombageRouge;
+        } else if (green === 0xff) {
+            return this.state.hauteurVert + distanceBord * this.state.bombageVert;
+        } else if (blue === 0xff) {
+            return this.state.hauteurBleu + distanceBord * this.state.bombageBleu;
+        } else {
+            return this.state.hauteurNoir + distanceBord * this.state.bombageNoir;
+        }
+
 
     }
     getPixelRGB(i) {
@@ -381,7 +379,6 @@ class Bg3d extends Component {
 
     getStl = () => {
         console.log("getStl start -----" + THREE);
-        // this.initMinimums();
         var exporter = new STLExporter();
         var sceneStl = new THREE.Scene();
         this.init2D23D_full(sceneStl, 1);

@@ -22,27 +22,27 @@ export function extractContours(imageData) {
         imageData.width,
         imageData.height
     );
-    console.log("imageDataNew ",imageDataNew)
+    console.log("imageDataNew ", imageDataNew)
     let dataNew = imageDataNew.data;
-    console.log("data ",dataNew)
+    console.log("data ", dataNew)
     let nContour = 0;
     let nContourNo = 0;
     for (var i = 0; i < imageData.width; i++) {
         for (var j = 0; j < imageData.height; j++) {
             let k = 4 * (i * imageData.width + j);
-           
+
             if (isContour(i, j, imageData)) {
                 nContour++;
                 dataNew[k] = 0;
                 dataNew[k + 1] = 0;
                 dataNew[k + 2] = 0xff;
-                dataNew[k+3] = 0xff;
+                dataNew[k + 3] = 0xff;
             } else {
                 nContourNo++;
                 dataNew[k] = 0xff;
                 dataNew[k + 1] = 0;
                 dataNew[k + 2] = 0;
-                dataNew[k+3] = 0xff;
+                dataNew[k + 3] = 0xff;
             }
         }
     }
@@ -101,3 +101,44 @@ function colorEqual(color0, color1) {
     }
     return true;
 }
+
+export function getDistanceBorder(i, j, imageData) {
+    let colors0 = getColors(i, j, imageData);
+    
+    for (var n = 1; n < imageData.width; n++) {
+        let colors1 = getColors(i + n, j, imageData);
+        if (!colorEqual(colors0, colors1)) {
+            return n;
+        }
+        let colors2 = getColors(i + n, j + n, imageData);
+        if (!colorEqual(colors0, colors2)) {
+            return n;
+        }
+        let colors3 = getColors(i + n, j - n, imageData);
+        if (!colorEqual(colors0, colors3)) {
+            return n;
+        }
+        let colors4 = getColors(i, j + n, imageData);
+        if (!colorEqual(colors0, colors4)) {
+            return n;
+        }
+        let colors5 = getColors(i, j - n, imageData);
+        if (!colorEqual(colors0, colors5)) {
+            return n;
+        }
+        let colors6 = getColors(i - n, j - n, imageData);
+        if (!colorEqual(colors0, colors6)) {
+            return n;
+        }
+        let colors7 = getColors(i - n, j + n, imageData);
+        if (!colorEqual(colors0, colors7)) {
+            return n;
+        }
+        let colors8 = getColors(i - n, j, imageData);
+        if (!colorEqual(colors0, colors8)) {
+            return n;
+        }
+    }
+}
+
+
