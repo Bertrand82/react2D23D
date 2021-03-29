@@ -39,6 +39,7 @@ class Bg2d extends React.Component {
         this.handleUndo = this.handleUndo.bind(this);
         this.display = this.display.bind(this);
         this.handlePermuteCouleurs=this.handlePermuteCouleurs.bind(this);
+        this.handleExtractionContour=this.handleExtractionContour.bind(this);
         this.refCanvas = React.createRef();
         this.ref3d = React.createRef();
 
@@ -62,7 +63,14 @@ class Bg2d extends React.Component {
     imageData_Z_3;
     imageData_Z_4;
 
-
+    handleExtractionContour(event) {
+        this.process_Z_1();
+        this.log("extraction contour")
+        var imageDataCurrent = this.ctx.getImageData(0, 0, this.w, this.h);
+        let imageDataNew = BgUtil.extractContours(imageDataCurrent);
+        this.ctx.putImageData(imageDataNew, 0, 0);
+        this.logAppend('extraction contour done');
+    }
 
     handleDisplay3D(event) {
         console.log("handleDisplay3D", event);
@@ -97,6 +105,7 @@ class Bg2d extends React.Component {
             fileName: event.target.files[0].name
         })
         this.displayOnCanvas2(url, "bg2dCanvas");
+        this.process_Z_1();
     }
 
     handlePermuteCouleurs(event){
@@ -619,7 +628,7 @@ class Bg2d extends React.Component {
                                     </tr>
                                     <tr>
                                         <td>Limite à 5 couleurs (R V B , noir, blanc)</td>
-                                        <td><input type="button" onClick={this.handleFiltreImageSaturation} value="Filtre Sturation" />
+                                        <td><input type="button" onClick={this.handleFiltreImageSaturation} value="Filtre Saturation" />
                                         </td>
                                         <td></td>
                                     </tr>
@@ -701,6 +710,12 @@ class Bg2d extends React.Component {
                                         <td>
                                         </td>
                                         <td><input type="button" onClick={this.handleSaveImage} value="Save Image" /></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        </td>
+                                        <td><input type="button" onClick={this.handleExtractionContour} value="Extraction contour" /></td>
                                         <td></td>
                                     </tr>
                                 </tbody>
