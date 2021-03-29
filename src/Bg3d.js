@@ -116,7 +116,6 @@ class Bg3d extends Component {
     init2D23D_full(scene, kk) {  ///  ////////////////////////////////////////////////////////////////////////
 
 
-        var pointB = false;
         const positionsHaut = [];
         const positionsBas = [];
 
@@ -129,8 +128,8 @@ class Bg3d extends Component {
         var scale = this.state.scale;
         var nDisplayable = 0;
         var nDisplayableNo = 0;
-        for (var i = 0; i < this.w; i = i + kk) {
-            for (var j = 0; j < this.h; j = j + kk) {
+        for (var i = 0; i < this.w-kk; i = i + kk) {
+            for (var j = 0; j < this.h-kk; j = j + kk) {
 
 
                 var isDisplayable2 = this.isDisplayableConnex(i, j, kk)
@@ -196,12 +195,12 @@ class Bg3d extends Component {
         const normalNumComponents = 3;
         geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
         geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
-        const color = 0xffFF88;
+        const color = 0xffff88;
         const material = new THREE.MeshBasicMaterial({ color: color, wireframe: true });
 
         const cube = new THREE.Mesh(geometry, material);
-        cube.position.x = 0;
-        cube.position.y = 0;
+        cube.position.x = this.w/2;
+        cube.position.y = this.h/2;
         cube.position.z = 0;
         scene.add(cube);
 
@@ -251,7 +250,8 @@ class Bg3d extends Component {
             if (!this.isFondImagePixel2(i, j + kk)) {
                 return true;
             }
-        } else if (((j + kk) < this.h) && ((i + kk) < this.w)) {
+        } 
+        else if (((j + kk) < this.h) && ((i + kk) < this.w)) {
             if (!this.isFondImagePixel2(i + kk, j + kk)) {
                 return true;
             }
