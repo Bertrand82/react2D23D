@@ -19,6 +19,7 @@ class Bg2d extends React.Component {
             drawFontName: 'carolingia',
             couleurPermutationSource: '0xffffff',
             couleurPermutationDestination: '0xffff00',
+            angleInitial: 0
         }
         this.handleChangeString = this.handleChangeString.bind(this);
         this.handleChangeLoadImage = this.handleChangeLoadImage.bind(this);
@@ -318,7 +319,7 @@ class Bg2d extends React.Component {
         var centerY = this.h / 2;
         console.log("drawTextAlongArc B >" + this.state.colorSelected + "<");
         var len = str.length, s;
-        var angle = len * angleByChar;
+        var angle = (this.state.angleInitial*3.14156)/180;
         console.log("drawTextAlongArc str " + str);
         console.log("drawTextAlongArc angle " + angle);
 
@@ -326,8 +327,8 @@ class Bg2d extends React.Component {
         this.ctx.save();
 
         this.ctx.translate(centerX, centerY);
-        this.ctx.rotate(sens * angle / 2);
-        this.ctx.rotate(sens * (angle / len) / 2);
+        this.ctx.rotate(sens * angle );
+        
         for (var n = 0; n < len; n++) {
             var angle
             var isUpperCase
@@ -674,6 +675,15 @@ class Bg2d extends React.Component {
                                                 <option value="MorrisRomanAlternate-Black">MorrisRomanAlternate-Black</option>
                                                 <option value="MorrisRoman-Black">MorrisRoman-Black</option>
                                             </select>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span> Angle Initial (degré) </span>
+                                            <input style={{width:'40px'}} type="number" id="angleInitial" value={this.state.angleInitial} onChange={this.handleChangeString} />
                                         </td>
                                         <td>
                                         </td>
