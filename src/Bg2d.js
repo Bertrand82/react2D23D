@@ -19,6 +19,8 @@ class Bg2d extends React.Component {
             drawFontName: 'carolingia',
             couleurPermutationSource: '0xffffff',
             couleurPermutationDestination: '0xffff00',
+            positionTextX: 50,
+            positionTextY: 50,
             angleInitial: 0
         }
         this.handleChangeString = this.handleChangeString.bind(this);
@@ -39,8 +41,9 @@ class Bg2d extends React.Component {
         this.handleFiltreImageSaturation = this.handleFiltreImageSaturation.bind(this);
         this.handleUndo = this.handleUndo.bind(this);
         this.display = this.display.bind(this);
-        this.handlePermuteCouleurs=this.handlePermuteCouleurs.bind(this);
-        this.handleExtractionContour=this.handleExtractionContour.bind(this);
+        this.handlePermuteCouleurs = this.handlePermuteCouleurs.bind(this);
+        this.handleExtractionContour = this.handleExtractionContour.bind(this);
+        this.handleDrawTextDroit = this.handleDrawTextDroit.bind(this);
         this.refCanvas = React.createRef();
         this.ref3d = React.createRef();
 
@@ -51,7 +54,7 @@ class Bg2d extends React.Component {
     componentDidMount() {
         this.initCanvasText();
         this.display("2d");
-        var color = this.state.colorSelected;        
+        var color = this.state.colorSelected;
         this.selectColor(color);
     }
     refCanvas;
@@ -63,6 +66,13 @@ class Bg2d extends React.Component {
     imageData_Z_2;
     imageData_Z_3;
     imageData_Z_4;
+
+    handleDrawTextDroit(event) {
+        this.process_Z_1();
+        this.log("handleTextDroit : " + this.state.drawTextInput + " X: " + this.state.positionTextX + "  Y: " + this.state.positionTextY);
+        this.setFont();
+        this.ctx.fillText(this.state.drawTextInput, this.state.positionTextX, this.state.positionTextY)
+    }
 
     handleExtractionContour(event) {
         this.process_Z_1();
@@ -109,9 +119,9 @@ class Bg2d extends React.Component {
         this.process_Z_1();
     }
 
-    handlePermuteCouleurs(event){
-        this.log("Permute couleur de "+this.state.couleurPermutationSource+" à "+this.state.couleurPermutationDestination);
-        this.permuteCouleurs(this.state.couleurPermutationSource,this.state.couleurPermutationDestination);
+    handlePermuteCouleurs(event) {
+        this.log("Permute couleur de " + this.state.couleurPermutationSource + " à " + this.state.couleurPermutationDestination);
+        this.permuteCouleurs(this.state.couleurPermutationSource, this.state.couleurPermutationDestination);
     }
 
     displayOnCanvas2(urlImage, destCanvasId) {
@@ -127,13 +137,13 @@ class Bg2d extends React.Component {
 
     process_Z_1() {
         let imageDataCurrent = this.ctx.getImageData(0, 0, this.w, this.h);
-        this.imageData_Z_4=this.imageData_Z_3;
-        this.imageData_Z_3=this.imageData_Z_2;
-        this.imageData_Z_2=this.imageData_Z_1;
-        this.imageData_Z_1 =this.cloneImageData(imageDataCurrent);
+        this.imageData_Z_4 = this.imageData_Z_3;
+        this.imageData_Z_3 = this.imageData_Z_2;
+        this.imageData_Z_2 = this.imageData_Z_1;
+        this.imageData_Z_1 = this.cloneImageData(imageDataCurrent);
     }
 
-    cloneImageData(imageDataCurrent){
+    cloneImageData(imageDataCurrent) {
         var imd = new ImageData(
             imageDataCurrent.width,
             imageDataCurrent.height
@@ -157,7 +167,7 @@ class Bg2d extends React.Component {
         this.log("Undo");
         var oldImageData = this.ctx.getImageData(0, 0, this.h, this.w);
         this.imageData = this.imageData_Z_1;
-        this.imageData_Z_1 =this.imageData_Z_2;
+        this.imageData_Z_1 = this.imageData_Z_2;
         this.imageData_Z_2 = this.imageData_Z_3;
         this.imageData_Z_3 = this.imageData_Z_4;
         this.imageData_Z_4 = oldImageData
@@ -236,19 +246,19 @@ class Bg2d extends React.Component {
     }
 
     handleDrawTextAlongArc1() {
-       this.process_Z_1();
+        this.process_Z_1();
         this.log("handleDrawTextAlongArc1 " + this.state.drawTextInput);
         var rayon = this.state.drawCircleRayon;
         var angleByChar = 30.0 / rayon;
-        this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar,1)
+        this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar, 1)
     }
     handleDrawTextAlongArc2() {
         this.process_Z_1();
-         this.log("handleDrawTextAlongArc " + this.state.drawTextInput);
-         var rayon = this.state.drawCircleRayon;
-         var angleByChar = 30.0 / rayon;
-         this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar,-1)
-     }
+        this.log("handleDrawTextAlongArc " + this.state.drawTextInput);
+        var rayon = this.state.drawCircleRayon;
+        var angleByChar = 30.0 / rayon;
+        this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar, -1)
+    }
 
     handleDrawCercle() {
         this.process_Z_1();
@@ -305,21 +315,21 @@ class Bg2d extends React.Component {
         this.ctx.fill();
     }
     setFont() {
-        console.log(" Font size : " + this.state.drawFontSize)
-        var font = "bold "+this.state.drawFontSize + " " + this.state.drawFontName;
-        console.log("Font  : " + font)
+        this.logAppend(" Font size : " + this.state.drawFontSize)
+        var font = "bold " + this.state.drawFontSize + " " + this.state.drawFontName;
+        this.logAppend("Font  : " + font)
         this.ctx.font = font;
-        
+
     }
 
     drawTextAlongArc(str, radius, angleByChar, sens) {
-        this.log("drawTextAlongArc " + str + "  radius : " + radius+" sens:   "+sens)
+        this.log("drawTextAlongArc " + str + "  radius : " + radius + " sens:   " + sens)
         this.setFont();
         var centerX = this.w / 2;
         var centerY = this.h / 2;
         console.log("drawTextAlongArc B >" + this.state.colorSelected + "<");
         var len = str.length, s;
-        var angle = (this.state.angleInitial*3.14156)/180;
+        var angle = (this.state.angleInitial * 3.14156) / 180;
         console.log("drawTextAlongArc str " + str);
         console.log("drawTextAlongArc angle " + angle);
 
@@ -327,8 +337,8 @@ class Bg2d extends React.Component {
         this.ctx.save();
 
         this.ctx.translate(centerX, centerY);
-        this.ctx.rotate(sens * angle );
-        
+        this.ctx.rotate(sens * angle);
+
         for (var n = 0; n < len; n++) {
             var angle
             var isUpperCase
@@ -337,12 +347,12 @@ class Bg2d extends React.Component {
                 angle = sens * 1.5 * angleByChar;
             } else {
                 isUpperCase = false;
-                angle = sens *angleByChar;
+                angle = sens * angleByChar;
             }
             console.log("drawTextAlongArc " + str[n] + "  " + isUpperCase)
 
             this.ctx.save();
-            this.ctx.translate(0,-1* sens * radius);
+            this.ctx.translate(0, -1 * sens * radius);
             s = str[n];
             this.ctx.fillText(s, 0, 0);
 
@@ -445,22 +455,22 @@ class Bg2d extends React.Component {
         this.ctx.putImageData(imageData, 0, 0);
     }
 
-    permuteCouleurs(color1,color2){
+    permuteCouleurs(color1, color2) {
         this.process_Z_1();
         var imageData = this.ctx.getImageData(0, 0, this.w, this.h);
         var colors = BgUtil.getColorsArray(color1);
         var colors2 = BgUtil.getColorsArray(color2);
-        this.log('colors ',colors)
-        this.log('colors2 ',colors2)
+        this.log('colors ', colors)
+        this.log('colors2 ', colors2)
         var data = imageData.data;
-        for (var i = 0; i < data.length; i=i+4) {
+        for (var i = 0; i < data.length; i = i + 4) {
             let r = data[i];
-            let v = data[i+1]
-            let b =data[i+1]
-            if ((r === colors[0])&&(v===colors[1]) && (b===colors[2])){
-                data[i]=colors2[0];
-                data[i+1]=colors2[1];
-                data[i+2]=colors2[2];
+            let v = data[i + 1]
+            let b = data[i + 1]
+            if ((r === colors[0]) && (v === colors[1]) && (b === colors[2])) {
+                data[i] = colors2[0];
+                data[i + 1] = colors2[1];
+                data[i + 2] = colors2[2];
             }
         }
         this.ctx.putImageData(imageData, 0, 0);
@@ -530,6 +540,7 @@ class Bg2d extends React.Component {
         })
 
     }
+   
     handleChangeNumber(event) {
         console.log("handleChangeNumber event : ", event);
         console.log("handleChangeNumber event.target : ", event.target);
@@ -636,9 +647,9 @@ class Bg2d extends React.Component {
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td>Permute 
-                                            <input style={{width: '40px'}} type="text" value={this.state.couleurPermutationSource}></input> et 
-                                            <input style={{width: '40px'}} type="text" value={this.state.couleurPermutationDestination}></input></td>
+                                        <td>Permute
+                                            <input style={{ width: '40px' }} type="text" value={this.state.couleurPermutationSource}></input> et
+                                            <input style={{ width: '40px' }} type="text" value={this.state.couleurPermutationDestination}></input></td>
                                         <td><input type="button" onClick={this.handlePermuteCouleurs} value="Permute Couleurs" />
                                         </td>
                                         <td></td>
@@ -668,7 +679,7 @@ class Bg2d extends React.Component {
                                         <td>
                                             <span> Font  </span>
                                             <select id="drawFontName" onChange={this.handleSelectFont}>
-                                                <option value="carolingia">carolingia</option>
+                                                <option value="carolingia">{this.state.in}</option>
                                                 <option value="crom.regular">crom.regular</option>
                                                 <option value="Roman_SD">Roman_SD</option>
                                                 <option value="DOMINICA">DOMINICA</option>
@@ -683,7 +694,7 @@ class Bg2d extends React.Component {
                                     <tr>
                                         <td>
                                             <span> Angle Initial (degré) </span>
-                                            <input style={{width:'40px'}} type="number" id="angleInitial" value={this.state.angleInitial} onChange={this.handleChangeString} />
+                                            <input style={{ width: '40px' }} type="number" id="angleInitial" value={this.state.angleInitial} onChange={this.handleChangeString} />
                                         </td>
                                         <td>
                                         </td>
@@ -700,7 +711,16 @@ class Bg2d extends React.Component {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" id="drawCircleRayon" value={this.state.drawCircleRayon} onChange={this.handleChangeString} /></td>
+                                        <td>
+                                            X:<input style={{ width: '40px' }} type="number" id="positionTextX" value={this.state.positionTextX} onChange={this.handleChangeString} />
+                                        Y:<input style={{ width: '40px' }} type="number" id="positionTextY" value={this.state.positionTextY} onChange={this.handleChangeString} />
+                                        </td>
+                                        <td><input type="button" onClick={this.handleDrawTextDroit} value="DrawText Droit" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rayon: <input style={{ width: '80px' }} type="number" id="drawCircleRayon" value={this.state.drawCircleRayon} onChange={this.handleChangeString} /></td>
                                         <td><input type="button" onClick={this.handleDrawCercle} value="DrawCircle" />
                                         </td>
                                         <td></td>
@@ -746,6 +766,20 @@ class Bg2d extends React.Component {
                     <div id="Bg3dDiv">
                         <Bg3d ref={this.ref3d} id="Bg3d_" image2Dsrc="bg2dCanvas" fileName={this.state.fileName} />
                     </div>
+                </div>
+                <div id="bgCollapseKey2" style={{ textAlign: 'left', border: '1px solid red' }} onClick={(event) => { document.getElementById('bgCollapseKey2').style.display = 'none'; document.getElementById('bgCollapse2').style.display = 'block' }}>
+                    <h2>+ Fonts Exemples</h2>
+                </div>
+                <div id="bgCollapse2" style={{ textAlign: 'left' }} class="contentCollapse" onClick={(event) => { document.getElementById('bgCollapse2').style.display = 'none'; document.getElementById('bgCollapseKey2').style.display = 'block' }}>
+                    <h2>- Fonts Exemples</h2>
+                    <ul id="collapse" >
+                        <li><span style={{font:"bold 30px carolingia",width:'500px'}}>carolingia <span class="t">{this.state.drawTextInput}</span></span></li>
+                        <li><span style={{font:"bold 30px 'crom.regular'",width:'500px'}}>crom.regular <span class="t">{this.state.drawTextInput}</span> </span></li>
+                        <li><span style={{font:"bold 30px DOMINICA",width:'500px'}}>DOMINICA<span class="t">{this.state.drawTextInput}</span></span></li>
+                        <li><span style={{font:"bold 30px MorrisRoman-Black",width:'500px'}}>MorrisRoman-Black<span class="t">{this.state.drawTextInput}</span></span></li>
+                        <li><span style={{font:"bold 30px MorrisRomanAlternate-Black",width:'500px'}}>MorrisRomanAlternate-Black<span class="t">{this.state.drawTextInput}</span></span></li>
+                        <li><span style={{font:"bold 30px Roman_SD",width:'500px'}}>Roman_SD <span class="t">{this.state.drawTextInput}</span></span></li>
+                    </ul>
                 </div>
             </div>
         );
