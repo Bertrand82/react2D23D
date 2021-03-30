@@ -773,12 +773,12 @@ class Bg2d extends React.Component {
                 <div id="bgCollapse2" style={{ textAlign: 'left' }} class="contentCollapse" onClick={(event) => { document.getElementById('bgCollapse2').style.display = 'none'; document.getElementById('bgCollapseKey2').style.display = 'block' }}>
                     <h2>- Fonts Exemples</h2>
                     <ul id="collapse" >
-                        <li><span style={{font:"bold 30px carolingia",width:'500px'}}>carolingia <span class="t">{this.state.drawTextInput}</span></span></li>
-                        <li><span style={{font:"bold 30px 'crom.regular'",width:'500px'}}>crom.regular <span class="t">{this.state.drawTextInput}</span> </span></li>
-                        <li><span style={{font:"bold 30px DOMINICA",width:'500px'}}>DOMINICA<span class="t">{this.state.drawTextInput}</span></span></li>
-                        <li><span style={{font:"bold 30px MorrisRoman-Black",width:'500px'}}>MorrisRoman-Black<span class="t">{this.state.drawTextInput}</span></span></li>
-                        <li><span style={{font:"bold 30px MorrisRomanAlternate-Black",width:'500px'}}>MorrisRomanAlternate-Black<span class="t">{this.state.drawTextInput}</span></span></li>
-                        <li><span style={{font:"bold 30px Roman_SD",width:'500px'}}>Roman_SD <span class="t">{this.state.drawTextInput}</span></span></li>
+                        <li><span class="label2">carolingia                  </span> <span style={{font:"bold 30px carolingia"}} >{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">crom.regular                 </span> <span style={{font:"bold 30px 'crom.regular'"}} >{this.state.drawTextInput}</span> </li>
+                        <li><span class="label2">DOMINICA                    </span> <span style={{font:"bold 30px DOMINICA",width:'500px'}} >{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">MorrisRoman-Black           </span> <span style={{font:"bold 30px 'MorrisRoman-Black'"}}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">MorrisRomanAlternate-Black  </span> <span style={{font:"bold 30px MorrisRomanAlternate-Black"}}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">Roman_SD                    </span> <span style={{font:"bold 30px Roman_SD"}}>{this.state.drawTextInput}</span></li>
                     </ul>
                 </div>
             </div>
