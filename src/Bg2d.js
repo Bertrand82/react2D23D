@@ -12,7 +12,7 @@ class Bg2d extends React.Component {
         this.state = {
             fileName: "No Image",
             display3D: false,
-            drawTextInput: "Montpezat de Quercy",
+            drawTextInput: "Art 2 Faire",
             drawCircleRayon: 140,
             colorSelected: '#ff0000',
             drawFontSize: '50px',
@@ -21,7 +21,7 @@ class Bg2d extends React.Component {
             couleurPermutationDestination: '0xffff00',
             positionTextX: 50,
             positionTextY: 50,
-            angleInitial: 0
+            angleInitial: -85
         }
         this.handleChangeString = this.handleChangeString.bind(this);
         this.handleChangeLoadImage = this.handleChangeLoadImage.bind(this);
@@ -192,7 +192,7 @@ class Bg2d extends React.Component {
                 newImageData.data[kk + 1] = this.imageData.data[k + 1];
                 newImageData.data[kk + 2] = this.imageData.data[k + 2];
                 newImageData.data[kk + 3] = this.imageData.data[k + 3];
-                newImageData.data[kk + 4] = this.imageData.data[k + 4];
+               
             }
         }
         console.log("handleInverse done");
@@ -523,7 +523,7 @@ class Bg2d extends React.Component {
         this.h = canvas.height;
         this.imageData = this.ctx.getImageData(0, 0, this.w, this.h);
 
-        this.ctx.rect(0, 0, this.w, this.h);
+        this.ctx.rect(0, 0, this.w+1, this.h+1);
         this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
         this.ctx.fill();
         //this.handleClean();

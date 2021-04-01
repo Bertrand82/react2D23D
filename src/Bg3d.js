@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TrackballControls from './TrackballControls';
 
 import * as BgUtil from './BgUtil.js';
+import * as Bg3dUtil from './Bg3dUtil';
 import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
@@ -114,7 +115,7 @@ class Bg3d extends Component {
 
 
     init2D23D_full(scene, kk) {  ///  ////////////////////////////////////////////////////////////////////////
-
+        
 
         const positionsHaut = [];
         const positionsBas = [];
@@ -126,13 +127,11 @@ class Bg3d extends Component {
         console.log(" this.h " + this.h);
         console.log("init2D23D_full  kk " + kk);
         var scale = this.state.scale;
-        var nDisplayable = 0;
+        var nDisplayable = 0
         var nDisplayableNo = 0;
-        for (var i = 0; i < this.w-kk; i = i + kk) {
-            for (var j = 0; j < this.h-kk; j = j + kk) {
-
-
-                var isDisplayable2 = this.isDisplayableConnex(i, j, kk)
+        for (var i = 1; i < this.w - kk; i = i + kk) {
+            for (var j = 1; j < this.h - kk; j = j + kk) {
+                var isDisplayable2 = this.isDisplayableConnex(i, j, kk) > 0
                 if (isDisplayable2) {
                     nDisplayable++
                 } else {
@@ -145,12 +144,12 @@ class Bg3d extends Component {
                     var pixel = this.getPixelRGB(indexPixel);
                     //console.log("pixelA   i: " + i + " j: "+j);
 
-                    this.processPosition(i, j, positionsHaut, true);
-                    this.processPosition(i + kk, j, positionsHaut, true);
-                    this.processPosition(i + kk, j + kk, positionsHaut, true);
-                    this.processPosition(i, j, positionsHaut, true);
-                    this.processPosition(i + kk, j + kk, positionsHaut, true);
-                    this.processPosition(i, j + kk, positionsHaut, true);
+                    let p1 = this.processPosition(i, j, positionsHaut, true);
+                    let p2 = this.processPosition(i + kk, j, positionsHaut, true);
+                    let p3 = this.processPosition(i + kk, j + kk, positionsHaut, true);
+                    let p4 = this.processPosition(i, j, positionsHaut, true);
+                    let p5 = this.processPosition(i + kk, j + kk, positionsHaut, true);
+                    let p6 = this.processPosition(i, j + kk, positionsHaut, true);
 
                     this.processPosition(i, j, positionsBas, false);
                     this.processPosition(i + kk, j, positionsBas, false);
@@ -161,14 +160,16 @@ class Bg3d extends Component {
 
 
 
-                    var normalHaut = [0, 0, 1];
+                    var normalHaut1 = Bg3dUtil.getNormal(p1, p2, p3);
+                    var normalHaut2 = Bg3dUtil.getNormal(p3, p4, p5);
                     var normalBas = [0, 0, -1];
-                    normalsHaut.push(...normalHaut);
-                    normalsHaut.push(...normalHaut);
-                    normalsHaut.push(...normalHaut);
-                    normalsHaut.push(...normalHaut);
-                    normalsHaut.push(...normalHaut);
-                    normalsHaut.push(...normalHaut);
+                    //console.log(" normalHaut1 ",normalHaut1, " normalhaut2 ",normalHaut2," normalBas",normalBas)
+                    normalsHaut.push(...normalHaut1);
+                    normalsHaut.push(...normalHaut1);
+                    normalsHaut.push(...normalHaut1);
+                    normalsHaut.push(...normalHaut2);
+                    normalsHaut.push(...normalHaut2);
+                    normalsHaut.push(...normalHaut2);
 
                     normalsBas.push(...normalBas);
                     normalsBas.push(...normalBas);
@@ -187,30 +188,45 @@ class Bg3d extends Component {
 
         console.log(" nDisplayableNo " + nDisplayableNo + "  nDisplayable " + nDisplayable);
 
-        var positions = positionsHaut.concat(positionsBas);
-        var normals = normalsHaut.concat(normalsBas);
+        // var positions = positionsHaut.concat(positionsBas);
+        //   var normals = normalsHaut.concat(normalsBas);
 
-        const geometry = new THREE.BufferGeometry();
+        const geometryHaut = new THREE.BufferGeometry();
+        const geometryBas = new THREE.BufferGeometry();
         const positionNumComponents = 3;
         const normalNumComponents = 3;
-        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
-        geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
-        const color = 0xffff88;
-        const material = new THREE.MeshBasicMaterial({ color: color, wireframe: true });
+        geometryHaut.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positionsHaut), positionNumComponents));
+        geometryBas.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positionsBas), positionNumComponents));
+        geometryHaut.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normalsHaut), normalNumComponents));
+        geometryBas.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normalsBas), normalNumComponents));
+        const colorHAut = 0xffff88;
+        const colorBas = 0x88ffff;
+        const materialHaut = new THREE.MeshBasicMaterial({ color: colorHAut, wireframe: true });
+        const materialBas = new THREE.MeshBasicMaterial({ color: colorBas, wireframe: true });
 
-        const cube = new THREE.Mesh(geometry, material);
-        cube.position.x = 0;
-        cube.position.y = 0;
-        cube.position.z = 0;
-        scene.add(cube);
+        const cubeHaut = new THREE.Mesh(geometryHaut, materialHaut);
+        const cubeBas = new THREE.Mesh(geometryBas, materialBas);
+
+        cubeHaut.updateMatrix();
+        cubeBas.updateMatrix();
+        //cubeBas.updateMatrix();
+        var cubes = [cubeHaut,cubeBas];
+        // THREE.GeometryUtils.merge(geometryBas,cube); // Deprecated
+
+        
+        
+        scene.add(cubeHaut);
+        scene.add(cubeBas);
+       
 
 
-        return cube;
+
+        return cubes;
 
 
     }  ///  ///////////////////////////////////////////////////////////////////////
     distanceBordArray;
-   
+
     processPosition(i, j, positions, isHaut) {
         var hauteur = 0;
         if (isHaut) {
@@ -224,6 +240,7 @@ class Bg3d extends Component {
         var scale = this.state.scale;
         var positionHaut2 = [i * scale, j * scale, hauteur * scale];
         positions.push(...positionHaut2);
+        return positionHaut2;
     }
 
 
@@ -231,6 +248,17 @@ class Bg3d extends Component {
 
 
     isFondImagePixel2(i, j) {
+        if (i >= this.w) {
+            return true;
+        }
+        if (j >= this.h) {
+            return true;
+        }
+        if (i < 0) {
+            return true;
+        } if (j < 0) {
+            return true;
+        }
         var indexPixel = this.getPixelXYIndex(i, j);
         var pixel = this.getPixelRGB(indexPixel);
         var isFondImage = (pixel === this.state.couleurFond);
@@ -239,28 +267,44 @@ class Bg3d extends Component {
 
     isDisplayableConnex(i, j, kk) {
 
-
         if (!this.isFondImagePixel2(i, j)) {
-            return true;
-        } else if ((i + kk) < this.w) {
+            return 1;
+        }
+        if ((i + kk) < this.w) {
             if (!this.isFondImagePixel2(i + kk, j)) {
-                return true;
+                return 2;
             }
-        } else if ((j + kk) < this.h) {
+        }
+        if ((i - kk) >= 0) {
+            if (!this.isFondImagePixel2(i - kk, j)) {
+                return 3;
+            }
+        }
+        if ((j + kk) < this.h) {
             if (!this.isFondImagePixel2(i, j + kk)) {
-                return true;
+                return 4;
             }
-        } 
-        else if (((j + kk) < this.h) && ((i + kk) < this.w)) {
+        }
+        if ((j - kk) >= 0) {
+            if (!this.isFondImagePixel2(i, j - kk)) {
+                return 5;
+            }
+        }
+        if (((j + kk) < this.h) && ((i + kk) < this.w)) {
             if (!this.isFondImagePixel2(i + kk, j + kk)) {
-                return true;
+                return 6;
+            }
+        }
+        if (((j - kk) >= 0) && ((i - kk) >= 0)) {
+            if (!this.isFondImagePixel2(i - kk, j - kk)) {
+                return 7;
             }
         }
 
-        return false;
+        return 0;
 
     }
-    
+
     getHauteurFromColor2(ii, jj) {
         if (ii >= this.w) {
             return 0;
@@ -304,7 +348,7 @@ class Bg3d extends Component {
     }
 
     getPixelXYIndex(x, y) {
-        return 4 * (y * this.imageData.width + x);
+        return 4 * ((y * this.imageData.width) + x);
     }
 
     create3D() {
@@ -380,9 +424,10 @@ class Bg3d extends Component {
     getStl = () => {
         console.log("getStl start -----" + THREE);
         var exporter = new STLExporter();
-        var sceneStl = new THREE.Scene();
-        this.init2D23D_full(sceneStl, 1);
-        const bufferBinary = exporter.parse(sceneStl, { binary: true });
+        const sceneStl = new THREE.Scene();
+        let cubes = this.init2D23D_full(sceneStl, 2);
+        cubes.forEach((c)=>sceneStl.add(c));
+        const bufferBinary = exporter.parse(sceneStl, { binary: false });
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
         var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
         saveAs(blobBinary, fileName + '.stl');
@@ -404,7 +449,7 @@ class Bg3d extends Component {
                 </div>
                 <div class="droit">
                     <div
-                        style={{ width: '300px', height: '300px', backgroundColor: "yellow", border: "3px solid red" }}
+                        style={{ width: '400px', height: '400px', backgroundColor: "yellow", border: "3px solid red" }}
                         ref={(mount) => { this.mount = mount }}
                     />
                 </div>
