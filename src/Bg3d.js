@@ -126,7 +126,6 @@ class Bg3d extends Component {
         console.log(" this.w " + this.w);
         console.log(" this.h " + this.h);
         console.log("init2D23D_full  kk " + kk);
-        var scale = this.state.scale;
         var nDisplayable = 0
         var nDisplayableNo = 0;
         for (var i = 1; i < this.w - kk; i = i + kk) {
@@ -140,10 +139,7 @@ class Bg3d extends Component {
 
                 if (isDisplayable2) {
 
-                    var indexPixel = this.getPixelXYIndex(i, j);
-                    var pixel = this.getPixelRGB(indexPixel);
-                    //console.log("pixelA   i: " + i + " j: "+j);
-
+                    
                     let p1 = this.processPosition(i, j, positionsHaut, true);
                     let p2 = this.processPosition(i + kk, j, positionsHaut, true);
                     let p3 = this.processPosition(i + kk, j + kk, positionsHaut, true);
@@ -161,7 +157,7 @@ class Bg3d extends Component {
 
 
                     var normalHaut1 = Bg3dUtil.getNormal(p1, p2, p3);
-                    var normalHaut2 = Bg3dUtil.getNormal(p3, p4, p5);
+                    var normalHaut2 = Bg3dUtil.getNormal(p4, p5, p6);
                     var normalBas = [0, 0, -1];
                     //console.log(" normalHaut1 ",normalHaut1, " normalhaut2 ",normalHaut2," normalBas",normalBas)
                     normalsHaut.push(...normalHaut1);
@@ -410,7 +406,17 @@ class Bg3d extends Component {
         })
         console.log("updateParam22 2 ----- hauteurNoir: " + this.state.hauteurNoir + "  hauteurRouge: " + this.state.hauteurRouge + "  nbPoints: " + nbPoints);
 
-
+    }
+    updateParam3 = (data) => {
+        console.log(" updateParam3 data ",data);
+        this.setState({
+            hauteurNoir: data.hauteurNoir,
+            hauteurRouge: data.hauteurRouge,
+            hauteurVert: data.hauteurVert,
+            hauteurBleu: data.hauteurBleu,
+            nbPoints: data.nbPoints,
+            scale: data.scale
+        })
     }
 
     calcul = () => {
@@ -458,12 +464,5 @@ class Bg3d extends Component {
     }
 }
 
-class Point {
-    constructor(ii, jj) {
-        this.i = ii;
-        this.j = jj;
-    }
-    i;
-    j;
-}
+
 export default Bg3d;

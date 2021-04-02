@@ -51,10 +51,7 @@ export function extractContours(imageData) {
 }
 
 function isContour(i, j, imageData) {
-    let w = imageData.width;
-    let h = imageData.height;
-
-
+    
     let color0 = getColors(i, j, imageData);
     let color1 = getColors(i - 1, j, imageData);
     let color2 = getColors(i + 1, j, imageData);

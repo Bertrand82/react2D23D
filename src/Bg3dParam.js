@@ -47,6 +47,7 @@ class Bg3dParam extends Component {
     }
 
     handleUpdate(event){
+        this.props.updateParam3(this.state);
         this.props.updateParam2(this.state.hauteurNoir, this.state.hauteurRouge,this.state.hauteurVert, this.state.hauteurBleu,this.state.nbPoints,this.state.scale);
     }
 

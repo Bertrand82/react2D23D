@@ -1,6 +1,4 @@
 
-import { Blending } from 'three';
-
 import Bg3d from './Bg3d';
 import * as BgUtil from './BgUtil.js';
 import { saveAs } from 'file-saver';
@@ -340,7 +338,6 @@ class Bg2d extends React.Component {
         this.ctx.rotate(sens * angle);
 
         for (var n = 0; n < len; n++) {
-            var angle
             var isUpperCase
             if (str[n] === str[n].toUpperCase()) {
                 isUpperCase = true;
@@ -395,26 +392,25 @@ class Bg2d extends React.Component {
     }
     getkNeareastColor(i, j, imageData) {
         var color = this.getColor(i, j, imageData);
-        var nPixelConnect = 0;
         var ii, jj, kk;
         ii = i;
         jj = j - 1;
         var color4 = this.getColor(ii, jj, imageData);
-        if (color4 != color) {
+        if (color4 !== color) {
             kk = 4 * (ii * this.w + jj);
             return kk;
         }
         ii = i;
         jj = j + 1;
         var color3 = this.getColor(ii, jj, imageData);
-        if (color3 != color) {
+        if (color3 !== color) {
             kk = 4 * (ii * this.w + jj);
             return kk;
         }
         ii = i - 1;
         jj = j;
         var color2 = this.getColor(ii, jj, imageData);
-        if (color != color2) {
+        if (color !== color2) {
             kk = 4 * (ii * this.w + jj);
             return kk;
         }
@@ -422,7 +418,7 @@ class Bg2d extends React.Component {
         jj = j;
         var color1 = this.getColor(ii, jj, imageData);
 
-        if (color != color1) {
+        if (color !== color1) {
             kk = 4 * (ii * this.w + jj);
             return kk;
         }
@@ -579,7 +575,6 @@ class Bg2d extends React.Component {
             console.log(a);
         }
         var element = document.getElementById("log");
-        var sPrevious = element.innerHTML;
         var elemDiv = document.createElement('div');
         elemDiv.innerText = "" + s;
         element.appendChild(elemDiv);
