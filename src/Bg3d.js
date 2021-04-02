@@ -39,7 +39,7 @@ class Bg3d extends Component {
             scale: 0.4
 
         }
-        this.updateParam2 = this.updateParam2.bind(this);
+        this.updateParam3 = this.updateParam3.bind(this);
         this.process3d();
     }
 
@@ -394,19 +394,7 @@ class Bg3d extends Component {
     renderScene = () => {
         this.renderer.render(this.scene, this.camera)
     }
-    updateParam2 = (hauteurNoir, hauteurRouge, hauteurVert, hauteurBleu, nbPoints, scale) => {
-        console.log("updateParam22 1 ----- hauteurNoir: " + hauteurNoir + "  hauteurRouge: " + hauteurRouge + "  nbPoints: " + nbPoints);
-        this.setState({
-            hauteurNoir: new Number(hauteurNoir),
-            hauteurRouge: new Number(hauteurRouge),
-            hauteurVert: new Number(hauteurVert),
-            hauteurBleu: new Number(hauteurBleu),
-            nbPoints: new Number(nbPoints),
-            scale: new Number(scale)
-        })
-        console.log("updateParam22 2 ----- hauteurNoir: " + this.state.hauteurNoir + "  hauteurRouge: " + this.state.hauteurRouge + "  nbPoints: " + nbPoints);
-
-    }
+    
     updateParam3 = (data) => {
         console.log(" updateParam3 data ",data);
         this.setState({
@@ -415,7 +403,11 @@ class Bg3d extends Component {
             hauteurVert: data.hauteurVert,
             hauteurBleu: data.hauteurBleu,
             nbPoints: data.nbPoints,
-            scale: data.scale
+            scale: data.scale,
+            bombageNoir: data.bombageNoir,
+            bombageRouge: data.bombageRouge,
+            bombageVert: data.bombageVert,
+            bombageBleu: data.bombageBleu
         })
     }
 
@@ -451,7 +443,7 @@ class Bg3d extends Component {
 
             <div class="global">
                 <div class="gauche">
-                    <Bg3dParam updateParam2={this.updateParam2} calcul={this.calcul} getStl={this.getStl} data={this.state} />
+                    <Bg3dParam updateParam3={this.updateParam3} calcul={this.calcul} getStl={this.getStl} data={this.state} />
                 </div>
                 <div class="droit">
                     <div

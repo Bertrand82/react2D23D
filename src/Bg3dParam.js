@@ -41,14 +41,16 @@ class Bg3dParam extends Component {
         console.log("handleChangeEpaisseur event.target.value : ", event.target.value);
         console.log("handleChangeEpaisseur event.target.id : ", event.target.id);
         this.setState({
-            [event.target.id]: event.target.value
+            [event.target.id]: event.target.valueAsNumber || event.target.value
         })
+       
         this.handleUpdate(event);
     }
 
     handleUpdate(event){
+       
         this.props.updateParam3(this.state);
-        this.props.updateParam2(this.state.hauteurNoir, this.state.hauteurRouge,this.state.hauteurVert, this.state.hauteurBleu,this.state.nbPoints,this.state.scale);
+        //this.props.updateParam2(this.state.hauteurNoir, this.state.hauteurRouge,this.state.hauteurVert, this.state.hauteurBleu,this.state.nbPoints,this.state.scale);
     }
 
     render() {
@@ -64,23 +66,23 @@ class Bg3dParam extends Component {
                         </tr>
                         <tr>
                             <td> Noir:</td>
-                            <td>Hauteur: <input style={{width:'60px'}} type="text" id="hauteurNoir" value={this.state.hauteurNoir} onChange={this.handleChange} /> </td>
-                            <td>Bombage<input style={{width:'30px'}} type="text" id="bombageNoir" value={this.state.bombageNoir} onChange={this.handleChange} /></td>
+                            <td>Hauteur: <input style={{width:'60px'}} type="number" id="hauteurNoir" value={this.state.hauteurNoir} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{width:'40px'}} type="number" id="bombageNoir" value={this.state.bombageNoir} onChange={this.handleChange} /></td>
                         </tr>
                         <tr>
                             <td> Rouge:</td>
                             <td>Hauteur <input style={{width:'60px'}} type="number" id="hauteurRouge" value={this.state.hauteurRouge} onChange={this.handleChange} /> </td>
-                            <td>Bombage<input style={{width:'30px'}} type="text" id="bombageRouge" value={this.state.bombageRouge} onChange={this.handleChange} /></td>
+                            <td>Bombage<input style={{width:'40px'}} type="number" id="bombageRouge" value={this.state.bombageRouge} onChange={this.handleChange} /></td>
                         </tr>
                         <tr>
                             <td> Vert:</td>
                             <td>Hauteur <input style={{width:'60px'}} type="number" id="hauteurVert" value={this.state.hauteurVert} onChange={this.handleChange} /> </td>
-                            <td>Bombage<input style={{width:'30px'}} type="text" id="bombageVert" value={this.state.bombageVert} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{width:'40px'}} type="number" id="bombageVert" value={this.state.bombageVert} onChange={this.handleChange} /> </td>
                       </tr>
                         <tr>
                             <td>Bleu:</td>
                             <td>Hauteur  <input style={{width:'60px'}} type="number" id="hauteurBleu" value={this.state.hauteurBleu} onChange={this.handleChange} /> </td>
-                            <td>Bombage <input style={{width:'30px'}} type="text" id="bombageBleu" value={this.state.bombageBleu} onChange={this.handleChange} /></td>
+                            <td>Bombage <input style={{width:'40px'}} type="number" id="bombageBleu" value={this.state.bombageBleu} onChange={this.handleChange} /></td>
                       </tr>
                         <tr>
                             <td>Nombre de points de maillage (1 coté):</td>
