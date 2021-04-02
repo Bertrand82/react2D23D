@@ -38,7 +38,7 @@ class Bg2d extends React.Component {
         this.handleClean = this.handleClean.bind(this);
         this.handleFiltreImageSaturation = this.handleFiltreImageSaturation.bind(this);
         this.handleUndo = this.handleUndo.bind(this);
-        this.display = this.display.bind(this);
+        this.displayView = this.displayView.bind(this);
         this.handlePermuteCouleurs = this.handlePermuteCouleurs.bind(this);
         this.handleExtractionContour = this.handleExtractionContour.bind(this);
         this.handleDrawTextDroit = this.handleDrawTextDroit.bind(this);
@@ -51,7 +51,7 @@ class Bg2d extends React.Component {
     }
     componentDidMount() {
         this.initCanvasText();
-        this.display("2d");
+        this.displayView("2d");
         var color = this.state.colorSelected;
         this.selectColor(color);
     }
@@ -86,23 +86,27 @@ class Bg2d extends React.Component {
         this.setState({
             display3D: !this.state.display3D,
         })
-        this.display("3d");
+        this.displayView("3d");
         this.ref3d.current.process3d();
         this.ref3d.current.calcul();
     }
 
-    display(viewToDisplay) {
-        console.log("BgUpload diplay value", viewToDisplay)
-        console.log("BgUpload diplay ref3d current: ", this.ref3d.current);
+    displayView(viewToDisplay) {
+        console.log("Bg2D diplayView viewToDisplay", viewToDisplay)
+        console.log("Bg2D displayView ref3d current: ", this.ref3d.current);
         var bg3dDiv = document.getElementById("Bg3dDiv");
         var bg2dDiv = document.getElementById("Bg2dDiv");
-        console.log("display : ", viewToDisplay);
+        
         if ("2d" === viewToDisplay) {
+            console.log("display 2D")
             bg3dDiv.style.display = "none";
             bg2dDiv.style.display = "block";
         } else if ("3d" === viewToDisplay) {
+            console.log("display 3D")
             bg2dDiv.style.display = "none";
             bg3dDiv.style.display = "block";
+        }else {
+            console.warning("DisplayView Aie !!!! probleme")
         }
     }
     handleChangeLoadImage(event) {
@@ -586,8 +590,8 @@ class Bg2d extends React.Component {
 
             <div>
                 <div style={{ textAlign: 'left', border: '1px solid red' }} id="Bg3dT">
-                    <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("2d") }} value=" 2D" />
-                    <input type="button" onClick={(event) => { console.log("retour from3D", event); this.display("3d") }} value=" 3D" />
+                    <input type="button" onClick={(event) => { console.log("retour from3D", event); this.displayView("2d") }} value=" 2D" />
+                    <input type="button" onClick={(event) => { console.log("retour from3D", event); this.displayView("3d") }} value=" 3D" />
                 </div>
                 <div id="Bg2dDiv">
                     <div class="global">
