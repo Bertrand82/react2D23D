@@ -96,7 +96,7 @@ class Bg2d extends React.Component {
         console.log("Bg2D displayView ref3d current: ", this.ref3d.current);
         var bg3dDiv = document.getElementById("Bg3dDiv");
         var bg2dDiv = document.getElementById("Bg2dDiv");
-        
+
         if ("2d" === viewToDisplay) {
             console.log("display 2D")
             bg3dDiv.style.display = "none";
@@ -105,7 +105,7 @@ class Bg2d extends React.Component {
             console.log("display 3D")
             bg2dDiv.style.display = "none";
             bg3dDiv.style.display = "block";
-        }else {
+        } else {
             console.warning("DisplayView Aie !!!! probleme")
         }
     }
@@ -194,7 +194,7 @@ class Bg2d extends React.Component {
                 newImageData.data[kk + 1] = this.imageData.data[k + 1];
                 newImageData.data[kk + 2] = this.imageData.data[k + 2];
                 newImageData.data[kk + 3] = this.imageData.data[k + 3];
-               
+
             }
         }
         console.log("handleInverse done");
@@ -523,7 +523,7 @@ class Bg2d extends React.Component {
         this.h = canvas.height;
         this.imageData = this.ctx.getImageData(0, 0, this.w, this.h);
 
-        this.ctx.rect(0, 0, this.w+1, this.h+1);
+        this.ctx.rect(0, 0, this.w + 1, this.h + 1);
         this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
         this.ctx.fill();
         //this.handleClean();
@@ -540,7 +540,7 @@ class Bg2d extends React.Component {
         })
 
     }
-   
+
     handleChangeNumber(event) {
         console.log("handleChangeNumber event : ", event);
         console.log("handleChangeNumber event.target : ", event.target);
@@ -684,6 +684,8 @@ class Bg2d extends React.Component {
                                                 <option value="DOMINICA">DOMINICA</option>
                                                 <option value="MorrisRomanAlternate-Black">MorrisRomanAlternate-Black</option>
                                                 <option value="MorrisRoman-Black">MorrisRoman-Black</option>
+                                                <option value="super-marker">Super-Marker</option>
+                                                <option value="Uni Sans Heavy">Uni Sans Heavy</option>
                                             </select>
                                         </td>
                                         <td>
@@ -772,12 +774,16 @@ class Bg2d extends React.Component {
                 <div id="bgCollapse2" style={{ textAlign: 'left' }} class="contentCollapse" onClick={(event) => { document.getElementById('bgCollapse2').style.display = 'none'; document.getElementById('bgCollapseKey2').style.display = 'block' }}>
                     <h2>- Fonts Exemples</h2>
                     <ul id="collapse" >
-                        <li><span class="label2">carolingia                  </span> <span style={{font:"bold 30px carolingia"}} >{this.state.drawTextInput}</span></li>
-                        <li><span class="label2">crom.regular                 </span> <span style={{font:"bold 30px 'crom.regular'"}} >{this.state.drawTextInput}</span> </li>
-                        <li><span class="label2">DOMINICA                    </span> <span style={{font:"bold 30px DOMINICA",width:'500px'}} >{this.state.drawTextInput}</span></li>
-                        <li><span class="label2">MorrisRoman-Black           </span> <span style={{font:"bold 30px 'MorrisRoman-Black'"}}>{this.state.drawTextInput}</span></li>
-                        <li><span class="label2">MorrisRomanAlternate-Black  </span> <span style={{font:"bold 30px MorrisRomanAlternate-Black"}}>{this.state.drawTextInput}</span></li>
-                        <li><span class="label2">Roman_SD                    </span> <span style={{font:"bold 30px Roman_SD"}}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">default                  </span> <span style={{ fontSize: "30px", fontWeight: 'bold' }}> {this.state.drawTextInput}</span></li>
+                        <li><span class="label2">carolingia                  </span> <span style={{ font: "bold 30px carolingia" }} >{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">crom.regular                 </span> <span style={{ font: "bold 30px 'crom.regular'" }} >{this.state.drawTextInput}</span> </li>
+                        <li><span class="label2">DOMINICA                    </span> <span style={{ font: "bold 30px DOMINICA", width: '500px' }} >{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">MorrisRoman-Black           </span> <span style={{ font: "bold 30px 'MorrisRoman-Black'" }}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">MorrisRomanAlternate-Black  </span> <span style={{ font: "bold 30px MorrisRomanAlternate-Black" }}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">Roman_SD                    </span> <span style={{ font: "bold 30px Roman_SD" }}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">super-marker                </span> <span style={{ font: "bold 30px super-marker" }}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">Affistory               </span> <span style={{ font: "bold 30px Affistory" }}>{this.state.drawTextInput}</span></li>
+                        <li><span class="label2">Uni Sans Heavy               </span> <span style={{ font: "bold 30px 'Uni Sans Heavy'" }}>{this.state.drawTextInput}</span></li>
                     </ul>
                 </div>
             </div>
