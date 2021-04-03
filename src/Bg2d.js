@@ -251,7 +251,7 @@ class Bg2d extends React.Component {
         this.process_Z_1();
         this.log("handleDrawTextAlongArc1 " + this.state.drawTextInput);
         var rayon = this.state.drawCircleRayon;
-        var angleByChar = 30.0 / rayon;
+        var angleByChar = 5.0 / rayon;
         this.drawTextAlongArc(this.state.drawTextInput, rayon, angleByChar, 1)
     }
     handleDrawTextAlongArc2() {
@@ -342,22 +342,20 @@ class Bg2d extends React.Component {
         this.ctx.rotate(sens * angle);
 
         for (var n = 0; n < len; n++) {
-            var isUpperCase
-            if (str[n] === str[n].toUpperCase()) {
-                isUpperCase = true;
-                angle = sens * 1.5 * angleByChar;
-            } else {
-                isUpperCase = false;
-                angle = sens * angleByChar;
-            }
-            console.log("drawTextAlongArc " + str[n] + "  " + isUpperCase)
-
+            
+           
+            
+            
+            var longueurCh = this.ctx.measureText(str[n]).width;
+            var angleCh = longueurCh/radius;
+            console.log("drawTextAlongArc " + str[n] +  "  longueurCh :"+longueurCh+"  angleCh "+angleCh);
             this.ctx.save();
             this.ctx.translate(0, -1 * sens * radius);
             s = str[n];
             this.ctx.fillText(s, 0, 0);
 
             this.ctx.restore();
+            angle = sens * (angleByChar+angleCh);
             this.ctx.rotate(angle);
         }
         this.ctx.restore();
