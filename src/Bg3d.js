@@ -158,6 +158,7 @@ class Bg3d extends Component {
 
                     var normalHaut1 = Bg3dUtil.getNormal(p1, p2, p3);
                     var normalHaut2 = Bg3dUtil.getNormal(p4, p5, p6);
+                    //console.log("normaleHaut 1 et 2 :", normalHaut1,normalHaut2);
                     var normalBas = [0, 0, -1];
                     //console.log(" normalHaut1 ",normalHaut1, " normalhaut2 ",normalHaut2," normalBas",normalBas)
                     normalsHaut.push(...normalHaut1);
