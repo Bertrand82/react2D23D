@@ -130,6 +130,7 @@ class Bg3d extends Component {
         var nDisplayableNo = 0;
         for (var i = 1; i < this.w - kk; i = i + kk) {
             for (var j = 1; j < this.h - kk; j = j + kk) {
+               
                 var isDisplayable2 = this.isDisplayableConnex(i, j, kk) > 0
                 if (isDisplayable2) {
                     nDisplayable++
@@ -138,7 +139,7 @@ class Bg3d extends Component {
                 }
 
                 if (isDisplayable2) {
-
+                    
                     
                     let p1 = this.processPosition(i, j, positionsHaut, true);
                     let p2 = this.processPosition(i + kk, j, positionsHaut, true);
@@ -235,7 +236,10 @@ class Bg3d extends Component {
         }
 
         var scale = this.state.scale;
-        var positionHaut2 = [i * scale, j * scale, hauteur * scale];
+        // Pour une raison mstérieuse, il faut inverser l'image
+        let ii =i;
+        let jj =this.h -j;
+        var positionHaut2 = [ii * scale, jj * scale, hauteur * scale];
         positions.push(...positionHaut2);
         return positionHaut2;
     }

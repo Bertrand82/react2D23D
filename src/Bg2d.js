@@ -281,10 +281,9 @@ class Bg2d extends React.Component {
         var font = event.target.value;
         this.setState({
             drawFontName: font
-        }
-        )
+        })
         console.log("handleSelectFont A >" + font + "<");
-        this.setFont();
+        this.setFont2(this.state.drawFontSize,font);
     }
     handlePatern1(event) {
         console.log("handlePattern1 start colorSelected:" + this.state.colorSelected)
@@ -317,8 +316,12 @@ class Bg2d extends React.Component {
         this.ctx.fill();
     }
     setFont() {
-        this.logAppend(" Font size : " + this.state.drawFontSize)
-        var font = "bold " + this.state.drawFontSize + " " + this.state.drawFontName;
+        this.logAppend(" Font size : " +this.state.drawFontSize+"  "+ this.state.drawFontName )
+        this.setFont2(this.state.drawFontSize, this.state.drawFontName) ;
+    } 
+    setFont2(fontSize, drawFontName) {
+       
+        var font = "bold " + fontSize + " " + drawFontName;
         this.logAppend("Font  : " + font)
         this.ctx.font = font;
 
