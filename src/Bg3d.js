@@ -33,7 +33,7 @@ class Bg3d extends Component {
             bombageRouge: 0,
             bombageVert: 0,
             bombageBleu: 0.6,
-            nbPoints: 200,
+            nbPoints: 100,
             couleurFond: 0xffffff,
             titre: 'r2d23d',
             scale: 0.4
