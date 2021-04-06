@@ -316,19 +316,21 @@ class Bg2d extends React.Component {
         this.ctx.fill();
     }
     setFont() {
-        this.logAppend(" Font size : " +this.state.drawFontSize+"  "+ this.state.drawFontName )
+        this.logAppend("setFont Font size : " +this.state.drawFontSize+"  name: "+ this.state.drawFontName )
         this.setFont2(this.state.drawFontSize, this.state.drawFontName) ;
+       
     } 
     setFont2(fontSize, drawFontName) {
        
-        var font = "bold " + fontSize + " " + drawFontName;
-        this.logAppend("Font  : " + font)
-        this.ctx.font = font;
+        var font2 = "bold " + fontSize + " " + drawFontName;
+        this.logAppend("setFont2 Font  : " + font2)
+        this.ctx.font = font2;
+        this.ctx.fillText(" ",0,0)
 
     }
 
     drawTextAlongArc(str, radius, angleByChar, sens) {
-        this.log("drawTextAlongArc " + str + "  radius : " + radius + " sens:   " + sens)
+        this.log("drawTextAlongArc :" + str + "  radius : " + radius + " sens:   " + sens)
         this.setFont();
         var centerX = this.w / 2;
         var centerY = this.h / 2;

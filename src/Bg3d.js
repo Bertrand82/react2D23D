@@ -7,6 +7,7 @@ import { saveAs } from 'file-saver';
 import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter";
+import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 
 initCanvasText();
 
@@ -157,9 +158,9 @@ class Bg3d extends Component {
 
 
 
-                    var normalHaut1 = Bg3dUtil.getNormal(p1, p2, p3);
-                    var normalHaut2 = Bg3dUtil.getNormal(p4, p5, p6);
-                    //console.log("normaleHaut 1 et 2 :", normalHaut1,normalHaut2);
+                    var normalHaut1 = Bg3dUtil.getNormal(p1,  p3,p2);
+                    var normalHaut2 = Bg3dUtil.getNormal(p4, p6,p5);
+                  // console.log("normaleHaut 1 et 2 :", normalHaut1,normalHaut2);
                     var normalBas = [0, 0, -1];
                     //console.log(" normalHaut1 ",normalHaut1, " normalhaut2 ",normalHaut2," normalBas",normalBas)
                     normalsHaut.push(...normalHaut1);
@@ -427,14 +428,29 @@ class Bg3d extends Component {
     getStl = () => {
         console.log("getStl start -----" + THREE);
         var exporter = new STLExporter();
-        const sceneStl = new THREE.Scene();
-        let cubes = this.init2D23D_full(sceneStl, 2);
-        cubes.forEach((c)=>sceneStl.add(c));
-        const bufferBinary = exporter.parse(sceneStl, { binary: false });
+        const sceneExport = new THREE.Scene();
+        let cubes = this.init2D23D_full(sceneExport, 1);
+        cubes.forEach((c)=>sceneExport.add(c));
+        const bufferBinary = exporter.parse(sceneExport, { binary: false });
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
         var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
         saveAs(blobBinary, fileName + '.stl');
-        console.log("getStl done nb de cubes sceneStl : " + sceneStl.children.length);
+        console.log("getStl done nb de cubes sceneStl : " + sceneExport.children.length);
+    }
+    // github.com/mrdoob/three.js/blob/master/examples/js/exporters/OBJExporter.js
+    exportOBJ =() =>{
+        console.log("exportObj start -----" );
+        const sceneExport = new THREE.Scene();
+        let cubes = this.init2D23D_full(sceneExport, 1);
+        cubes.forEach((c)=>sceneExport.add(c));
+        
+        const exporter = new OBJExporter();
+        const bufferBinary = exporter.parse( sceneExport );
+        const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
+        var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
+        saveAs(blobBinary, fileName + '.OBJ');
+        console.log("exportOBJ done nb de cubes sceneStl : " + sceneExport.children.length);
+
     }
 
     getSrcName = () => {
@@ -448,7 +464,7 @@ class Bg3d extends Component {
 
             <div class="global">
                 <div class="gauche">
-                    <Bg3dParam updateParam3={this.updateParam3} calcul={this.calcul} getStl={this.getStl} data={this.state} />
+                    <Bg3dParam updateParam3={this.updateParam3} calcul={this.calcul} getStl={this.getStl} exportOBJ={this.exportOBJ} data={this.state} />
                 </div>
                 <div class="droit">
                     <div

@@ -4,10 +4,10 @@
 var normalize = function (p) {
     let r;
     
-    //var length = Math.sqrt(p[0] * p[0] + p[1]* p[1]+p[2] * p[2]); //calculating length
+    var length = Math.sqrt(p[0] * p[0] + p[1]* p[1]+p[2] * p[2]); //calculating length
     // I don't need to be accurate , and sqrt is expensive ....
-    
-    var length =  (Math.abs(p[0])+Math.abs(p[1])+Math.abs(p[2]))/3.0;
+    // Cura red
+    //var length =  (Math.abs(p[0])+Math.abs(p[1])+Math.abs(p[2]))/3.0;
     if (length ===0){
         r = [0,0,1];
     }else {

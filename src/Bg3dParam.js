@@ -6,8 +6,8 @@ import React, { Component } from 'react';
 class Bg3dParam extends Component {
     constructor(props) {
         super(props);
-        
-        this.state = {           
+
+        this.state = {
             hauteurNoir: props.data.hauteurNoir,
             hauteurRouge: props.data.hauteurRouge,
             hauteurVert: props.data.hauteurVert,
@@ -22,6 +22,7 @@ class Bg3dParam extends Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleButtonClick2 = this.handleButtonClick2.bind(this);
+        this.handleButtonExportOBJ = this.handleButtonExportOBJ.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
     }
 
@@ -35,6 +36,11 @@ class Bg3dParam extends Component {
         this.props.getStl();
     };
 
+    handleButtonExportOBJ = (event) => {
+        console.log("Button handleButtonExportObj.");
+        this.props.exportOBJ();
+    };
+
     handleChange(event) {
         console.log("handleChangeEpaisseur event : ", event);
         console.log("handleChangeEpaisseur event.target : ", event.target);
@@ -43,12 +49,12 @@ class Bg3dParam extends Component {
         this.setState({
             [event.target.id]: event.target.valueAsNumber || event.target.value
         })
-       
+
         this.handleUpdate(event);
     }
 
-    handleUpdate(event){
-       
+    handleUpdate(event) {
+
         this.props.updateParam3(this.state);
         //this.props.updateParam2(this.state.hauteurNoir, this.state.hauteurRouge,this.state.hauteurVert, this.state.hauteurBleu,this.state.nbPoints,this.state.scale);
     }
@@ -66,39 +72,44 @@ class Bg3dParam extends Component {
                         </tr>
                         <tr>
                             <td> Noir:</td>
-                            <td>Hauteur: <input style={{width:'60px'}} type="number" id="hauteurNoir" value={this.state.hauteurNoir} onChange={this.handleChange} /> </td>
-                            <td>Bombage<input style={{width:'40px'}} type="number" id="bombageNoir" value={this.state.bombageNoir} onChange={this.handleChange} /></td>
+                            <td>Hauteur: <input style={{ width: '60px' }} type="number" id="hauteurNoir" value={this.state.hauteurNoir} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{ width: '40px' }} type="number" id="bombageNoir" value={this.state.bombageNoir} onChange={this.handleChange} /></td>
                         </tr>
                         <tr>
                             <td> Rouge:</td>
-                            <td>Hauteur <input style={{width:'60px'}} type="number" id="hauteurRouge" value={this.state.hauteurRouge} onChange={this.handleChange} /> </td>
-                            <td>Bombage<input style={{width:'40px'}} type="number" id="bombageRouge" value={this.state.bombageRouge} onChange={this.handleChange} /></td>
+                            <td>Hauteur <input style={{ width: '60px' }} type="number" id="hauteurRouge" value={this.state.hauteurRouge} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{ width: '40px' }} type="number" id="bombageRouge" value={this.state.bombageRouge} onChange={this.handleChange} /></td>
                         </tr>
                         <tr>
                             <td> Vert:</td>
-                            <td>Hauteur <input style={{width:'60px'}} type="number" id="hauteurVert" value={this.state.hauteurVert} onChange={this.handleChange} /> </td>
-                            <td>Bombage<input style={{width:'40px'}} type="number" id="bombageVert" value={this.state.bombageVert} onChange={this.handleChange} /> </td>
-                      </tr>
+                            <td>Hauteur <input style={{ width: '60px' }} type="number" id="hauteurVert" value={this.state.hauteurVert} onChange={this.handleChange} /> </td>
+                            <td>Bombage<input style={{ width: '40px' }} type="number" id="bombageVert" value={this.state.bombageVert} onChange={this.handleChange} /> </td>
+                        </tr>
                         <tr>
                             <td>Bleu:</td>
-                            <td>Hauteur  <input style={{width:'60px'}} type="number" id="hauteurBleu" value={this.state.hauteurBleu} onChange={this.handleChange} /> </td>
-                            <td>Bombage <input style={{width:'40px'}} type="number" id="bombageBleu" value={this.state.bombageBleu} onChange={this.handleChange} /></td>
-                      </tr>
+                            <td>Hauteur  <input style={{ width: '60px' }} type="number" id="hauteurBleu" value={this.state.hauteurBleu} onChange={this.handleChange} /> </td>
+                            <td>Bombage <input style={{ width: '40px' }} type="number" id="bombageBleu" value={this.state.bombageBleu} onChange={this.handleChange} /></td>
+                        </tr>
                         <tr>
                             <td>Nombre de points de maillage (1 coté):</td>
-                            <td> <input style={{width:'60px'}} type="number" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
+                            <td> <input style={{ width: '60px' }} type="number" id="nbPoints" value={this.state.nbPoints} onChange={this.handleChange} /> </td>
                             <td></td>
-                       </tr>
+                        </tr>
                         <tr>
                             <td>Echelle sortie:</td>
-                            <td> <input style={{width:'60px'}} type="number" id="scale" value={this.state.scale} onChange={this.handleChange} /> </td>
+                            <td> <input style={{ width: '60px' }} type="number" id="scale" value={this.state.scale} onChange={this.handleChange} /> </td>
                             <td></td>
-                       </tr>
-                         <tr>
+                        </tr>
+                        <tr>
                             <td><input type="button" onClick={this.handleUpdate} value="Update" /> </td>
                             <td> <input type="button" onClick={this.handleButtonClick1} value="Calcul" /> </td>
-                            <td><input type="button" style={{border: '3px solid red'}} onClick={this.handleButtonClick2} value="getStl" /></td>
+                            <td><input type="button" style={{ border: '3px solid red' }} onClick={this.handleButtonClick2} value="getStl" /></td>
                         </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td><input type="button" style={{ border: '3px solid red' }} onClick={this.handleButtonExportOBJ} value="exportObj" /></td>
+                </tr>
 
                     </tbody>
                 </table>
