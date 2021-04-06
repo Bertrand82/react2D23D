@@ -8,6 +8,8 @@ import Bg3dParam from './Bg3dParam';
 import * as THREE from 'three';
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter";
 import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
+import { GLTFExporter} from "three/examples/jsm/exporters/GLTFExporter";
+
 
 initCanvasText();
 
@@ -425,8 +427,8 @@ class Bg3d extends Component {
     }
 
 
-    getStl = () => {
-        console.log("getStl start -----" + THREE);
+    exportStl = () => {
+        console.log("exportStl start -----" + THREE);
         var exporter = new STLExporter();
         const sceneExport = new THREE.Scene();
         let cubes = this.init2D23D_full(sceneExport, 1);
@@ -435,7 +437,7 @@ class Bg3d extends Component {
         const blobBinary = new Blob([bufferBinary], { type: 'application/octet-stream' });
         var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
         saveAs(blobBinary, fileName + '.stl');
-        console.log("getStl done nb de cubes sceneStl : " + sceneExport.children.length);
+        console.log("exportStl done nb de cubes sceneStl : " + sceneExport.children.length);
     }
     // github.com/mrdoob/three.js/blob/master/examples/js/exporters/OBJExporter.js
     exportOBJ =() =>{
@@ -453,6 +455,29 @@ class Bg3d extends Component {
 
     }
 
+    exportGlTF=()=>{
+        console.log("exportGlTF start -----" );
+       var gltfExporter = new GLTFExporter();
+        const sceneExport = new THREE.Scene();
+        let cubes = this.init2D23D_full(sceneExport, 1);
+        cubes.forEach((c)=>sceneExport.add(c));
+        gltfExporter.parse(sceneExport, this.exportGlTFTraitement);
+    }
+
+    exportGlTFTraitement = (result)=>{
+        var output = JSON.stringify( result, null, 2 );
+            console.log( "output length : "+output.length);
+            var fileName = "cube_r2d23d_" + this.getSrcName() + "_" + this.state.hauteurRouge + "V" + this.state.hauteurVert + "B" + this.state.hauteurBleu + "N" + this.state.hauteurNoir
+            this.saveString( output, fileName+'.gltf' );
+    }
+
+    saveString(s,fileName){
+       console.log("Save String to :"+fileName) ;
+       const blobBinary = new Blob([s], { type: "text/plain;charset=utf-8" });
+       saveAs(blobBinary, fileName);
+       console.log("Save String to :"+fileName+" done") ;
+    }
+
     getSrcName = () => {
         return this.state.fileName.split(".")[0];
     }
@@ -464,7 +489,7 @@ class Bg3d extends Component {
 
             <div class="global">
                 <div class="gauche">
-                    <Bg3dParam updateParam3={this.updateParam3} calcul={this.calcul} getStl={this.getStl} exportOBJ={this.exportOBJ} data={this.state} />
+                    <Bg3dParam updateParam3={this.updateParam3} calcul={this.calcul} exportStl={this.exportStl} exportOBJ={this.exportOBJ} exportGlTF={this.exportGlTF} data={this.state} />
                 </div>
                 <div class="droit">
                     <div

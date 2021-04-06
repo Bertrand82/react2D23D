@@ -33,15 +33,15 @@ export function extractContours(imageData) {
 
             if (isContour(i, j, imageData)) {
                 nContour++;
-                dataNew[k] = 0;
-                dataNew[k + 1] = 0;
-                dataNew[k + 2] = 0xff;
+                dataNew[k] =  0;
+                dataNew[k + 1] =  0;
+                dataNew[k + 2] = 0;
                 dataNew[k + 3] = 0xff;
             } else {
                 nContourNo++;
                 dataNew[k] = 0xff;
-                dataNew[k + 1] = 0;
-                dataNew[k + 2] = 0;
+                dataNew[k + 1] = 0xff;
+                dataNew[k + 2] = 0xff;
                 dataNew[k + 3] = 0xff;
             }
         }
@@ -52,6 +52,7 @@ export function extractContours(imageData) {
 
 function isContour(i, j, imageData) {
     
+
     let color0 = getColors(i, j, imageData);
     let color1 = getColors(i - 1, j, imageData);
     let color2 = getColors(i + 1, j, imageData);

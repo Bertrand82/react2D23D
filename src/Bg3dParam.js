@@ -21,7 +21,7 @@ class Bg3dParam extends Component {
             scale: props.data.scale
         };
         this.handleChange = this.handleChange.bind(this);
-        this.handleButtonClick2 = this.handleButtonClick2.bind(this);
+        this.handleButtonExportStl = this.handleButtonExportStl.bind(this);
         this.handleButtonExportOBJ = this.handleButtonExportOBJ.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
     }
@@ -31,10 +31,14 @@ class Bg3dParam extends Component {
         this.handleUpdate(event);
         this.props.calcul();
     };
-    handleButtonClick2 = (event) => {
-        console.log("Button Stl was clicked.");
-        this.props.getStl();
+    handleButtonExportStl = (event) => {
+        console.log("exportStl start.");
+        this.props.exportStl();
     };
+    handleButtonExportGlTF =(event) =>{
+        console.log("exportGlTF start.");
+        this.props.exportGlTF();
+    }
 
     handleButtonExportOBJ = (event) => {
         console.log("Button handleButtonExportObj.");
@@ -103,12 +107,16 @@ class Bg3dParam extends Component {
                         <tr>
                             <td><input type="button" onClick={this.handleUpdate} value="Update" /> </td>
                             <td> <input type="button" onClick={this.handleButtonClick1} value="Calcul" /> </td>
-                            <td><input type="button" style={{ border: '3px solid red' }} onClick={this.handleButtonClick2} value="getStl" /></td>
+                            <td><input type="button" style={{ border: '3px solid red' }} onClick={this.handleButtonExportStl} value="exportStl" /></td>
                         </tr>
                         <tr>
                             <td></td>
                             <td></td>
                             <td><input type="button" style={{ border: '3px solid red' }} onClick={this.handleButtonExportOBJ} value="exportObj" /></td>
+                </tr><tr>
+                            <td></td>
+                            <td></td>
+                            <td><input type="button" style={{ border: '3px solid red' }} onClick={this.handleButtonExportGlTF} value="export GlTF" /></td>
                 </tr>
 
                     </tbody>
