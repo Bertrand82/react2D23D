@@ -143,12 +143,12 @@ class Bg3d extends Component {
                     
                     
                     let p1 = this.processPosition(i, j, positionsHaut, true);
-                    let p2 = this.processPosition(i + kk, j, positionsHaut, true);
-                    let p3 = this.processPosition(i + kk, j + kk, positionsHaut, true);
+                    let p2 = this.processPosition(i + kk, j + kk, positionsHaut, true);
+                    let p3 = this.processPosition(i + kk, j, positionsHaut, true);
                     let p4 = this.processPosition(i, j, positionsHaut, true);
-                    let p5 = this.processPosition(i + kk, j + kk, positionsHaut, true);
-                    let p6 = this.processPosition(i, j + kk, positionsHaut, true);
-
+                    let p5 = this.processPosition(i, j + kk, positionsHaut, true);
+                    let p6 = this.processPosition(i + kk, j + kk, positionsHaut, true);
+                    
                     this.processPosition(i, j, positionsBas, false);
                     this.processPosition(i + kk, j, positionsBas, false);
                     this.processPosition(i + kk, j + kk, positionsBas, false);
@@ -158,8 +158,8 @@ class Bg3d extends Component {
 
 
 
-                    var normalHaut1 = Bg3dUtil.getNormal(p1,  p3,p2);
-                    var normalHaut2 = Bg3dUtil.getNormal(p4, p6,p5);
+                    var normalHaut1 = Bg3dUtil.getNormal(p1,  p2, p3);
+                    var normalHaut2 = Bg3dUtil.getNormal(p4,  p5, p6);
                   // console.log("normaleHaut 1 et 2 :", normalHaut1,normalHaut2);
                     var normalBas = [0, 0, -1];
                     //console.log(" normalHaut1 ",normalHaut1, " normalhaut2 ",normalHaut2," normalBas",normalBas)
