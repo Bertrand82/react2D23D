@@ -42,6 +42,7 @@ class Bg2d extends React.Component {
         this.handlePermuteCouleurs = this.handlePermuteCouleurs.bind(this);
         this.handleExtractionContour = this.handleExtractionContour.bind(this);
         this.handleDrawTextDroit = this.handleDrawTextDroit.bind(this);
+        this.handleFiltreNoirEtBlanc = this.handleFiltreNoirEtBlanc.bind(this);
         this.refCanvas = React.createRef();
         this.ref3d = React.createRef();
 
@@ -200,6 +201,10 @@ class Bg2d extends React.Component {
         console.log("handleInverse done");
         this.imageData = newImageData;
         this.ctx.putImageData(this.imageData, 0, 0);
+    }
+    handleFiltreNoirEtBlanc() {
+        this.log("filtre noir et blanc")
+        this.filtreNoirEtBlanc();
     }
     handleFiltreImageSaturation() {
         this.filtreImageSaturation();
@@ -442,7 +447,18 @@ class Bg2d extends React.Component {
         var color = red * 0x10000 + green * 0x100 + blue;
         return color;
     }
-
+    filtreNoirEtBlanc() {
+        this.process_Z_1();
+        var imageData = this.ctx.getImageData(0, 0, this.w, this.h);
+        var data = imageData.data;
+        this.log("filtreImageSaturation");
+        for (var i = 0; i < this.w; i++) {
+            for (var j = 0; j < this.h; j++) {
+                this.filtreNoirEtBlancPixel(i, j, data);
+            }
+        }
+        this.ctx.putImageData(imageData, 0, 0);
+    }
 
 
     filtreImageSaturation() {
@@ -479,7 +495,26 @@ class Bg2d extends React.Component {
         this.ctx.putImageData(imageData, 0, 0);
         this.log('permuteCouleurs done')
     }
+    filtreNoirEtBlancPixel(x, y, data) {
+        var i = 4 * (y * this.w + x);
 
+        var red = data[i];
+        var green = data[i + 1];
+        var blue = data[i + 2];
+        // eslint-disable-next-line
+        var alpha = data[i + 3];
+        var seuill = 0xA0;
+        if ((red === 0xff) && (green === 0xff) && (blue === 0xff)) {
+            data[i] = 0xff;
+            data[i + 1] = 0xff;
+            data[i + 2] = 0xff;
+        } else  {
+            data[i] = 0;
+            data[i + 1] = 0;
+            data[i + 2] = 0;
+        } 
+
+    }
 
     filtreImageSaturationPixel(x, y, data) {
         var i = 4 * (y * this.w + x);
@@ -645,6 +680,12 @@ class Bg2d extends React.Component {
                                     <tr>
                                         <td>Limite à 5 couleurs (R V B , noir, blanc)</td>
                                         <td><input type="button" onClick={this.handleFiltreImageSaturation} value="Filtre Saturation" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Filtre en noir et blanc</td>
+                                        <td><input type="button" onClick={this.handleFiltreNoirEtBlanc} value="Filtre Noir et Blanc" />
                                         </td>
                                         <td></td>
                                     </tr>
